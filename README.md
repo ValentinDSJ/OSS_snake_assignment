@@ -1,1 +1,7 @@
-# OSS_snake_assignment
+# OSS snake assignment
+
+## How to launch
+
+```bash
+yarn install # Install dependencies
+```

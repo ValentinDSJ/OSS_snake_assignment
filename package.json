@@ -1,0 +1,12 @@
+{
+  "name": "OSS_snake_assignment",
+  "version": "1.0.0",
+  "description": "Package for Snake game's assignment",
+  "main": "index.js",
+  "repository": "git@github.com:ValentinDSJ/OSS_snake_assignment.git",
+  "author": "Amaury LECOMTE <amaury.lecomte1@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "pixi.js": "^6.3.0"
+  }
+}
