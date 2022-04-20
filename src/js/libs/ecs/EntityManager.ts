@@ -9,6 +9,7 @@ export default class EntityManager {
 
     addEntity(components: Array<Component>) {
         components.map(component => {
+            component.idEntity = this.nextIdEntity;
             if (!this.entities.get(this.nextIdEntity)) {
                 this.entities.set(this.nextIdEntity, new Map<string, Array<Component>>());
             }
@@ -40,11 +41,24 @@ export default class EntityManager {
         this.entities.get(idEntity).delete(type);
     }
 
-    getComponentByType(idEntity: number, type: number): Array<Component> {
-        return this.entities[idEntity][type];
+    getComponentsByType(idEntity: number, type: string): Array<Component> {
+        if (!this.entities.get(idEntity))
+            return [];
+        if (!this.entities.get(idEntity).get(type))
+            return [];
+        return this.entities.get(idEntity).get(type);
     }
 
-    getComponentsOfEntity(idEntity: number): Map<number, Array<Component>> {
-        return this.entities[idEntity];
+    getComponentByType(idEntity: number, type: string): Component {
+        if (!this.entities.get(idEntity).get(type))
+            return null;
+        const components = this.entities.get(idEntity).get(type);
+        if (components.length == 0)
+            return null;
+        return components[0];
+    }
+
+    getComponentsOfEntity(idEntity: number): Map<string, Array<Component>> {
+        return this.entities.get(idEntity);
     }
 }

@@ -4,11 +4,7 @@ import MenuScene from "./scenes/MenuScene";
 import GameScene from "./scenes/GameScene";
 import Application, {getNameApplication} from "./components/Application";
 import * as PIXI from "pixi.js";
-
-enum SceneType {
-    MENU = 1,
-    GAME
-}
+import {SceneType} from "./utils/SceneType";
 
 export default class Game {
     private sharedEntities: Array<Array<Component>>;
@@ -52,8 +48,8 @@ export default class Game {
                 this.changeScene();
             }
         });
-        this.scene.stop();
-        this.scene.tearDown();
+        // this.scene.stop();
+        // this.scene.tearDown();
     }
 
     changeScene() {
@@ -61,7 +57,7 @@ export default class Game {
         this.scene.tearDown();
         this.currentScene = Game.nextScene;
         this.scene = this.scenes.get(this.currentScene)();
-        this.scene.awake();
+        this.scene.awake(this.sharedEntities);
         this.scene.start();
     }
 }

@@ -20,5 +20,12 @@ export default class GraphicsSystem extends System {
 
     stop() {}
 
-    tearDown() {}
+    tearDown() {
+        const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
+        const graphics = this.componentManager.getComponentsByType(getNameGraphics());
+
+        graphics.map((c: Graphics) => {
+            app.app.stage.removeChild(c.graphics);
+        });
+    }
 }
