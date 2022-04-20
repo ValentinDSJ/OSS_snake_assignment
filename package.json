@@ -1,11 +1,17 @@
 {
   "name": "OSS_snake_assignment",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Package for Snake game's assignment",
-  "main": "index.js",
+  "scripts": {
+    "watch": "parcel watch",
+    "build": "parcel build"
+  },
   "repository": "git@github.com:ValentinDSJ/OSS_snake_assignment.git",
   "author": "Amaury LECOMTE <amaury.lecomte1@gmail.com>",
   "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.4.1"
+  },
   "dependencies": {
     "pixi.js": "^6.3.0"
   }
