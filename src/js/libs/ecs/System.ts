@@ -2,12 +2,12 @@ import EntityManager from "./EntityManager";
 import ComponentManager from "./ComponentManager";
 
 export class System {
-    private entityManager?: EntityManager;
-    private componentManager?: ComponentManager;
+    protected entityManager: EntityManager;
+    protected componentManager: ComponentManager;
 
-    constructor() {
-        this.entityManager = null;
-        this.componentManager = null;
+    constructor(entityManager: EntityManager, componentManager: ComponentManager) {
+        this.entityManager = entityManager;
+        this.componentManager = componentManager;
     }
 
     setEntityManager(entityManager: EntityManager) {
@@ -22,7 +22,7 @@ export class System {
 
     start() {}
 
-    update() {}
+    update(delta: number) {}
 
     stop() {}
 

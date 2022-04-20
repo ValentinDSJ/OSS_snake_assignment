@@ -1,28 +1,19 @@
 import '../scss/index.scss';
 
-import * as PIXI from 'pixi.js';
-import Position, {getNamePosition} from "./components/Position";
-import Velocity, {getNameVelocity} from "./components/Velocity";
-import EntityManager from "./ecs/EntityManager";
+import Game from "./Game";
 
-const app = new PIXI.Application({ view: document.querySelector("#game") });
+// import * as PIXI from 'pixi.js';
+//
+// const app = new PIXI.Application({ view: document.querySelector("#game") });
+//
+// let texture = PIXI.Sprite.from(Snake);
+//
+// app.stage.addChild(texture);
+//
+// app.ticker.add((delta) => {
+//     texture.x += 0.5;
+// });
 
-document.body.appendChild(app.view);
+const game = new Game();
 
-let position: Position = {
-    x: 10, y: 10, idEntity: 1, name: getNamePosition()
-}
-
-let velocity: Velocity = {
-    x: 5, y: 5, idEntity: 1, name: getNameVelocity()
-}
-
-function test(component: Component) {
-    console.log(component.name);
-}
-
-let manager = new EntityManager();
-
-test(position);
-test(velocity);
-
+game.start();

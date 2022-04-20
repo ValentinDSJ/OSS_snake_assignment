@@ -9,6 +9,12 @@ export default class EntityManager {
 
     addEntity(components: Array<Component>) {
         components.map(component => {
+            if (!this.entities.get(this.nextIdEntity)) {
+                this.entities.set(this.nextIdEntity, new Map<string, Array<Component>>());
+            }
+            if (!this.entities.get(this.nextIdEntity).get(component.name)) {
+                this.entities.get(this.nextIdEntity).set(component.name, new Array<Component>());
+            }
             this.entities.get(this.nextIdEntity).get(component.name).push(component);
         })
         this.nextIdEntity++;

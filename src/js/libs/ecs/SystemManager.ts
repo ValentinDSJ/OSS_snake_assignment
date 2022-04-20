@@ -23,9 +23,9 @@ export default class SystemManager {
         })
     }
 
-    update() {
+    update(delta: number) {
         this.systems.map(system => {
-            system.update();
+            system.update(delta);
         })
     }
 

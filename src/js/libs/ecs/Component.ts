@@ -1,4 +1,4 @@
 interface Component {
-    idEntity: number
+    idEntity?: number
     name: string
 }
