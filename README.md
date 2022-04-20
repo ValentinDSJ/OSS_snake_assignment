@@ -7,3 +7,7 @@ yarn install # Install dependencies
 yarn parcel src/index.html # For development
 yarn parcel build src/index.html # For production
 ```
+
+## Documentation
+
+https://parceljs.org/
