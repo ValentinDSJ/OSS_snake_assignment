@@ -1,31 +1,44 @@
-import {System} from "../libs/ecs/System";
-import Application, {getNameApplication} from "../components/Application";
-import * as PIXI from "pixi.js";
-import Graphics, {getNameGraphics} from "../components/Graphics";
+import Application, { getNameApplication } from "../components/Application";
+import Graphics, { getNameGraphics } from "../components/Graphics";
+import Sprite, { getNameSprite } from "../components/Sprite";
+import { System } from "../libs/ecs/System";
 
 export default class GraphicsSystem extends System {
-    awake() {
-    }
+  awake() {}
 
-    start() {
-        const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
-        const graphics = this.componentManager.getComponentsByType(getNameGraphics());
+  start() {
+    const app = this.componentManager.getComponentByType(
+      getNameApplication()
+    ) as Application;
+    const graphics = this.componentManager.getComponentsByType(
+      getNameGraphics()
+    );
+    const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
-        graphics.map((c: Graphics) => {
-            app.app.stage.addChild(c.graphics);
-        });
-    }
+    console.log("size", sprites?.length);
+    sprites?.map((s) => {
+      app.app?.stage.addChild((s as Sprite).sprite);
+    });
 
-    update(delta: number) {}
+    graphics?.map((c: Graphics) => {
+      app.app.stage.addChild(c.graphics);
+    });
+  }
 
-    stop() {}
+  update(delta: number) {}
 
-    tearDown() {
-        const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
-        const graphics = this.componentManager.getComponentsByType(getNameGraphics());
+  stop() {}
 
-        graphics.map((c: Graphics) => {
-            app.app.stage.removeChild(c.graphics);
-        });
-    }
+  tearDown() {
+    const app = this.componentManager.getComponentByType(
+      getNameApplication()
+    ) as Application;
+    const graphics = this.componentManager.getComponentsByType(
+      getNameGraphics()
+    );
+
+    graphics.map((c: Graphics) => {
+      app.app.stage.removeChild(c.graphics);
+    });
+  }
 }
