@@ -9,7 +9,7 @@ export default class ComponentManager {
     if (!this.components.get(component.name)) {
       this.components.set(component.name, new Array<Component>());
     }
-    this.components.get(component.name).push(component);
+    this.components.get(component.name)?.push(component);
   }
 
   addComponents(components: Array<Component>) {
@@ -32,9 +32,8 @@ export default class ComponentManager {
     });
   }
 
-  getComponentsByType(type: string): Array<Component> | undefined {
-    console.log("components", this.components);
-    return this.components.get(type);
+  getComponentsByType(type: string): Array<Component> {
+    return this.components.get(type) ?? [];
   }
 
   getComponentByType(type: string): Component | null {

@@ -15,13 +15,12 @@ export default class GraphicsSystem extends System {
     );
     const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
-    console.log("size", sprites?.length);
     sprites?.map((s) => {
       app.app?.stage.addChild((s as Sprite).sprite);
     });
 
-    graphics?.map((c: Graphics) => {
-      app.app.stage.addChild(c.graphics);
+    graphics?.map((c) => {
+      app.app?.stage.addChild((c as Graphics).graphics);
     });
   }
 
@@ -36,9 +35,14 @@ export default class GraphicsSystem extends System {
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
     );
+    const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
-    graphics.map((c: Graphics) => {
-      app.app.stage.removeChild(c.graphics);
+    sprites?.map((c) => {
+      app.app?.stage.removeChild((c as Sprite).sprite);
+    });
+
+    graphics?.map((c) => {
+      app.app?.stage.removeChild((c as Graphics).graphics);
     });
   }
 }

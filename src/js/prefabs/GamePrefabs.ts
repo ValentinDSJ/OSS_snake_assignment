@@ -3,6 +3,7 @@ import snakeHead from "../../../assets/sprites/snake.png";
 import EventComponent, { getNameEvent } from "../components/Event";
 import Graphics, { getNameGraphics } from "../components/Graphics";
 import Sprite, { getNameSprite } from "../components/Sprite";
+import Velocity, { getNameVelocity } from "../components/Velocity";
 import Game from "../Game";
 import { SceneType } from "../utils/SceneType";
 
@@ -35,17 +36,23 @@ export default class GamePrefabs {
 
     const snake = PIXI.Sprite.from(snakeHead);
 
-    // snake.anchor.set(50);
+    // TODO should be middle of screen
+    snake.x = 500;
+    snake.y = 300;
 
-    snake.anchor.x = 1;
-    snake.anchor.y = 1;
+    snake.width = 100;
+    snake.height = 100;
 
-    snake.width = 1000;
-    snake.height = 1000;
+    snake.angle = 180;
 
     components.push(<Sprite>{
       name: getNameSprite(),
       sprite: snake,
+    });
+    components.push(<Velocity>{
+      name: getNameVelocity(),
+      x: 0,
+      y: -2,
     });
     // components.push(<EventComponent>{
     //   name: getNameEvent(),
