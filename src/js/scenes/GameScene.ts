@@ -14,6 +14,7 @@ export default class GameScene extends Scene {
   }
 
   initEntities() {
+    this.initEntity(GamePrefabs.createBoard());
     this.initEntity(GamePrefabs.createButton());
     this.initEntity(GamePrefabs.createHead());
   }

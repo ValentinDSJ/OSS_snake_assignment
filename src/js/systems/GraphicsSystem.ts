@@ -15,12 +15,11 @@ export default class GraphicsSystem extends System {
     );
     const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
-    sprites?.map((s) => {
-      app.app?.stage.addChild((s as Sprite).sprite);
-    });
-
     graphics?.map((c) => {
       app.app?.stage.addChild((c as Graphics).graphics);
+    });
+    sprites?.map((s) => {
+      app.app?.stage.addChild((s as Sprite).sprite);
     });
   }
 

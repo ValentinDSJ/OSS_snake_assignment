@@ -63,4 +63,58 @@ export default class GamePrefabs {
     // });
     return components;
   }
+
+  static createBoard(): Array<Component> {
+    let components = Array<Component>();
+
+    for (let i = 0; i <= 30; i++) {
+      const graphics = new PIXI.Graphics();
+
+      graphics.beginFill(0xff0000);
+      graphics.drawRect(i * 50, 0, 50, 50);
+      graphics.drawRect(i * 50, 20 * 50, 50, 50);
+      graphics.endFill();
+
+      components.push(<Graphics>{
+        name: getNameGraphics(),
+        graphics: graphics,
+      });
+
+      for (let j = 0; j <= 20; j++) {
+        const graphics = new PIXI.Graphics();
+
+        graphics.beginFill(0xff0000);
+        graphics.drawRect(0, j * 50, 50, 50);
+        graphics.drawRect(30 * 50, j * 50, 50, 50);
+        graphics.endFill();
+
+        components.push(<Graphics>{
+          name: getNameGraphics(),
+          graphics: graphics,
+        });
+
+        if (i > 0 && i < 30 && j > 0 && j < 20) {
+          const graphics = new PIXI.Graphics();
+
+          if (i % 2) {
+            graphics.beginFill(j % 2 ? 0x228b22 : 0x32cd32);
+          }
+          if (j % 2) {
+            graphics.beginFill(i % 2 ? 0x228b22 : 0x32cd32);
+          }
+          if (!(i % 2) && !(j % 2)) {
+            graphics.beginFill(0x228b22);
+          }
+          graphics.drawRect(i * 50, j * 50, 50, 50);
+          graphics.endFill();
+
+          components.push(<Graphics>{
+            name: getNameGraphics(),
+            graphics: graphics,
+          });
+        }
+      }
+    }
+    return components;
+  }
 }
