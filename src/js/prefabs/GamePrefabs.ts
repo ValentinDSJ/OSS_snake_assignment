@@ -40,6 +40,8 @@ export default class GamePrefabs {
     snake.x = 500;
     snake.y = 300;
 
+    snake.anchor.set(0.5);
+
     snake.width = 100;
     snake.height = 100;
 
