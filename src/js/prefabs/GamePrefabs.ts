@@ -39,12 +39,12 @@ export default class GamePrefabs {
 
     // TODO should be middle of screen
     snake.x = 500;
-    snake.y = 300;
+    snake.y = 500;
 
     snake.anchor.set(0.5);
 
-    snake.width = 100;
-    snake.height = 100;
+    snake.width = 50;
+    snake.height = 50;
 
     snake.angle = 180;
 
@@ -86,12 +86,12 @@ export default class GamePrefabs {
   static createBoard(): Array<Component> {
     let components = Array<Component>();
 
-    for (let i = 0; i <= 30; i++) {
+    for (let i = 0; i <= 40; i++) {
       const graphics = new PIXI.Graphics();
 
       graphics.beginFill(0xff0000);
-      graphics.drawRect(i * 50, 0, 50, 50);
-      graphics.drawRect(i * 50, 20 * 50, 50, 50);
+      graphics.drawRect(i * 25, 0, 25, 25);
+      graphics.drawRect(i * 25, 40 * 25, 25, 25);
       graphics.endFill();
 
       components.push(<Graphics>{
@@ -99,12 +99,12 @@ export default class GamePrefabs {
         graphics: graphics,
       });
 
-      for (let j = 0; j <= 20; j++) {
+      for (let j = 0; j <= 40; j++) {
         const graphics = new PIXI.Graphics();
 
         graphics.beginFill(0xff0000);
-        graphics.drawRect(0, j * 50, 50, 50);
-        graphics.drawRect(30 * 50, j * 50, 50, 50);
+        graphics.drawRect(0, j * 25, 25, 25);
+        graphics.drawRect(40 * 25, j * 25, 25, 25);
         graphics.endFill();
 
         components.push(<Graphics>{
@@ -112,19 +112,20 @@ export default class GamePrefabs {
           graphics: graphics,
         });
 
-        if (i > 0 && i < 30 && j > 0 && j < 20) {
+        if (i > 0 && i < 40 && j > 0 && j < 40) {
           const graphics = new PIXI.Graphics();
 
-          if (i % 2) {
-            graphics.beginFill(j % 2 ? 0x228b22 : 0x32cd32);
-          }
-          if (j % 2) {
-            graphics.beginFill(i % 2 ? 0x228b22 : 0x32cd32);
-          }
-          if (!(i % 2) && !(j % 2)) {
-            graphics.beginFill(0x228b22);
-          }
-          graphics.drawRect(i * 50, j * 50, 50, 50);
+          // if (i % 2) {
+          //   graphics.beginFill(j % 2 ? 0x228b22 : 0x32cd32);
+          // }
+          // if (j % 2) {
+          //   graphics.beginFill(i % 2 ? 0x228b22 : 0x32cd32);
+          // }
+          // if (!(i % 2) && !(j % 2)) {
+          //   graphics.beginFill(0x228b22);
+          // }
+          graphics.beginFill(0x228b22);
+          graphics.drawRect(i * 25, j * 25, 25, 25);
           graphics.endFill();
 
           components.push(<Graphics>{
