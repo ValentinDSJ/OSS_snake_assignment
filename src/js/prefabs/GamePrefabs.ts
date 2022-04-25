@@ -67,14 +67,14 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createApple(posX, posY): Array<Component> {
+  static createApple(posX: number, posY: number): Array<Component> {
     let components = Array<Component>();
 
     const apple = PIXI.Sprite.from(appleSprite);
     apple.x = posX;
     apple.y = posY;
-    apple.width = 100;
-    apple.height = 100;
+    apple.width = 50;
+    apple.height = 50;
 
     components.push(<Sprite>{
       name: getNameSprite(),
@@ -83,15 +83,17 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createBoard(): Array<Component> {
+  static createBoard(x: number, y: number): Array<Component> {
     let components = Array<Component>();
+
+    const blockSize = 50 * (y / x) * 1.7;
 
     for (let i = 0; i <= 40; i++) {
       const graphics = new PIXI.Graphics();
 
       graphics.beginFill(0xff0000);
-      graphics.drawRect(i * 50, 0, 50, 50);
-      graphics.drawRect(i * 50, 40 * 50, 50, 50);
+      graphics.drawRect(i * blockSize, 0, blockSize, blockSize);
+      graphics.drawRect(i * blockSize, 40 * blockSize, blockSize, blockSize);
       graphics.endFill();
 
       components.push(<Graphics>{
@@ -103,8 +105,8 @@ export default class GamePrefabs {
         const graphics = new PIXI.Graphics();
 
         graphics.beginFill(0xff0000);
-        graphics.drawRect(0, j * 50, 50, 50);
-        graphics.drawRect(40 * 50, j * 50, 50, 50);
+        graphics.drawRect(0, j * blockSize, blockSize, blockSize);
+        graphics.drawRect(40 * blockSize, j * blockSize, blockSize, blockSize);
         graphics.endFill();
 
         components.push(<Graphics>{
@@ -125,7 +127,7 @@ export default class GamePrefabs {
           //   graphics.beginFill(0x228b22);
           // }
           graphics.beginFill(0x228b22);
-          graphics.drawRect(i * 50, j * 50, 50, 50);
+          graphics.drawRect(i * blockSize, j * blockSize, blockSize, blockSize);
           graphics.endFill();
 
           components.push(<Graphics>{
