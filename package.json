@@ -4,7 +4,8 @@
   "description": "Package for Snake game's assignment",
   "scripts": {
     "watch": "parcel watch",
-    "build": "parcel build"
+    "build": "parcel build",
+    "dev": "parcel src/index.html"
   },
   "repository": "git@github.com:ValentinDSJ/OSS_snake_assignment.git",
   "author": "Amaury LECOMTE <amaury.lecomte1@gmail.com>",

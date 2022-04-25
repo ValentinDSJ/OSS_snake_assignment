@@ -19,9 +19,9 @@ export default class Scene {
         this.componentManager.addComponents(components);
     }
 
-    initSystems() {};
+    initSystems() { };
 
-    initEntities() {};
+    initEntities() { };
 
     awake(sharedEntities?: Array<Array<Component>>) {
         if (sharedEntities) {

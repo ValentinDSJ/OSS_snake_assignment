@@ -1,5 +1,5 @@
-import {System} from "../libs/ecs/System";
-import Application, {getNameApplication} from "../components/Application";
+import { System } from "../libs/ecs/System";
+import Application, { getNameApplication } from "../components/Application";
 import * as PIXI from "pixi.js";
 
 export default class ApplicationSystem extends System {
@@ -19,9 +19,9 @@ export default class ApplicationSystem extends System {
         // });
     }
 
-    update() {}
+    update() { }
 
-    stop() {}
+    stop() { }
 
-    tearDown() {}
+    tearDown() { }
 }

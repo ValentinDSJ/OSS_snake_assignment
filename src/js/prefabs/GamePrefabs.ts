@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import snakeHead from "../../../assets/sprites/snake.png";
+import appleSprite from "../../../assets/sprites/food.png";
 import EventComponent, { getNameEvent } from "../components/Event";
 import Graphics, { getNameGraphics } from "../components/Graphics";
 import Sprite, { getNameSprite } from "../components/Sprite";
@@ -63,6 +64,22 @@ export default class GamePrefabs {
     //     Game.nextScene = SceneType.MENU;
     //   },
     // });
+    return components;
+  }
+
+  static createApple(posX, posY): Array<Component> {
+    let components = Array<Component>();
+
+    const apple = PIXI.Sprite.from(appleSprite);
+    apple.x = posX;
+    apple.y = posY;
+    apple.width = 100;
+    apple.height = 100;
+
+    components.push(<Sprite>{
+      name: getNameSprite(),
+      sprite: apple,
+    });
     return components;
   }
 
