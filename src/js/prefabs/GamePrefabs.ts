@@ -43,8 +43,8 @@ export default class GamePrefabs {
 
     snake.anchor.set(0.5);
 
-    snake.width = 50;
-    snake.height = 50;
+    snake.width = 100;
+    snake.height = 100;
 
     snake.angle = 180;
 
@@ -90,8 +90,8 @@ export default class GamePrefabs {
       const graphics = new PIXI.Graphics();
 
       graphics.beginFill(0xff0000);
-      graphics.drawRect(i * 25, 0, 25, 25);
-      graphics.drawRect(i * 25, 40 * 25, 25, 25);
+      graphics.drawRect(i * 50, 0, 50, 50);
+      graphics.drawRect(i * 50, 40 * 50, 50, 50);
       graphics.endFill();
 
       components.push(<Graphics>{
@@ -103,8 +103,8 @@ export default class GamePrefabs {
         const graphics = new PIXI.Graphics();
 
         graphics.beginFill(0xff0000);
-        graphics.drawRect(0, j * 25, 25, 25);
-        graphics.drawRect(40 * 25, j * 25, 25, 25);
+        graphics.drawRect(0, j * 50, 50, 50);
+        graphics.drawRect(40 * 50, j * 50, 50, 50);
         graphics.endFill();
 
         components.push(<Graphics>{
@@ -125,7 +125,7 @@ export default class GamePrefabs {
           //   graphics.beginFill(0x228b22);
           // }
           graphics.beginFill(0x228b22);
-          graphics.drawRect(i * 25, j * 25, 25, 25);
+          graphics.drawRect(i * 50, j * 50, 50, 50);
           graphics.endFill();
 
           components.push(<Graphics>{
