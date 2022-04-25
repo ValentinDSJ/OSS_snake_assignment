@@ -1,8 +1,8 @@
 export default interface Position extends Component {
-    x: number,
-    y: number
+  x: number;
+  y: number;
 }
 
 export function getNamePosition(): string {
-    return "Position";
+  return "Position";
 }
