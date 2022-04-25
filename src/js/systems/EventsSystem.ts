@@ -6,7 +6,7 @@ import Velocity, { getNameVelocity } from "../components/Velocity";
 import { System } from "../libs/ecs/System";
 
 export default class EventsSystem extends System {
-  awake() {}
+  awake() { }
 
   start() {
     const events = this.componentManager.getComponentsByType(getNameEvent());
@@ -33,6 +33,19 @@ export default class EventsSystem extends System {
     });
   }
 
+  checkCollision(apple: Sprite, head: Sprite) {
+    if (!apple || !head) return;
+
+    // console.log("Snake X:" + head.sprite.x + ", Y: " + head.sprite.y);
+    // console.log("Apple X:" + apple.sprite.x + ", Y: " + apple.sprite.y);
+    if (head.sprite.x >= (apple.sprite.x) && head.sprite.x <= (apple.sprite.x + apple.sprite.width)) {
+      if (head.sprite.y >= (apple.sprite.y) && head.sprite.y <= (apple.sprite.y + apple.sprite.height)) {
+        console.log('collision');
+      }
+    }
+    apple.sprite.x
+  }
+
   update(delta: number) {
     const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
@@ -51,13 +64,15 @@ export default class EventsSystem extends System {
       }
     });
 
+
+    // TODO: how to get head
+    const head = sprites[1] as Sprite;
+    this.checkCollision(sprites[0] as Sprite, head);
+
     document.onkeydown = (e) => {
       const velocities = this.componentManager.getComponentsByType(
         getNameVelocity()
       );
-
-      // TODO: how to get head
-      const head = sprites[0] as Sprite;
 
       if (e.key === "ArrowLeft") {
         head.sprite.angle = 90;
@@ -94,7 +109,7 @@ export default class EventsSystem extends System {
     };
   }
 
-  stop() {}
+  stop() { }
 
   tearDown() {
     const app = this.componentManager.getComponentByType(

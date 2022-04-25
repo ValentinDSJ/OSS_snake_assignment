@@ -73,8 +73,8 @@ export default class GamePrefabs {
     const apple = PIXI.Sprite.from(appleSprite);
     apple.x = posX;
     apple.y = posY;
-    apple.width = 100;
-    apple.height = 100;
+    apple.width = 75;
+    apple.height = 75;
 
     components.push(<Sprite>{
       name: getNameSprite(),

@@ -20,9 +20,9 @@ export default class GameScene extends Scene {
   initEntities() {
     this.initEntity(GamePrefabs.createBoard());
     this.initEntity(GamePrefabs.createButton());
-    this.initEntity(GamePrefabs.createHead());
     this.initEntity(
       GamePrefabs.createApple(Math.random() * 500, Math.random() * 500)
     );
+    this.initEntity(GamePrefabs.createHead());
   }
 }
