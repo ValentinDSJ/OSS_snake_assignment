@@ -1,4 +1,6 @@
 import Application from "../components/Application";
+import Sprite from "../components/Sprite";
+import Velocity from "../components/Velocity";
 import Scene from "../libs/ecs/Scene";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import EventsSystem from "../systems/EventsSystem";
@@ -32,8 +34,25 @@ export default class GameScene extends Scene {
     );
     this.initEntity(GamePrefabs.createButton());
     this.initEntity(
-      GamePrefabs.createApple(Math.random() * 500, Math.random() * 500)
+      GamePrefabs.createApple(
+        Math.floor(Math.random() * (1580 - 60)) + 60,
+        Math.floor(Math.random() * (1580 - 60)) + 60
+      )
     );
-    this.initEntity(GamePrefabs.createHead());
+    const head = GamePrefabs.createHead();
+
+    this.initEntity(head);
+
+    let body = GamePrefabs.createBody(
+      0,
+      head[0] as Sprite,
+      head[1] as Velocity
+    );
+    this.initEntity(body);
+
+    for (let i = 1; i < 3; i++) {
+      body = GamePrefabs.createBody(i, body[0] as Sprite, body[1] as Velocity);
+      this.initEntity(body);
+    }
   }
 }

@@ -4,9 +4,10 @@ import Graphics, { getNameGraphics } from "../components/Graphics";
 import Sprite, { getNameSprite } from "../components/Sprite";
 import Velocity, { getNameVelocity } from "../components/Velocity";
 import { System } from "../libs/ecs/System";
+import GamePrefabs from "../prefabs/GamePrefabs";
 
 export default class EventsSystem extends System {
-  awake() { }
+  awake() {}
 
   start() {
     const events = this.componentManager.getComponentsByType(getNameEvent());
@@ -33,17 +34,65 @@ export default class EventsSystem extends System {
     });
   }
 
-  checkCollision(apple: Sprite, head: Sprite) {
+  checkCollision(
+    apple: Sprite,
+    head: Sprite,
+    currentSize: number,
+    tail: Sprite,
+    velocity: Velocity
+  ) {
     if (!apple || !head) return;
 
-    // console.log("Snake X:" + head.sprite.x + ", Y: " + head.sprite.y);
-    // console.log("Apple X:" + apple.sprite.x + ", Y: " + apple.sprite.y);
-    if (head.sprite.x >= (apple.sprite.x) && head.sprite.x <= (apple.sprite.x + apple.sprite.width)) {
-      if (head.sprite.y >= (apple.sprite.y) && head.sprite.y <= (apple.sprite.y + apple.sprite.height)) {
-        console.log('collision');
+    if (
+      head.sprite.x <= 60 ||
+      head.sprite.x >= 1580 ||
+      head.sprite.y <= 60 ||
+      head.sprite.y >= 1580
+    ) {
+      // TODO: show game over scene
+      console.log("game over");
+    }
+
+    if (
+      head.sprite.x >= apple.sprite.x &&
+      head.sprite.x <= apple.sprite.x + apple.sprite.width
+    ) {
+      if (
+        head.sprite.y >= apple.sprite.y &&
+        head.sprite.y <= apple.sprite.y + apple.sprite.height
+      ) {
+        apple.sprite.x = Math.floor(Math.random() * (1580 - 60)) + 60;
+        apple.sprite.y = Math.floor(Math.random() * (1580 - 60)) + 60;
+
+        const newBody = GamePrefabs.createBody(currentSize, tail, velocity);
+
+        this.entityManager.addEntity(newBody);
+        this.componentManager.addComponents(newBody);
+
+        const app = this.componentManager.getComponentByType(
+          "Application"
+        ) as Application;
+
+        app.app?.stage.addChild((newBody[0] as Sprite).sprite);
+
+        // TODO: add score
       }
     }
-    apple.sprite.x
+    apple.sprite.x;
+  }
+
+  moveBody() {
+    const sprites = this.componentManager.getComponentsByType("Sprite");
+
+    for (let i = 2; i < sprites.length; i++) {
+      const sprite = sprites[i] as Sprite;
+      const prevSprite = sprites[i - 1] as Sprite;
+
+      sprite.sprite.x = prevSprite.sprite.x;
+      sprite.sprite.y = prevSprite.sprite.y;
+    }
+
+    // console.log(sprites);
   }
 
   update(delta: number) {
@@ -64,42 +113,52 @@ export default class EventsSystem extends System {
       }
     });
 
+    const velocities = this.componentManager.getComponentsByType(
+      getNameVelocity()
+    );
 
     // TODO: how to get head
+    const apple = sprites[0] as Sprite;
     const head = sprites[1] as Sprite;
-    this.checkCollision(sprites[0] as Sprite, head);
+    const tail = sprites[sprites.length - 1] as Sprite;
+
+    this.checkCollision(
+      apple,
+      head,
+      sprites.length - 1,
+      tail,
+      velocities[0] as Velocity
+    );
 
     document.onkeydown = (e) => {
-      const velocities = this.componentManager.getComponentsByType(
-        getNameVelocity()
-      );
+      const angle = head.sprite.angle;
 
-      if (e.key === "ArrowLeft") {
-        head.sprite.angle = 90;
+      if (e.key === "ArrowLeft" && angle !== 90) {
+        head.sprite.angle = 270;
         velocities.map((v) => {
           const velocity = v as Velocity;
           velocity.x = -2 * delta;
           velocity.y = 0;
         });
       }
-      if (e.key === "ArrowRight") {
-        head.sprite.angle = 270;
+      if (e.key === "ArrowRight" && angle !== 270) {
+        head.sprite.angle = 90;
         velocities.map((v) => {
           const velocity = v as Velocity;
           velocity.x = 2 * delta;
           velocity.y = 0;
         });
       }
-      if (e.key === "ArrowUp") {
-        head.sprite.angle = 180;
+      if (e.key === "ArrowUp" && angle !== 180) {
+        head.sprite.angle = 0;
         velocities.map((v) => {
           const velocity = v as Velocity;
           velocity.x = 0;
           velocity.y = -2 * delta;
         });
       }
-      if (e.key === "ArrowDown") {
-        head.sprite.angle = 0;
+      if (e.key === "ArrowDown" && angle !== 0) {
+        head.sprite.angle = 180;
         velocities.map((v) => {
           const velocity = v as Velocity;
           velocity.x = 0;
@@ -109,7 +168,7 @@ export default class EventsSystem extends System {
     };
   }
 
-  stop() { }
+  stop() {}
 
   tearDown() {
     const app = this.componentManager.getComponentByType(

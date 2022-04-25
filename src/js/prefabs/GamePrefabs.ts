@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import appleSprite from "../../../assets/sprites/food.png";
-import snakeHead from "../../../assets/sprites/snake.png";
+import snakeBody from "../../../assets/sprites/nibbler_snake_core.png";
+import snakeHead from "../../../assets/sprites/nibbler_snake_head.png";
 import EventComponent, { getNameEvent } from "../components/Event";
 import Graphics, { getNameGraphics } from "../components/Graphics";
 import Sprite, { getNameSprite } from "../components/Sprite";
@@ -37,16 +38,15 @@ export default class GamePrefabs {
 
     const snake = PIXI.Sprite.from(snakeHead);
 
-    // TODO should be middle of screen
-    snake.x = 500;
-    snake.y = 500;
+    snake.x = 800;
+    snake.y = 800;
 
     snake.anchor.set(0.5);
 
-    snake.width = 100;
-    snake.height = 100;
+    snake.width = 50;
+    snake.height = 50;
 
-    snake.angle = 180;
+    snake.angle = 0;
 
     components.push(<Sprite>{
       name: getNameSprite(),
@@ -57,13 +57,37 @@ export default class GamePrefabs {
       x: 0,
       y: -2,
     });
-    // components.push(<EventComponent>{
-    //   name: getNameEvent(),
-    //   eventName: "pointerdown",
-    //   fct: (idEntity, em, cm) => {
-    //     Game.nextScene = SceneType.MENU;
-    //   },
-    // });
+    return components;
+  }
+
+  static createBody(
+    currentSize: number,
+    tail: Sprite,
+    velocity: Velocity
+  ): Array<Component> {
+    let components = Array<Component>();
+
+    const snake = PIXI.Sprite.from(snakeBody);
+
+    snake.x = tail.sprite.x;
+    snake.y = tail.sprite.y + tail.sprite.height;
+
+    snake.anchor.set(0.5);
+
+    snake.width = 50;
+    snake.height = 50;
+
+    snake.angle = tail.sprite.angle;
+
+    components.push(<Sprite>{
+      name: getNameSprite(),
+      sprite: snake,
+    });
+    components.push(<Velocity>{
+      name: getNameVelocity(),
+      x: velocity.x,
+      y: velocity.y,
+    });
     return components;
   }
 
@@ -73,8 +97,8 @@ export default class GamePrefabs {
     const apple = PIXI.Sprite.from(appleSprite);
     apple.x = posX;
     apple.y = posY;
-    apple.width = 75;
-    apple.height = 75;
+    apple.width = 50;
+    apple.height = 50;
 
     components.push(<Sprite>{
       name: getNameSprite(),
@@ -86,7 +110,8 @@ export default class GamePrefabs {
   static createBoard(x: number, y: number): Array<Component> {
     let components = Array<Component>();
 
-    const blockSize = 50 * (y / x) * 1.7;
+    // const blockSize = 50 * (y / x) * 1.7;
+    const blockSize = 40;
 
     for (let i = 0; i <= 40; i++) {
       const graphics = new PIXI.Graphics();

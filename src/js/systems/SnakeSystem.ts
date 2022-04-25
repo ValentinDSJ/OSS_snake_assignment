@@ -1,8 +1,7 @@
+import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
-import GamePrefabs from "../prefabs/GamePrefabs";
 
 export default class SnakeSystem extends System {
-
   spawnApple() {
     // console.log(this.entityManager);
     // console.log(this.componentManager);
@@ -10,7 +9,7 @@ export default class SnakeSystem extends System {
   }
 
   update(delta: number) {
-    this.spawnApple();
+    // this.spawnApple();
+    // this.moveBody();
   }
-
 }
