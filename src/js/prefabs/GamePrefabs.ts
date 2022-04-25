@@ -86,12 +86,12 @@ export default class GamePrefabs {
   static createBoard(): Array<Component> {
     let components = Array<Component>();
 
-    for (let i = 0; i <= 30; i++) {
+    for (let i = 0; i <= 40; i++) {
       const graphics = new PIXI.Graphics();
 
       graphics.beginFill(0xff0000);
-      graphics.drawRect(i * 50, 0, 50, 50);
-      graphics.drawRect(i * 50, 20 * 50, 50, 50);
+      graphics.drawRect(i * 25, 0, 25, 25);
+      graphics.drawRect(i * 25, 20 * 25, 25, 25);
       graphics.endFill();
 
       components.push(<Graphics>{
@@ -99,12 +99,12 @@ export default class GamePrefabs {
         graphics: graphics,
       });
 
-      for (let j = 0; j <= 20; j++) {
+      for (let j = 0; j <= 40; j++) {
         const graphics = new PIXI.Graphics();
 
-        graphics.beginFill(0xff0000);
-        graphics.drawRect(0, j * 50, 50, 50);
-        graphics.drawRect(30 * 50, j * 50, 50, 50);
+        graphics.beginFill(0xff0010);
+        graphics.drawRect(0, j * 25, 25, 25);
+        graphics.drawRect(20 * 25, j * 25, 25, 25);
         graphics.endFill();
 
         components.push(<Graphics>{
@@ -112,7 +112,7 @@ export default class GamePrefabs {
           graphics: graphics,
         });
 
-        if (i > 0 && i < 30 && j > 0 && j < 20) {
+        if (i > 0 && i < 40 && j > 0 && j < 40) {
           const graphics = new PIXI.Graphics();
 
           if (i % 2) {
@@ -124,7 +124,7 @@ export default class GamePrefabs {
           if (!(i % 2) && !(j % 2)) {
             graphics.beginFill(0x228b22);
           }
-          graphics.drawRect(i * 50, j * 50, 50, 50);
+          graphics.drawRect(i * 25, j * 25, 25, 25);
           graphics.endFill();
 
           components.push(<Graphics>{
