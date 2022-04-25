@@ -6,7 +6,7 @@ import Velocity, { getNameVelocity } from "../components/Velocity";
 import { System } from "../libs/ecs/System";
 
 export default class EventsSystem extends System {
-  awake() { }
+  awake() {}
 
   start() {
     const events = this.componentManager.getComponentsByType(getNameEvent());
@@ -94,7 +94,7 @@ export default class EventsSystem extends System {
     };
   }
 
-  stop() { }
+  stop() {}
 
   tearDown() {
     const app = this.componentManager.getComponentByType(

@@ -91,7 +91,7 @@ export default class GamePrefabs {
 
       graphics.beginFill(0xff0000);
       graphics.drawRect(i * 25, 0, 25, 25);
-      graphics.drawRect(i * 25, 40 * 25, 25, 25);
+      graphics.drawRect(i * 25, 20 * 25, 25, 25);
       graphics.endFill();
 
       components.push(<Graphics>{
@@ -102,9 +102,9 @@ export default class GamePrefabs {
       for (let j = 0; j <= 40; j++) {
         const graphics = new PIXI.Graphics();
 
-        graphics.beginFill(0xff0000);
+        graphics.beginFill(0xff0010);
         graphics.drawRect(0, j * 25, 25, 25);
-        graphics.drawRect(40 * 25, j * 25, 25, 25);
+        graphics.drawRect(20 * 25, j * 25, 25, 25);
         graphics.endFill();
 
         components.push(<Graphics>{
@@ -115,16 +115,15 @@ export default class GamePrefabs {
         if (i > 0 && i < 40 && j > 0 && j < 40) {
           const graphics = new PIXI.Graphics();
 
-          // if (i % 2) {
-          //   graphics.beginFill(j % 2 ? 0x228b22 : 0x32cd32);
-          // }
-          // if (j % 2) {
-          //   graphics.beginFill(i % 2 ? 0x228b22 : 0x32cd32);
-          // }
-          // if (!(i % 2) && !(j % 2)) {
-          //   graphics.beginFill(0x228b22);
-          // }
-          graphics.beginFill(0x228b22);
+          if (i % 2) {
+            graphics.beginFill(j % 2 ? 0x228b22 : 0x32cd32);
+          }
+          if (j % 2) {
+            graphics.beginFill(i % 2 ? 0x228b22 : 0x32cd32);
+          }
+          if (!(i % 2) && !(j % 2)) {
+            graphics.beginFill(0x228b22);
+          }
           graphics.drawRect(i * 25, j * 25, 25, 25);
           graphics.endFill();
 
