@@ -4,6 +4,7 @@ import Graphics, {getNameGraphics} from "../components/Graphics";
 import EventComponent, {getNameEvent} from "../components/Event";
 import Game from "../Game";
 import {SceneType} from "../utils/SceneType";
+import HTML, {getNameHTML} from "../components/HTML";
 
 export default class MenuPrefabs {
     static createButton(): Array<Component> {
@@ -24,6 +25,16 @@ export default class MenuPrefabs {
             fct: (idEntity, em, cm) => {
                 Game.nextScene = SceneType.GAME;
             }
+        });
+        return components;
+    }
+
+    static createMenu(): Array<Component> {
+        let components = Array<Component>();
+
+        components.push(<HTML>{
+            name: getNameHTML(),
+            element: 'body main .menu'
         });
         return components;
     }
