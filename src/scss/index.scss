@@ -38,8 +38,55 @@ h1 {
     font-size: 8rem;
 }
 
+h2 {
+    margin: 0;
+    font-family: "MELTED PERSONAL USE", sans-serif;
+    font-size: 6rem;
+}
+
+table {
+    font-family: "Nasalization Rg", sans-serif;
+    text-align: center;
+    width: 100%;
+
+    th {
+        background-color: #002da0;
+        color: white;
+        padding: 0;
+    }
+    td, th {
+        padding: 10px 0px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #71e9ff;
+    }
+}
+
 button {
+    font-family: "Nasalization Rg", sans-serif;
+    padding: 10px 20px;
+    background-color: #00217b;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.5s;
+
+    &:hover {
+        background-color: #002da0;
+    }
+}
+
+button.main-button {
     font-size: 3rem;
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+button.small-button {
+    font-size: 1.5rem;
 }
 
 main {
@@ -67,24 +114,37 @@ main {
             text-align: center;
             margin-top: auto;
             margin-bottom: auto;
+        }
+    }
 
-            button {
-                font-family: "Nasalization Rg", sans-serif;
-                width: 350px;
-                margin-left: auto;
-                margin-right: auto;
-                margin-top: 20px;
-                padding: 10px 20px;
-                cursor: pointer;
-                background-color: #00217b;
-                color: white;
-                border: none;
-                transition: background-color 0.5s;
+    .ranking-scene {
+        width: 100%;
+        height: 100vh;
+        z-index: 2;
+        background-color: #03e3fc;
+        position: absolute;
+        top: 0;
 
-                &:hover {
-                    background-color: #002da0;
-                }
+        .title {
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .scores {
+            width: 80%;
+            margin: auto;
+            margin-top: 100px;
+
+            .scores-tbody {
+                overflow: auto;
+                height: 60vh;
             }
+        }
+
+        .button-back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
         }
     }
 

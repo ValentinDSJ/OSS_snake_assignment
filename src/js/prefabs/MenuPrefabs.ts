@@ -38,6 +38,13 @@ export default class MenuPrefabs {
             Game.nextScene = SceneType.GAME;
         });
 
+        events.set(".ranking-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            Game.nextScene = SceneType.RANKING;
+        });
+
+        events.set(".exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        });
+
         components.push(<HTML>{
             name: getNameHTML(),
             element: 'body main .menu',

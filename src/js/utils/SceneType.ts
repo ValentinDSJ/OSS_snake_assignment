@@ -1,4 +1,5 @@
 export enum SceneType {
     MENU = 1,
-    GAME
+    GAME,
+    RANKING
 }
