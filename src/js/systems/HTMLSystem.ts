@@ -8,10 +8,23 @@ export default class HTMLSystem extends System {
 
     components?.map(component => {
       document.querySelector(component.element)?.classList.remove('hidden');
-      // document.querySelector(component.element)?.classList.add('visible');
+
+      component.eventsOnClick.forEach((value, key, map) => {
+        document.querySelector(`${component.element} ${key}`)?.addEventListener('click', (event) => {
+          value(component.idEntity!, this.entityManager, this.componentManager);
+        })
+      })
     });
   }
 
   update(delta: number) {
+  }
+
+  tearDown() {
+    const components = this.componentManager.getComponentsByType(getNameHTML()) as Array<HTML>;
+
+    components?.map(component => {
+      document.querySelector(component.element)?.classList.add('hidden');
+    });
   }
 }
