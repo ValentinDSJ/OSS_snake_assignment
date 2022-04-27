@@ -16,8 +16,9 @@ export default class SharedPrefabs {
       resizeTo: window,
       resolution: devicePixelRatio,
     });
-    app.app.renderer.resize(view.width, view.height);
+    app.app.renderer.resize(view.offsetWidth, view.offsetHeight);
     components.push(app);
+    console.log(view.offsetHeight);
 
     return components;
   }
