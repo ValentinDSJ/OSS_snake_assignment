@@ -5,6 +5,7 @@ import Sprite, { getNameSprite } from "../components/Sprite";
 import Velocity, { getNameVelocity } from "../components/Velocity";
 import { System } from "../libs/ecs/System";
 import GamePrefabs from "../prefabs/GamePrefabs";
+import GameOver, {getNameGameOver} from "../components/GameOver";
 
 export default class EventsSystem extends System {
   awake() {}
@@ -49,8 +50,9 @@ export default class EventsSystem extends System {
       head.sprite.y <= 60 ||
       head.sprite.y >= 1580
     ) {
-      // TODO: show game over scene
-      console.log("game over");
+      const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+
+      gameOver.over = true;
     }
 
     if (
@@ -96,6 +98,11 @@ export default class EventsSystem extends System {
   }
 
   update(delta: number) {
+    const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+
+    if (gameOver?.over) {
+      return;
+    }
     const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
     sprites.map((s) => {

@@ -1,5 +1,6 @@
 import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
+import GameOver, {getNameGameOver} from "../components/GameOver";
 
 export default class GameOverSystem extends System {
   start() {
@@ -24,5 +25,13 @@ export default class GameOverSystem extends System {
   }
 
   update(delta: number) {
+    const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+
+    if (!gameOver?.over) {
+      return;
+    }
+    let element = document.querySelector("body main .game-scene .game-over");
+
+    element?.classList.remove('hidden');
   }
 }

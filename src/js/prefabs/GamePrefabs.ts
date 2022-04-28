@@ -10,6 +10,7 @@ import {SceneType} from "../utils/SceneType";
 import EntityManager from "../libs/ecs/EntityManager";
 import ComponentManager from "../libs/ecs/ComponentManager";
 import HTML, {getNameHTML} from "../components/HTML";
+import GameOver, {getNameGameOver} from "../components/GameOver";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -218,6 +219,16 @@ export default class GamePrefabs {
         }
       }
     }
+    return components;
+  }
+
+  static createGameOver(): Array<Component> {
+    let components = Array<Component>();
+
+    components.push(<GameOver>{
+      name: getNameGameOver(),
+      over: false
+    });
     return components;
   }
 }

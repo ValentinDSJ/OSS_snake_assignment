@@ -62,5 +62,7 @@ export default class GameScene extends Scene {
       body = GamePrefabs.createBody(i, body[0] as Sprite, body[1] as Velocity);
       this.initEntity(body);
     }
+
+    this.initEntity(GamePrefabs.createGameOver());
   }
 }
