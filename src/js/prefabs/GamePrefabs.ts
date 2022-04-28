@@ -27,8 +27,14 @@ export default class GamePrefabs {
     //   Game.nextScene = SceneType.RANKING;
     // });
     //
-    // events.set(".exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-    // });
+    events.set(".instructions .labels", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('.instructions');
+      if (element?.classList.contains('close')) {
+        element.classList.remove('close');
+      } else {
+        element?.classList.add('close');
+      }
+    });
 
     components.push(<HTML>{
       name: getNameHTML(),

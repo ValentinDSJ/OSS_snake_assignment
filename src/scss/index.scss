@@ -22,6 +22,14 @@
     font-display: swap;
 }
 
+:root {
+    --color-dark-brown: #6C584C;
+    --color-brown: #A98467;
+    --color-green: #ADC178;
+    --color-light-green: #DDE5B6;
+    --color-extra-light-green: #F0EAD2;
+}
+
 html, body {
     padding: 0;
     margin: 0;
@@ -29,6 +37,7 @@ html, body {
     height: 100vh;
     font-size: 20px;
     overflow: hidden;
+    font-family: "Nasalization Rg", sans-serif;
 }
 
 h1 {
@@ -43,6 +52,15 @@ h2 {
     font-size: 6rem;
 }
 
+h3 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+p {
+    margin: 0;
+}
+
 table {
     font-family: "Nasalization Rg", sans-serif;
     text-align: center;
@@ -54,7 +72,7 @@ table {
     }
 
     th {
-        background-color: #6C584C;
+        background-color: var(--color-dark-brown);
         color: white;
         padding: 0;
     }
@@ -67,21 +85,21 @@ table {
     }
 
     tr:nth-child(odd) {
-        background-color: #A98467;
+        background-color: var(--color-brown);
     }
 }
 
 button {
     font-family: "Nasalization Rg", sans-serif;
     padding: 10px 20px;
-    background-color: #A98467;
+    background-color: var(--color-brown);
     color: white;
     cursor: pointer;
     border: none;
     transition: background-color 0.5s;
 
     &:hover {
-        background-color: #6C584C;
+        background-color: var(--color-dark-brown);
     }
 }
 
@@ -95,6 +113,18 @@ button.main-button {
 
 button.small-button {
     font-size: 1.5rem;
+}
+
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.rotate-minus-90 {
+    transform: rotate(-90deg);
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
 }
 
 main {
@@ -120,8 +150,8 @@ main {
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        background: rgb(240,234,210);
-        background: linear-gradient(180deg, rgba(240,234,210,1) 0%, rgba(221,229,182,1) 50%, rgba(173,193,120,1) 100%);
+        background: var(--color-extra-light-green);
+        background: linear-gradient(180deg, var(--color-extra-light-green) 0%, var(--color-light-green) 50%, var(--color-green) 100%);
         background-size: cover;
 
         .title {
@@ -157,13 +187,67 @@ main {
             transform:translate(-50%, -50%);
             z-index: 1;
         }
+
+        .instructions {
+            position: absolute;
+            right: 0;
+            width: 25%;
+            height: 100vh;
+            background-color: var(--color-extra-light-green);
+            padding: 20px;
+            border: 1px solid black;
+            box-sizing: border-box;
+            transition: 0.5s right;
+
+            &.close {
+                right: -25%;
+            }
+
+            .labels {
+                position: absolute;
+                transform: rotate(-90deg);
+                background-color: var(--color-extra-light-green);
+                left: -96px;
+                padding: 10px;
+                border: 1px solid black;
+                border-bottom: none;
+                cursor: pointer;
+                top: 120px;
+            }
+
+            .title {
+                text-align: center;
+                margin-bottom: 40px;
+
+                h3 {
+                }
+            }
+
+
+            .instruction {
+                display: flex;
+                align-items: center;
+                margin-top: 20px;
+
+                .image {
+                    img {
+                        width: 40px;
+                        height: auto;
+                    }
+                }
+
+                .text {
+                    padding-left: 20px;
+                }
+            }
+        }
     }
 
     .ranking-scene {
         width: 100%;
         height: 100vh;
         z-index: 2;
-        background: linear-gradient(180deg, rgba(240,234,210,1) 0%, rgba(221,229,182,1) 50%, rgba(173,193,120,1) 100%);
+        background: linear-gradient(180deg, var(--color-extra-light-green) 0%, var(--color-light-green) 50%, var(--color-green) 100%);
         position: absolute;
         background-size: cover;
         top: 0;
