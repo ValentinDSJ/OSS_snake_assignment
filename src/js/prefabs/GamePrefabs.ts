@@ -8,27 +8,35 @@ import Sprite, { getNameSprite } from "../components/Sprite";
 import Velocity, { getNameVelocity } from "../components/Velocity";
 import Game from "../Game";
 import { SceneType } from "../utils/SceneType";
+import EntityManager from "../libs/ecs/EntityManager";
+import ComponentManager from "../libs/ecs/ComponentManager";
+import HTML, {getNameHTML} from "../components/HTML";
 
 export default class GamePrefabs {
-  static createButton(): Array<Component> {
+  static createHTMLElement(): Array<Component> {
     let components = Array<Component>();
+    let events = new Map;
 
-    const graphics = new PIXI.Graphics();
+    // events.set(".play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+    //   document.querySelector('main')?.classList.add('game');
+    //   Game.nextScene = SceneType.GAME;
+    // });
+    //
+    // events.set(".ranking-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+    //   document.querySelector('main')?.classList.add('ranking');
+    //   Game.nextScene = SceneType.RANKING;
+    // });
+    //
+    // events.set(".exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+    // });
 
-    graphics.beginFill(0x228b22);
-    graphics.drawRect(100, 50, 100, 100);
-    graphics.endFill();
-
-    components.push(<Graphics>{
-      name: getNameGraphics(),
-      graphics: graphics,
-    });
-    components.push(<EventComponent>{
-      name: getNameEvent(),
-      eventName: "pointerdown",
-      fct: (idEntity, em, cm) => {
-        Game.nextScene = SceneType.MENU;
+    components.push(<HTML>{
+      name: getNameHTML(),
+      onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
+        document.querySelector('main')?.classList.add('game');
       },
+      element: 'body main .game-scene',
+      eventsOnClick: events
     });
     return components;
   }

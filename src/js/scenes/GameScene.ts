@@ -6,6 +6,7 @@ import GamePrefabs from "../prefabs/GamePrefabs";
 import EventsSystem from "../systems/EventsSystem";
 import GraphicsSystem from "../systems/GraphicsSystem";
 import SnakeSystem from "../systems/SnakeSystem";
+import HTMLSystem from "../systems/HTMLSystem";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -17,6 +18,9 @@ export default class GameScene extends Scene {
     );
     this.systemManager.addSystem(
       new SnakeSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new HTMLSystem(this.entityManager, this.componentManager)
     );
   }
 
@@ -32,7 +36,7 @@ export default class GameScene extends Scene {
         (application as Application).app?.screen.height ?? 0
       )
     );
-    this.initEntity(GamePrefabs.createButton());
+    this.initEntity(GamePrefabs.createHTMLElement());
     this.initEntity(
       GamePrefabs.createApple(
         Math.floor(Math.random() * (1580 - 60)) + 60,
