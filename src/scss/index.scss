@@ -175,6 +175,39 @@ main {
         background-image: url("../../assets/images/snake-game-background.png");
         background-size: cover;
 
+        h2 {
+            color: white;
+            text-align: center;
+        }
+
+        .pause {
+            position: fixed;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            height: 100vh;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 100px;
+            box-sizing: border-box;
+            transition: 0.3s;
+
+            .title {
+                text-align: center;
+                padding-top: 50px;
+            }
+
+            .buttons {
+                display: flex;
+                flex-direction: column;
+                margin: auto;
+
+                button {
+                    margin-top: 50px;
+                }
+            }
+        }
+
         #game {
             width: 600px;
             height: 600px;

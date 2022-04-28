@@ -165,6 +165,9 @@ export default class EventsSystem extends System {
           velocity.y = 2 * delta;
         });
       }
+      if (e.key == "Escape") {
+        document.querySelector('body main .game-scene .pause')?.classList.remove("hidden");
+      }
     };
   }
 

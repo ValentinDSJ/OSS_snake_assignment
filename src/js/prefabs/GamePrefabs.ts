@@ -2,12 +2,11 @@ import * as PIXI from "pixi.js";
 import appleSprite from "../../../assets/sprites/food.png";
 import snakeBody from "../../../assets/sprites/nibbler_snake_core.png";
 import snakeHead from "../../../assets/sprites/nibbler_snake_head.png";
-import EventComponent, { getNameEvent } from "../components/Event";
-import Graphics, { getNameGraphics } from "../components/Graphics";
-import Sprite, { getNameSprite } from "../components/Sprite";
-import Velocity, { getNameVelocity } from "../components/Velocity";
+import Graphics, {getNameGraphics} from "../components/Graphics";
+import Sprite, {getNameSprite} from "../components/Sprite";
+import Velocity, {getNameVelocity} from "../components/Velocity";
 import Game from "../Game";
-import { SceneType } from "../utils/SceneType";
+import {SceneType} from "../utils/SceneType";
 import EntityManager from "../libs/ecs/EntityManager";
 import ComponentManager from "../libs/ecs/ComponentManager";
 import HTML, {getNameHTML} from "../components/HTML";
@@ -34,6 +33,32 @@ export default class GamePrefabs {
       } else {
         element?.classList.add('close');
       }
+    });
+
+    events.set(".pause .resume-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main .game-scene .pause');
+
+      element?.classList.add("hidden");
+    });
+
+    events.set(".pause .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main');
+      const pauseElement = document.querySelector('body main .game-scene .pause');
+
+      pauseElement?.classList.add("hidden");
+      element?.classList.remove("game");
+      setTimeout(function () {
+        Game.nextScene = SceneType.MENU;
+      }, 500);
+    });
+
+    events.set(".pause .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main .game-scene .pause');
+
+      element?.classList.add("hidden");
+    });
+
+    events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
     });
 
     components.push(<HTML>{
