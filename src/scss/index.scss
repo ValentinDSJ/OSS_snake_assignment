@@ -61,6 +61,13 @@ p {
     margin: 0;
 }
 
+input {
+    font-family: "Nasalization Rg", sans-serif;
+    border: none;
+    padding: 10px;
+    outline: none;
+}
+
 table {
     font-family: "Nasalization Rg", sans-serif;
     text-align: center;
@@ -127,6 +134,18 @@ button.small-button {
     transform: rotate(180deg);
 }
 
+.white {
+    color: white;
+}
+
+.center {
+    text-align: center;
+}
+
+.font-size-30 {
+    font-size: 1.5rem;
+}
+
 main {
     width: 100%;
     height: auto;
@@ -178,6 +197,53 @@ main {
         h2 {
             color: white;
             text-align: center;
+        }
+
+        .game-over {
+            position: fixed;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            height: 100vh;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 100px;
+            box-sizing: border-box;
+
+            .title {
+                text-align: center;
+                padding-top: 50px;
+            }
+
+            .buttons {
+                display: flex;
+                flex-direction: column;
+                margin: auto;
+
+                button {
+                    margin-top: 50px;
+                }
+            }
+
+            .final-score {
+                margin-top: 50px;
+            }
+
+            .player-name {
+                margin-top: 50px;
+
+                label {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+
+                    input {
+                        margin-top: 20px;
+                        width: fit-content;
+                    }
+                }
+            }
         }
 
         .pause {
