@@ -6,6 +6,7 @@ import Velocity, { getNameVelocity } from "../components/Velocity";
 import { System } from "../libs/ecs/System";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import GameOver, {getNameGameOver} from "../components/GameOver";
+import Player from "../components/Player";
 
 export default class EventsSystem extends System {
   awake() {}
@@ -77,7 +78,9 @@ export default class EventsSystem extends System {
 
         app.app?.stage.addChild((newBody[0] as Sprite).sprite);
 
-        // TODO: add score
+        const player = this.componentManager.getComponentByType(getNameGameOver()) as Player;
+
+        player.score++;
       }
     }
     apple.sprite.x;

@@ -27,7 +27,7 @@ export default class GameOverSystem extends System {
   update(delta: number) {
     const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
 
-    if (!gameOver?.over) {
+    if (!gameOver?.over || gameOver?.exit) {
       return;
     }
     let element = document.querySelector("body main .game-scene .game-over");

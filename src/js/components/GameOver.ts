@@ -1,5 +1,6 @@
 export default interface GameOver extends Component {
-    over: boolean
+    over: boolean,
+    exit: boolean
 }
 
 export function getNameGameOver(): string {

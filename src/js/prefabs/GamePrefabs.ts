@@ -11,22 +11,13 @@ import EntityManager from "../libs/ecs/EntityManager";
 import ComponentManager from "../libs/ecs/ComponentManager";
 import HTML, {getNameHTML} from "../components/HTML";
 import GameOver, {getNameGameOver} from "../components/GameOver";
+import Player, {getNamePlayer} from "../components/Player";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
     let components = Array<Component>();
     let events = new Map;
 
-    // events.set(".play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-    //   document.querySelector('main')?.classList.add('game');
-    //   Game.nextScene = SceneType.GAME;
-    // });
-    //
-    // events.set(".ranking-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-    //   document.querySelector('main')?.classList.add('ranking');
-    //   Game.nextScene = SceneType.RANKING;
-    // });
-    //
     events.set(".instructions .labels", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
       const element = document.querySelector('.instructions');
       if (element?.classList.contains('close')) {
@@ -61,24 +52,6 @@ export default class GamePrefabs {
 
     events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
     });
-
-    events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main .game-scene .game-over');
-
-      element?.classList.add("hidden");
-    });
-
-    events.set(".game-over .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main');
-      const pauseElement = document.querySelector('body main .game-scene .game-over');
-
-      pauseElement?.classList.add("hidden");
-      element?.classList.remove("game");
-      setTimeout(function () {
-        Game.nextScene = SceneType.MENU;
-      }, 500);
-    });
-
     components.push(<HTML>{
       name: getNameHTML(),
       onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
@@ -224,10 +197,48 @@ export default class GamePrefabs {
 
   static createGameOver(): Array<Component> {
     let components = Array<Component>();
+    let events = new Map;
 
-    components.push(<GameOver>{
+    let gameOver = components.push(<GameOver>{
       name: getNameGameOver(),
-      over: false
+      over: false,
+      exit: false
+    });
+    events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const player = cm.getComponentByType(getNameGameOver()) as Player;
+      const element = document.querySelector('body main .game-scene .game-over');
+
+      player.score = 0;
+      element?.classList.add("hidden");
+    });
+
+    events.set(".game-over .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      let gameOver = cm.getComponentByType(getNameGameOver()) as GameOver;
+      const element = document.querySelector('body main');
+      const pauseElement = document.querySelector('body main .game-scene .game-over');
+
+      gameOver.exit = true;
+      pauseElement?.classList.add("hidden");
+      element?.classList.remove("game");
+      setTimeout(function () {
+        Game.nextScene = SceneType.MENU;
+      }, 500);
+    });
+
+    components.push(<HTML>{
+      name: getNameHTML(),
+      element: 'body main .game-scene',
+      eventsOnClick: events
+    });
+    return components;
+  }
+
+  static createPlayer(): Array<Component> {
+    let components = Array<Component>();
+
+    components.push(<Player>{
+      name: getNamePlayer(),
+      score: 0
     });
     return components;
   }
