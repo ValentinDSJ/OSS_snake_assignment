@@ -8,24 +8,25 @@ import {SceneType} from "./utils/SceneType";
 import RankingScene from "./scenes/RankingScene";
 
 export default class Game {
-    private sharedEntities: Array<Array<Component>>;
+    private readonly sharedEntities: Array<Array<Component>>;
     private scenes: Map<SceneType, () => Scene>;
-    private scene?: Scene;
+    private scene: Scene;
     private app?: Application;
     private currentScene: SceneType;
 
     static nextScene: SceneType;
 
     constructor() {
-        Game.nextScene = SceneType.RANKING;
-        this.currentScene = SceneType.RANKING;
+        Game.nextScene = SceneType.MENU;
+        this.currentScene = Game.nextScene;
+        this.sharedEntities = Array<Array<Component>>();
+        this.scenes = new Map<SceneType, () => Scene>();
 
         this.initScenes();
-        this.scene = this.scenes.get(this.currentScene)();
+        this.scene = this.scenes.get(this.currentScene)!();
     }
 
     initSharedEntities() {
-        this.sharedEntities = Array<Array<Component>>();
         this.app = <Application>{
             name: getNameApplication()
         };
@@ -44,7 +45,7 @@ export default class Game {
 
         this.scene.awake(this.sharedEntities);
         this.scene.start();
-        this.app.app.ticker.add((delta) => {
+        this.app!.app!.ticker.add((delta) => {
             this.scene.update(delta);
             if (Game.nextScene != this.currentScene) {
                 this.changeScene();
@@ -58,7 +59,7 @@ export default class Game {
         this.scene.stop();
         this.scene.tearDown();
         this.currentScene = Game.nextScene;
-        this.scene = this.scenes.get(this.currentScene)();
+        this.scene = this.scenes.get(this.currentScene)!();
         this.scene.awake(this.sharedEntities);
         this.scene.start();
     }

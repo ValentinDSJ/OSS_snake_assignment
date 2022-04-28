@@ -15,6 +15,7 @@ export default class RankingPrefabs {
 
         events.set(".button-back button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
             Game.nextScene = SceneType.MENU;
+            document.querySelector('main')?.classList.remove('ranking');
         });
 
         components.push(<HTML>{

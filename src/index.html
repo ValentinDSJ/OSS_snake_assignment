@@ -10,8 +10,8 @@
     <title>Snake Game</title>
   </head>
   <body>
-    <main>
-      <div class="menu hidden">
+    <main class="">
+      <div class="menu">
         <div class="title">
           <h1>Snake Game</h1>
         </div>
@@ -22,7 +22,10 @@
           <button class="main-button exit-button">Exit</button>
         </div>
       </div>
-      <div class="ranking-scene hidden">
+      <div class="game-scene">
+        <canvas id="game" width="40" height="40"></canvas>
+      </div>
+      <div class="ranking-scene">
         <div class="title">
           <h2>Ranking</h2>
         </div>
@@ -140,7 +143,6 @@
           <button class="small-button">Back</button>
         </div>
       </div>
-      <canvas id="game" width="40" height="40"></canvas>
     </main>
     <script type="module" src="js/index.ts"></script>
   </body>

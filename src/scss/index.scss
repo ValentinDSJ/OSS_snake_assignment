@@ -27,9 +27,8 @@ html, body {
     margin: 0;
     width: 100%;
     height: 100vh;
-    background-image: url("../../assets/images/snake-game-background.png");
-    background-size: cover;
     font-size: 20px;
+    overflow: hidden;
 }
 
 h1 {
@@ -49,8 +48,13 @@ table {
     text-align: center;
     width: 100%;
 
+    &, td, th {
+        border-bottom: 1px solid black;
+        border-collapse: collapse;
+    }
+
     th {
-        background-color: #002da0;
+        background-color: #6C584C;
         color: white;
         padding: 0;
     }
@@ -59,21 +63,25 @@ table {
     }
 
     tr:nth-child(even) {
-        background-color: #71e9ff;
+        background-color: #ffd6a4;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #A98467;
     }
 }
 
 button {
     font-family: "Nasalization Rg", sans-serif;
     padding: 10px 20px;
-    background-color: #00217b;
+    background-color: #A98467;
     color: white;
     cursor: pointer;
     border: none;
     transition: background-color 0.5s;
 
     &:hover {
-        background-color: #002da0;
+        background-color: #6C584C;
     }
 }
 
@@ -92,16 +100,29 @@ button.small-button {
 main {
     width: 100%;
     height: auto;
+    transform: translate(0, 0);
+    transition: transform 0.7s ease-out;
+    position: relative;
+
+    &.game {
+        transform: translate(0, -50%);
+    }
+
+    &.ranking {
+        transform: translate(-100%, 0);
+    }
 
     .menu {
         width: 100%;
         height: 100vh;
         z-index: 2;
         position: relative;
-        background-color: #03e3fc;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+        background: rgb(240,234,210);
+        background: linear-gradient(180deg, rgba(240,234,210,1) 0%, rgba(221,229,182,1) 50%, rgba(173,193,120,1) 100%);
+        background-size: cover;
 
         .title {
             text-align: center;
@@ -117,13 +138,36 @@ main {
         }
     }
 
+    .game-scene {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background-image: url("../../assets/images/snake-game-background.png");
+        background-size: cover;
+
+        #game {
+            width: 600px;
+            height: 600px;
+            //width: 100%;
+            //height: 100vh;
+            //position: absolute;
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            z-index: 1;
+        }
+    }
+
     .ranking-scene {
         width: 100%;
         height: 100vh;
         z-index: 2;
-        background-color: #03e3fc;
+        background: linear-gradient(180deg, rgba(240,234,210,1) 0%, rgba(221,229,182,1) 50%, rgba(173,193,120,1) 100%);
         position: absolute;
+        background-size: cover;
         top: 0;
+        left: 100%;
 
         .title {
             padding-top: 20px;
@@ -146,19 +190,6 @@ main {
             top: 20px;
             left: 20px;
         }
-    }
-
-    #game {
-        width: 600px;
-        height: 600px;
-        //width: 100%;
-        //height: 100vh;
-        //position: absolute;
-        position:absolute;
-        top:50%;
-        left:50%;
-        transform:translate(-50%, -50%);
-        z-index: 1;
     }
 }
 

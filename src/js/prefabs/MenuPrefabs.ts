@@ -35,10 +35,12 @@ export default class MenuPrefabs {
         let events = new Map;
 
         events.set(".play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('game');
             Game.nextScene = SceneType.GAME;
         });
 
         events.set(".ranking-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('ranking');
             Game.nextScene = SceneType.RANKING;
         });
 
@@ -47,6 +49,9 @@ export default class MenuPrefabs {
 
         components.push(<HTML>{
             name: getNameHTML(),
+            onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
+                document.querySelector('main')?.classList.remove('game');
+            },
             element: 'body main .menu',
             eventsOnClick: events
         });
