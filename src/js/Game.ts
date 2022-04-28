@@ -24,6 +24,16 @@ export default class Game {
 
         this.initScenes();
         this.scene = this.scenes.get(this.currentScene)!();
+        this.generateName();
+    }
+
+    generateName() {
+        let name = localStorage.getItem("name");
+
+        if (!name) {
+            name = `Player${Math.floor(Math.random() * 1000000)}`
+            localStorage.setItem('name', name);
+        }
     }
 
     initSharedEntities() {

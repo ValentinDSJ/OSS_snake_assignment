@@ -7,6 +7,7 @@ import EventsSystem from "../systems/EventsSystem";
 import GraphicsSystem from "../systems/GraphicsSystem";
 import SnakeSystem from "../systems/SnakeSystem";
 import HTMLSystem from "../systems/HTMLSystem";
+import GameOverSystem from "../systems/GameOverSystem";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -21,6 +22,9 @@ export default class GameScene extends Scene {
     );
     this.systemManager.addSystem(
         new HTMLSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new GameOverSystem(this.entityManager, this.componentManager)
     );
   }
 

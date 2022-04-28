@@ -61,6 +61,23 @@ export default class GamePrefabs {
     events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
     });
 
+    events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main .game-scene .game-over');
+
+      element?.classList.add("hidden");
+    });
+
+    events.set(".game-over .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main');
+      const pauseElement = document.querySelector('body main .game-scene .game-over');
+
+      pauseElement?.classList.add("hidden");
+      element?.classList.remove("game");
+      setTimeout(function () {
+        Game.nextScene = SceneType.MENU;
+      }, 500);
+    });
+
     components.push(<HTML>{
       name: getNameHTML(),
       onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
