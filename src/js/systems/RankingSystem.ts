@@ -3,9 +3,12 @@ import { System } from "../libs/ecs/System";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Player, {getNamePlayer} from "../components/Player";
 import HighestScores from "../utils/HighestScores";
+import GameOverSystem from "./GameOverSystem";
 
 export default class RankingSystem extends System {
   start() {
+    GameOverSystem.saveLatestScoreIfExist();
+
     const scoresJSON = localStorage.getItem('highestScores');
     const element = document.querySelector("body main .ranking-scene .scores-tbody tbody");
 
@@ -37,6 +40,7 @@ export default class RankingSystem extends System {
       tdPos.innerHTML = (index + 1).toString();
       tdName.innerHTML = value.name;
       tdScore.innerHTML = value.score.toString();
+      // @ts-ignore
       tdDate.innerHTML = new Date(value.date).toLocaleString();
 
       tr.appendChild(tdPos);
@@ -63,9 +67,8 @@ export default class RankingSystem extends System {
 
   order(scores: Array<HighestScores>): Array<HighestScores> {
     scores.sort((a, b): number => {
-      return a.score - b.score;
+      return b.score - a.score;
     });
-    scores.reverse();
     return scores;
   }
 

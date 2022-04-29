@@ -12,6 +12,7 @@ export default class GameOverSystem extends System {
       return;
     let inputName = element.querySelector('input[name="your-name"]');
     const name = localStorage.getItem('name');
+
     inputName?.setAttribute('value', name ?? '');
 
     inputName?.addEventListener('change', (event) => {
@@ -31,6 +32,7 @@ export default class GameOverSystem extends System {
         }
         localStorage.setItem('name', value);
       }
+      this.updateLatestScoreName(localStorage.getItem("name"));
     });
   }
 
@@ -69,14 +71,53 @@ export default class GameOverSystem extends System {
       date: new Date()
     };
 
+    GameOverSystem.saveLatestScoreIfExist();
+    localStorage.setItem('latestScore', JSON.stringify(score));
+    gameOver.scoreSaved = true;
+  }
+
+  static saveLatestScoreIfExist() {
+    let latestScoreJSON = localStorage.getItem('latestScore');
+
+    if (!latestScoreJSON || latestScoreJSON.length == 0) {
+      return;
+    }
+    let latestScore = JSON.parse(latestScoreJSON) as HighestScores;
     let savedScoresString = localStorage.getItem('highestScores');
     let scores = Array<HighestScores>();
 
     if (savedScoresString) {
       scores = JSON.parse(savedScoresString) as Array<HighestScores>;
     }
-    scores.push(score);
+    if (!GameOverSystem.replaceScoreIfExist(scores, latestScore)) {
+      scores.push(latestScore);
+    }
     localStorage.setItem('highestScores', JSON.stringify(scores));
-    gameOver.scoreSaved = true;
+    localStorage.removeItem('latestScore');
+  }
+
+  updateLatestScoreName(name: string | null) {
+    let latestScoreJSON = localStorage.getItem('latestScore');
+
+    if (!latestScoreJSON || latestScoreJSON.length == 0) {
+      return;
+    }
+    let latestScore = JSON.parse(latestScoreJSON) as HighestScores;
+
+    latestScore.name = !name || name.length == 0 ? "" : name;
+    localStorage.setItem('latestScore', JSON.stringify(latestScore));
+  }
+
+  static replaceScoreIfExist(scores: Array<HighestScores>, score: HighestScores): boolean {
+    for (const element of scores) {
+      if (element.name == score.name) {
+        if (element.score < score.score)  {
+          element.score = score.score;
+          element.date = score.date;
+        }
+        return true;
+      }
+    }
+    return false;
   }
 }
