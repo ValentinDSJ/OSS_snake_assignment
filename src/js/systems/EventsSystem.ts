@@ -6,7 +6,7 @@ import Velocity, { getNameVelocity } from "../components/Velocity";
 import { System } from "../libs/ecs/System";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import GameOver, {getNameGameOver} from "../components/GameOver";
-import Player from "../components/Player";
+import Player, {getNamePlayer} from "../components/Player";
 
 export default class EventsSystem extends System {
   awake() {}
@@ -78,7 +78,7 @@ export default class EventsSystem extends System {
 
         app.app?.stage.addChild((newBody[0] as Sprite).sprite);
 
-        const player = this.componentManager.getComponentByType(getNameGameOver()) as Player;
+        const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
 
         player.score++;
       }

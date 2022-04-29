@@ -15,10 +15,18 @@ export default class GameOverSystem extends System {
     inputName?.addEventListener('change', (event) => {
       // @ts-ignore
       const value = event.target.value;
+      const playerNameHTMLElement = document.querySelector(".game-scene .game-details .player-name span");
 
       if (value.length === 0) {
         localStorage.removeItem('name');
+        if (playerNameHTMLElement?.parentNode) {
+          playerNameHTMLElement.parentElement!.classList.add("hide");
+        }
       } else {
+        if (playerNameHTMLElement) {
+          playerNameHTMLElement.innerHTML = value;
+          playerNameHTMLElement.parentElement!.classList.remove("hide");
+        }
         localStorage.setItem('name', value);
       }
     });

@@ -1,0 +1,25 @@
+.menu {
+    width: 100%;
+    height: 100vh;
+    z-index: 2;
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-extra-light-green);
+    background: linear-gradient(180deg, var(--color-extra-light-green) 0%, var(--color-light-green) 50%, var(--color-green) 100%);
+    background-size: cover;
+
+    .title {
+        text-align: center;
+        padding-top: 50px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+}
