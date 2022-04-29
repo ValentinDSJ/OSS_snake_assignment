@@ -33,6 +33,7 @@ export default class GameOverSystem extends System {
         localStorage.setItem('name', value);
       }
       this.updateLatestScoreName(localStorage.getItem("name"));
+      this.updateHighestScoreFromName(value);
     });
   }
 
@@ -57,7 +58,37 @@ export default class GameOverSystem extends System {
 
     if (!gameOver.scoreSaved) {
       this.savedScore();
+      this.savedHighScore();
     }
+  }
+
+  updateHighestScoreFromName(name: string) {
+    let savedScoresString = localStorage.getItem('highestScores');
+    let scores = Array<HighestScores>();
+    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
+    const highestScoreHTMLElement = document.querySelector(".game-scene .game-details .highest-score span");
+
+    if (!savedScoresString || !player || !highestScoreHTMLElement) {
+      return;
+    }
+    scores = JSON.parse(savedScoresString) as Array<HighestScores>;
+    let highestScore = 0;
+    for (const score of scores) {
+      if (score.name == name) {
+        const s = player.score > score.score ? player.score : score.score;
+        localStorage.setItem("highestScore", s.toString());
+        highestScoreHTMLElement.innerHTML = s.toString();
+        return;
+      }
+    }
+    localStorage.setItem("highestScore", player.score.toString());
+    highestScoreHTMLElement.innerHTML = player.score.toString();
+  }
+
+  savedHighScore() {
+    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
+
+    localStorage.setItem("highestScore", player.highestScore.toString());
   }
 
   savedScore() {
@@ -83,6 +114,12 @@ export default class GameOverSystem extends System {
       return;
     }
     let latestScore = JSON.parse(latestScoreJSON) as HighestScores;
+
+    if (!latestScore.name || latestScore.name.length == 0) {
+      localStorage.removeItem('latestScore');
+      return;
+    }
+
     let savedScoresString = localStorage.getItem('highestScores');
     let scores = Array<HighestScores>();
 

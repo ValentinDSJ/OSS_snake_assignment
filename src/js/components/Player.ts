@@ -1,5 +1,6 @@
 export default interface Player extends Component {
-    score: number
+    score: number,
+    highestScore: number
 }
 
 export function getNamePlayer(): string {
