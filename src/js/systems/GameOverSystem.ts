@@ -2,6 +2,7 @@ import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Player, {getNamePlayer} from "../components/Player";
+import HighestScores from "../utils/HighestScores";
 
 export default class GameOverSystem extends System {
   start() {
@@ -51,5 +52,31 @@ export default class GameOverSystem extends System {
     let element = document.querySelector("body main .game-scene .game-over");
 
     element?.classList.remove('hidden');
+
+    if (!gameOver.scoreSaved) {
+      this.savedScore();
+    }
+  }
+
+  savedScore() {
+    const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
+    const name = localStorage.getItem('name');
+
+    let score = <HighestScores>{
+      score: player.score,
+      name: name,
+      date: new Date()
+    };
+
+    let savedScoresString = localStorage.getItem('highestScores');
+    let scores = Array<HighestScores>();
+
+    if (savedScoresString) {
+      scores = JSON.parse(savedScoresString) as Array<HighestScores>;
+    }
+    scores.push(score);
+    localStorage.setItem('highestScores', JSON.stringify(scores));
+    gameOver.scoreSaved = true;
   }
 }

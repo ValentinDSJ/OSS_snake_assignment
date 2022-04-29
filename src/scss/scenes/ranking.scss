@@ -21,6 +21,22 @@
         .scores-tbody {
             overflow: auto;
             height: 60vh;
+
+            tr {
+                td {
+                    &:nth-child(1) {
+                        width: 10%;
+                    }
+
+                    &:nth-child(2) {
+                        width: 20%;
+                    }
+
+                    &:nth-child(3) {
+                        width: 30%;
+                    }
+                }
+            }
         }
     }
 

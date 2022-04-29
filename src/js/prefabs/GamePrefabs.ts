@@ -178,7 +178,8 @@ export default class GamePrefabs {
     let gameOver = components.push(<GameOver>{
       name: getNameGameOver(),
       over: false,
-      exit: false
+      exit: false,
+      scoreSaved: false
     });
     events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
       const player = cm.getComponentByType(getNameGameOver()) as Player;

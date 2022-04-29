@@ -17,7 +17,7 @@ export default class Game {
     static nextScene: SceneType;
 
     constructor() {
-        Game.nextScene = SceneType.GAME;
+        Game.nextScene = SceneType.MENU;
         this.currentScene = Game.nextScene;
         this.sharedEntities = Array<Array<Component>>();
         this.scenes = new Map<SceneType, () => Scene>();
