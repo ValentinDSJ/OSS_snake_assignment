@@ -1,6 +1,7 @@
 import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
 import GameOver, {getNameGameOver} from "../components/GameOver";
+import Player, {getNamePlayer} from "../components/Player";
 
 export default class GameOverSystem extends System {
   start() {
@@ -38,6 +39,15 @@ export default class GameOverSystem extends System {
     if (!gameOver?.over || gameOver?.exit) {
       return;
     }
+    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
+    const scoreHTML = document.querySelector("body main .game-scene .game-over .final-score p span");
+
+    if (scoreHTML && player) {
+      if (scoreHTML.innerHTML !== player.score.toString()) {
+        scoreHTML.innerHTML = player.score.toString();
+      }
+    }
+
     let element = document.querySelector("body main .game-scene .game-over");
 
     element?.classList.remove('hidden');
