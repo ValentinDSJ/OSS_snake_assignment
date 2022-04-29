@@ -12,6 +12,7 @@ import ComponentManager from "../libs/ecs/ComponentManager";
 import HTML, {getNameHTML} from "../components/HTML";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Player, {getNamePlayer} from "../components/Player";
+import Pause, {getNamePause} from "../components/Pause";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -27,31 +28,6 @@ export default class GamePrefabs {
       }
     });
 
-    events.set(".pause .resume-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main .game-scene .pause');
-
-      element?.classList.add("hidden");
-    });
-
-    events.set(".pause .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main');
-      const pauseElement = document.querySelector('body main .game-scene .pause');
-
-      pauseElement?.classList.add("hidden");
-      element?.classList.remove("game");
-      setTimeout(function () {
-        Game.nextScene = SceneType.MENU;
-      }, 500);
-    });
-
-    events.set(".pause .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main .game-scene .pause');
-
-      element?.classList.add("hidden");
-    });
-
-    events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-    });
     components.push(<HTML>{
       name: getNameHTML(),
       onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
@@ -239,6 +215,55 @@ export default class GamePrefabs {
     components.push(<Player>{
       name: getNamePlayer(),
       score: 0
+    });
+    return components;
+  }
+
+  static createPause(): Array<Component> {
+    let components = Array<Component>();
+    let events = new Map;
+
+    events.set(".pause .resume-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main .game-scene .pause');
+      const pause = cm.getComponentByType(getNamePause()) as Pause;
+
+      if (pause) {
+        pause.isPaused = false;
+      }
+
+      element?.classList.add("hidden");
+    });
+
+    events.set(".pause .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main');
+      const pauseElement = document.querySelector('body main .game-scene .pause');
+
+      pauseElement?.classList.add("hidden");
+      element?.classList.remove("game");
+      setTimeout(function () {
+        Game.nextScene = SceneType.MENU;
+      }, 500);
+    });
+
+    events.set(".pause .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const element = document.querySelector('body main .game-scene .pause');
+
+      element?.classList.add("hidden");
+    });
+
+    events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+    });
+    components.push(<HTML>{
+      name: getNameHTML(),
+      onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
+        document.querySelector('main')?.classList.add('game');
+      },
+      element: 'body main .game-scene',
+      eventsOnClick: events
+    });
+    components.push(<Pause>{
+      name: getNamePause(),
+      isPaused: false
     });
     return components;
   }

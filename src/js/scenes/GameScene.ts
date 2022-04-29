@@ -69,5 +69,6 @@ export default class GameScene extends Scene {
 
     this.initEntity(GamePrefabs.createGameOver());
     this.initEntity(GamePrefabs.createPlayer());
+    this.initEntity(GamePrefabs.createPause());
   }
 }

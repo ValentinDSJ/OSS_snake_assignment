@@ -7,6 +7,7 @@ import { System } from "../libs/ecs/System";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Player, {getNamePlayer} from "../components/Player";
+import Pause, {getNamePause} from "../components/Pause";
 
 export default class EventsSystem extends System {
   awake() {}
@@ -101,9 +102,11 @@ export default class EventsSystem extends System {
   }
 
   update(delta: number) {
+    const pause = this.componentManager.getComponentByType(getNamePause()) as Pause;
+
     const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
 
-    if (gameOver?.over) {
+    if (gameOver?.over || pause?.isPaused) {
       return;
     }
     const sprites = this.componentManager.getComponentsByType(getNameSprite());
@@ -176,6 +179,9 @@ export default class EventsSystem extends System {
         });
       }
       if (e.key == "Escape") {
+        if (pause) {
+          pause.isPaused = true;
+        }
         document.querySelector('body main .game-scene .pause')?.classList.remove("hidden");
       }
     };
