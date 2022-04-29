@@ -125,28 +125,26 @@ export default class EventsSystem extends System {
 
     const headSpeed = this.entityManager.getComponentsOfEntity(head?.idEntity)?.get("Velocity")?.[0] as Velocity | undefined;
 
-    let prevPosX;
-    let prevPosY;
+    let prevVelX;
+    let prevVelY;
     if (headSpeed) {
       head.sprite.x += headSpeed.x;
       head.sprite.y += headSpeed.y;
-      prevPosX = head.sprite.x;
-      prevPosY = head.sprite.y;
+      prevVelX = headSpeed.x;
+      prevVelY = headSpeed.y;
     }
-    if (this.localDelta > 25) {
-      sprites.map((s, idx) => {
-        const sprite = s as Sprite;
-        if (idx > 0) {
-          const tempX = sprite.sprite.x;
-          const tempY = sprite.sprite.y;
-          sprite.sprite.x = prevPosX;
-          sprite.sprite.y = prevPosY;
-          prevPosX = tempX;
-          prevPosY = tempY;
+    sprites.map((s, idx) => {
+      const sprite = s as Sprite;
+      if (idx > 0) {
+        const tempVel = this.entityManager.getComponentsOfEntity(sprite.idEntity)?.get("Velocity")?.[0] as Velocity | undefined;
+        sprite.sprite.x += prevVelX;
+        sprite.sprite.y += prevVelY;
+        if (tempVel) {
+          prevVelX = tempVel.x;
+          prevVelY = tempVel.y;
         }
-      });
-      this.localDelta = 0;
-    }
+      }
+    });
 
     this.checkCollision(
       apple,
