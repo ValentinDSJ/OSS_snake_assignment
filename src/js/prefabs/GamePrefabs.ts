@@ -76,7 +76,8 @@ export default class GamePrefabs {
     components.push(<Snake>{
       name: getNameSnake(),
       direction: Direction.UP,
-      angles: []
+      angles: [],
+      isInit: true
     });
     return components;
   }
@@ -116,7 +117,8 @@ export default class GamePrefabs {
     components.push(<Snake>{
       name: getNameSnake(),
       direction: Direction.UP,
-      angles: []
+      angles: [],
+      isInit: true
     });
     return components;
   }
@@ -137,6 +139,7 @@ export default class GamePrefabs {
     });
     components.push(<Apple>{
       name: getNameApple(),
+      isAte: false
     });
     return components;
   }

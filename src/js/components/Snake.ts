@@ -13,7 +13,8 @@ export enum Direction {
 
 export default interface Snake extends Component {
     angles: Array<Angle>,
-    direction: Direction
+    direction: Direction,
+    isInit: boolean
 }
 
 export function getNameSnake(): string {

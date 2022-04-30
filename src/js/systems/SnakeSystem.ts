@@ -6,6 +6,7 @@ import Application, {getNameApplication} from "../components/Application";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import Player, {getNamePlayer} from "../components/Player";
 import GameOver, {getNameGameOver} from "../components/GameOver";
+import Apple, {getNameApple} from "../components/Apple";
 
 export default class SnakeSystem extends System {
   spawnApple() {
@@ -44,7 +45,6 @@ export default class SnakeSystem extends System {
     if (!snakeHeadGraphics || !snakeHead) {
       return;
     }
-    console.log(snakes);
 
     for (const graphic of graphics) {
       if (graphic.type == GraphicsType.GRASS || graphic.type == GraphicsType.SNAKE_HEAD || graphic.idEntity! == snakeAfterHead.idEntity!)
@@ -73,32 +73,35 @@ export default class SnakeSystem extends System {
           snakeHeadGraphics.sprite!.y < y + height &&
           snakeHeadGraphics.sprite!.y + snakeHeadGraphics.sprite!.height > y
       ) {
-        console.log(x, y, width, height);
-        console.log(snakeHeadGraphics.sprite!.x, snakeHeadGraphics.sprite!.y, snakeHeadGraphics.sprite!.width, snakeHeadGraphics.sprite!.height);
-        console.log(graphic.idEntity);
         switch (graphic.type) {
           case GraphicsType.APPLE:
-            const newBody = GamePrefabs.createBody(
-                application.app?.screen.width ?? 0,
-                application.app?.screen.height ?? 0,
-                snakes.length - 1,
-                this.getSnakeTail(), snakeHeadVelocity!);
-            this.entityManager.addEntity(newBody);
-            this.componentManager.addComponents(newBody);
+            const apple = this.entityManager.getComponentByType(graphic.idEntity!, getNameApple()) as Apple;
+
+            if (apple.isAte) {
+              break;
+            }
+            if (snakes.length == (application.nbBlocks) * (application.nbBlocks)) {
+              this.gameOver();
+              break;
+            }
+            apple.isAte = true;
+            // const newBody = GamePrefabs.createBody(
+            //     application.app?.screen.width ?? 0,
+            //     application.app?.screen.height ?? 0,
+            //     snakes.length - 1,
+            //     this.getSnakeTail(), snakeHeadVelocity!);
+            // this.entityManager.addEntity(newBody);
+            // this.componentManager.addComponents(newBody);
 
             const app = this.componentManager.getComponentByType(
                 getNameApplication()
             ) as Application;
-
-            app.app?.stage.addChild((newBody[0] as Graphics).sprite!);
 
             const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
 
             player.score++;
             break;
           case GraphicsType.SNAKE:
-            this.gameOver();
-            break;
           case GraphicsType.WALL:
             this.gameOver();
             break;
