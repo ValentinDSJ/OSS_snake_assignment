@@ -9,8 +9,9 @@ import HTMLSystem from "../systems/HTMLSystem";
 import GameOverSystem from "../systems/GameOverSystem";
 import GameDetailsSystem from "../systems/GameDetailsSystem";
 import Graphics from "../components/Graphics";
-import VelocitySystem from "../systems/VelocitySystem";
 import AppleSystem from "../systems/AppleSystem";
+import SaveSystem from "../systems/SaveSystem";
+import VelocitySystem from "../systems/VelocitySystem";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -37,6 +38,9 @@ export default class GameScene extends Scene {
     );
     this.systemManager.addSystem(
         new AppleSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new SaveSystem(this.entityManager, this.componentManager)
     );
   }
 

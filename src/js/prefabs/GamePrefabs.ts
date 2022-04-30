@@ -15,6 +15,7 @@ import Pause, {getNamePause} from "../components/Pause";
 import Snake, {Direction, getNameSnake} from "../components/Snake";
 import Apple, {getNameApple} from "../components/Apple";
 import Application from "../components/Application";
+import Save, {getNameSave} from "../components/Save";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -311,6 +312,9 @@ export default class GamePrefabs {
     });
 
     events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+      const save = cm.getComponentByType(getNameSave()) as Save;
+
+      save.click = true;
     });
     components.push(<HTML>{
       name: getNameHTML(),
@@ -323,6 +327,10 @@ export default class GamePrefabs {
     components.push(<Pause>{
       name: getNamePause(),
       isPaused: false
+    });
+    components.push(<Save>{
+      name: getNameSave(),
+      click: false
     });
     return components;
   }
