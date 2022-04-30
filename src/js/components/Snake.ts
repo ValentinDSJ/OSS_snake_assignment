@@ -1,4 +1,4 @@
-interface Angle {
+export interface Angle {
     direction: number,
     x: number,
     y: number
