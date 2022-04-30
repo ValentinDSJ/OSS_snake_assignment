@@ -198,6 +198,13 @@ export default class EventsSystem extends System {
     // const headVelocity = velocities[0] as Velocity;
 
     document.onkeydown = (e) => {
+      const pause = this.componentManager.getComponentByType(getNamePause()) as Pause;
+
+      const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+
+      if (gameOver?.over || pause?.isPaused) {
+        return;
+      }
       const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
       let snakeHead: Snake;
       let snakeHeadGraphics: Graphics;
