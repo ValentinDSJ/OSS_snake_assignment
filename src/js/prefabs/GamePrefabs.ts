@@ -14,6 +14,7 @@ import Player, {getNamePlayer} from "../components/Player";
 import Pause, {getNamePause} from "../components/Pause";
 import Snake, {Direction, getNameSnake} from "../components/Snake";
 import Apple, {getNameApple} from "../components/Apple";
+import Application from "../components/Application";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -117,8 +118,48 @@ export default class GamePrefabs {
     components.push(<Snake>{
       name: getNameSnake(),
       direction: Direction.UP,
+      angles: []
+    });
+    return components;
+  }
+
+  static createDynamicBody(
+      app: Application,
+      tail: Graphics,
+      velocity: Velocity,
+      dependsOn: Snake
+  ): Array<Component> {
+    let components = Array<Component>();
+
+    const snake = PIXI.Sprite.from(snakeBody);
+
+    snake.x = tail.sprite!.x;
+    snake.y = tail.sprite!.y;
+
+    snake.width = app.blockSizeX;
+    snake.height = app.blockSizeY;
+
+    // snake.anchor.set(0.5);
+    snake.angle = tail.sprite!.angle;
+
+    components.push(<Graphics>{
+      name: getNameGraphics(),
+      sprite: snake,
+      type: GraphicsType.SNAKE,
+      isInit: false
+    });
+    components.push(<Velocity>{
+      name: getNameVelocity(),
+      x: 0,
+      y: 0,
+      speed: velocity.speed,
+      skip: 0
+    });
+    components.push(<Snake>{
+      name: getNameSnake(),
+      direction: Direction.UP,
       angles: [],
-      isInit: true
+      dependsOn: dependsOn
     });
     return components;
   }

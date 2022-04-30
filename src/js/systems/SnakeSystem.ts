@@ -85,13 +85,9 @@ export default class SnakeSystem extends System {
               break;
             }
             apple.isAte = true;
-            // const newBody = GamePrefabs.createBody(
-            //     application.app?.screen.width ?? 0,
-            //     application.app?.screen.height ?? 0,
-            //     snakes.length - 1,
-            //     this.getSnakeTail(), snakeHeadVelocity!);
-            // this.entityManager.addEntity(newBody);
-            // this.componentManager.addComponents(newBody);
+            const newBody = GamePrefabs.createDynamicBody(application, this.getSnakeTail(), snakeHeadVelocity!, snakes[snakes.length - 1]);
+            this.entityManager.addEntity(newBody);
+            this.componentManager.addComponents(newBody);
 
             const app = this.componentManager.getComponentByType(
                 getNameApplication()
@@ -120,10 +116,59 @@ export default class SnakeSystem extends System {
     const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const application = this.componentManager.getComponentByType("Application") as Application;
 
+    console.log(snake[snake.length - 1]);
+    console.log(snake[snake.length - 2]);
     for (const s of snake) {
+      if (s.dependsOn) {
+        const graphic = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
+        const velocity = this.entityManager.getComponentByType(s.idEntity!, getNameVelocity()) as Velocity;
+        const graphicDependsOn = this.entityManager.getComponentByType(s.dependsOn.idEntity!, getNameGraphics()) as Graphics;
+        const velocityDependsOn = this.entityManager.getComponentByType(s.dependsOn.idEntity!, getNameVelocity()) as Velocity;
+        let pass = false;
+
+        console.log(graphicDependsOn.sprite!.x, graphicDependsOn.sprite!.y);
+        console.log(graphic.sprite!.x, graphic.sprite!.y);
+        switch (s.dependsOn.direction) {
+          case Direction.UP:
+            if (graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height <= graphic.sprite!.y) {
+              graphic.sprite!.y = graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height;
+              graphic.sprite!.x = graphicDependsOn.sprite!.x;
+              pass = true;
+            }
+            break;
+          case Direction.RIGHT:
+            if (graphicDependsOn.sprite!.x >= graphic.sprite!.x + graphic.sprite!.width) {
+              graphic.sprite!.x = graphicDependsOn.sprite!.x - graphic.sprite!.width;
+              graphic.sprite!.y = graphicDependsOn.sprite!.y;
+              pass = true;
+            }
+            break;
+          case Direction.LEFT:
+            if (graphicDependsOn.sprite!.x + graphicDependsOn.sprite!.width <= graphic.sprite!.x) {
+              graphic.sprite!.x = graphicDependsOn.sprite!.x + graphicDependsOn.sprite!.width;
+              graphic.sprite!.y = graphicDependsOn.sprite!.y;
+              pass = true;
+            }
+            break;
+          case Direction.DOWN:
+            if (graphicDependsOn.sprite!.y >= graphic.sprite!.y + graphic.sprite!.height) {
+              graphic.sprite!.y = graphicDependsOn.sprite!.y - graphic.sprite!.height;
+              graphic.sprite!.x = graphicDependsOn.sprite!.x;
+              pass = true;
+            }
+            break;
+        }
+        if (pass) {
+          velocity.x = velocityDependsOn.x;
+          velocity.y = velocityDependsOn.y;
+          s.angles = [...s.dependsOn.angles];
+          s.direction = s.dependsOn.direction;
+          s.dependsOn = undefined;
+        }
+      }
+
       if (s.angles.length == 0)
         continue;
-
       const nextAngle = s.angles[0];
       const graphics = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
       const velocity = this.entityManager.getComponentByType(s.idEntity!, getNameVelocity()) as Velocity;

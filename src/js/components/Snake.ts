@@ -14,7 +14,7 @@ export enum Direction {
 export default interface Snake extends Component {
     angles: Array<Angle>,
     direction: Direction,
-    isInit: boolean
+    dependsOn?: Snake
 }
 
 export function getNameSnake(): string {

@@ -12,7 +12,8 @@ export enum GraphicsType {
 export default interface Graphics extends Component {
     graphics?: G,
     sprite?: S,
-    type: GraphicsType
+    type: GraphicsType,
+    isInit: boolean
 }
 
 export function getNameGraphics(): string {
