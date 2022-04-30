@@ -44,6 +44,12 @@ export default class MenuPrefabs {
             Game.nextScene = SceneType.RANKING;
         });
 
+        events.set(".load-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('game');
+            localStorage.setItem("loadGame", "true");
+            Game.nextScene = SceneType.GAME;
+        });
+
         events.set(".exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
         });
 

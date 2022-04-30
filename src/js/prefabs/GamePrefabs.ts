@@ -13,9 +13,10 @@ import GameOver, {getNameGameOver} from "../components/GameOver";
 import Player, {getNamePlayer} from "../components/Player";
 import Pause, {getNamePause} from "../components/Pause";
 import Snake, {Direction, getNameSnake} from "../components/Snake";
-import Apple, {getNameApple} from "../components/Apple";
 import Application from "../components/Application";
 import Save, {getNameSave} from "../components/Save";
+import {SnakeSaved} from "../utils/GameSaved";
+import Apple, {getNameApple} from "../components/Apple";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -182,6 +183,66 @@ export default class GamePrefabs {
     components.push(<Apple>{
       name: getNameApple(),
       isAte: false
+    });
+    return components;
+  }
+
+  static createSavedApple(blockSizeX: number, blockSizeY: number, x: number, y: number, isAte: boolean): Array<Component> {
+    let components = Array<Component>();
+
+    const apple = PIXI.Sprite.from(appleSprite);
+    apple.x = x;
+    apple.y = y;
+    apple.width = blockSizeX;
+    apple.height = blockSizeY;
+
+    components.push(<Graphics>{
+      name: getNameGraphics(),
+      sprite: apple,
+      type: GraphicsType.APPLE
+    });
+    components.push(<Apple>{
+      name: getNameApple(),
+      isAte: isAte
+    });
+    return components;
+  }
+
+  static createSavedSnake(savedSnake: SnakeSaved, blockSizeX: number, blockSizeY: number): Array<Component> {
+    let components = Array<Component>();
+
+    const snake = PIXI.Sprite.from(savedSnake.type == GraphicsType.SNAKE_HEAD ? snakeHead : snakeBody);
+
+    snake.x = savedSnake.x;
+    snake.y = savedSnake.y;
+
+    snake.width = blockSizeX;
+    snake.height = blockSizeY;
+
+    // snake.x += snake.width / 2;
+    // snake.y += snake.height / 2;
+
+
+    snake.angle = 0;
+    // snake.anchor.set(0.5);
+
+    components.push(<Graphics>{
+      name: getNameGraphics(),
+      sprite: snake,
+      type: savedSnake.type,
+    });
+    components.push(<Velocity>{
+      name: getNameVelocity(),
+      x: savedSnake.velocity.x,
+      y: savedSnake.velocity.y,
+      speed: savedSnake.velocity.speed,
+      skip: savedSnake.velocity.skip
+    });
+    components.push(<Snake>{
+      name: getNameSnake(),
+      direction: savedSnake.direction,
+      angles: savedSnake.angles,
+      isInit: savedSnake.isInit
     });
     return components;
   }

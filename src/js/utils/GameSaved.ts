@@ -1,5 +1,6 @@
 import {GraphicsType} from "../components/Graphics";
 import {Angle, Direction} from "../components/Snake";
+import Velocity from "../components/Velocity";
 
 export interface SnakeSaved {
     type: GraphicsType,
@@ -8,7 +9,8 @@ export interface SnakeSaved {
     direction: Direction,
     dependsOn?: SnakeSaved,
     x: number,
-    y: number
+    y: number,
+    velocity: Velocity
 }
 
 export interface AppleSaved {

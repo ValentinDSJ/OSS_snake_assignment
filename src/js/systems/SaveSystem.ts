@@ -4,6 +4,7 @@ import Snake, {Angle, Direction, getNameSnake} from "../components/Snake";
 import Apple, {getNameApple} from "../components/Apple";
 import GameSaved, {AppleSaved, SnakeSaved} from "../utils/GameSaved";
 import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
+import Velocity, {getNameVelocity} from "../components/Velocity";
 
 export default class SaveSystem extends System {
   update(delta: number) {
@@ -22,7 +23,11 @@ export default class SaveSystem extends System {
     };
 
     for (const snake of snakes) {
+      if (snake.dependsOn)
+        continue;
+
       const graphic = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
+      const velocity = this.entityManager.getComponentByType(snake.idEntity!, getNameVelocity()) as Velocity;
 
       gameSaved.snakes.push({
         type: graphic.type,
@@ -31,7 +36,8 @@ export default class SaveSystem extends System {
         direction: snake.direction,
         // dependsOn: snake.dependsOn,
         x: graphic.sprite!.x,
-        y: graphic.sprite!.y
+        y: graphic.sprite!.y,
+        velocity: velocity
       });
     }
 
