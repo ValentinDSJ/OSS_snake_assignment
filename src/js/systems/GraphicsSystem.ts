@@ -1,6 +1,5 @@
 import Application, { getNameApplication } from "../components/Application";
 import Graphics, { getNameGraphics } from "../components/Graphics";
-import Sprite, { getNameSprite } from "../components/Sprite";
 import { System } from "../libs/ecs/System";
 
 export default class GraphicsSystem extends System {
@@ -12,14 +11,14 @@ export default class GraphicsSystem extends System {
     ) as Application;
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
-    );
-    const sprites = this.componentManager.getComponentsByType(getNameSprite());
+    ) as Array<Graphics>;
 
     graphics?.map((c) => {
-      app.app?.stage.addChild((c as Graphics).graphics);
-    });
-    sprites?.map((s) => {
-      app.app?.stage.addChild((s as Sprite).sprite);
+      if (c.graphics) {
+        app.app?.stage.addChild(c.graphics);
+      } else if (c.sprite) {
+        app.app?.stage.addChild(c.sprite);
+      }
     });
   }
 
@@ -33,15 +32,14 @@ export default class GraphicsSystem extends System {
     ) as Application;
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
-    );
-    const sprites = this.componentManager.getComponentsByType(getNameSprite());
-
-    sprites?.map((c) => {
-      app.app?.stage.removeChild((c as Sprite).sprite);
-    });
+    ) as Array<Graphics>;
 
     graphics?.map((c) => {
-      app.app?.stage.removeChild((c as Graphics).graphics);
+      if (c.graphics) {
+        app.app?.stage.removeChild(c.graphics);
+      } else if (c.sprite) {
+        app.app?.stage.removeChild(c.sprite);
+      }
     });
   }
 }

@@ -38,7 +38,7 @@ export default class Game {
 
     initSharedEntities() {
         this.app = <Application>{
-            name: getNameApplication()
+            name: getNameApplication(),
         };
         this.sharedEntities.push(SharedPrefabs.createApplication(this.app));
     }

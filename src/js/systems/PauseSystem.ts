@@ -1,7 +1,6 @@
-import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
 
-export default class SnakeSystem extends System {
+export default class PauseSystem extends System {
   update(delta: number) {
   }
 }

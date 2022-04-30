@@ -1,13 +1,13 @@
-import Application, { getNameApplication } from "../components/Application";
-import EventComponent, { getNameEvent } from "../components/Event";
-import Graphics, { getNameGraphics } from "../components/Graphics";
-import Sprite, { getNameSprite } from "../components/Sprite";
-import Velocity, { getNameVelocity } from "../components/Velocity";
-import { System } from "../libs/ecs/System";
+import Application, {getNameApplication} from "../components/Application";
+import EventComponent, {getNameEvent} from "../components/Event";
+import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
+import Velocity from "../components/Velocity";
+import {System} from "../libs/ecs/System";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Player, {getNamePlayer} from "../components/Player";
 import Pause, {getNamePause} from "../components/Pause";
+import Snake, {Direction, getNameSnake} from "../components/Snake";
 
 export default class EventsSystem extends System {
   awake() { }
@@ -24,15 +24,18 @@ export default class EventsSystem extends System {
 
       graphics.map((g) => {
         const graphic = g as Graphics;
-        graphic.graphics.interactive = true;
-        graphic.graphics.buttonMode = true;
-        graphic.graphics.on(event.eventName, () => {
-          event.fct(
-            event.idEntity ?? -1,
-            this.entityManager,
-            this.componentManager
-          );
-        });
+
+        if (graphic.graphics) {
+          graphic.graphics.interactive = true;
+          graphic.graphics.buttonMode = true;
+          graphic.graphics.on(event.eventName, () => {
+            event.fct(
+              event.idEntity ?? -1,
+              this.entityManager,
+              this.componentManager
+            );
+          });
+        }
       });
     });
   }
@@ -44,13 +47,15 @@ export default class EventsSystem extends System {
     tail: Sprite,
     velocity: Velocity
   ) {
+    const application = this.componentManager.getComponentByType("Application") as Application;
+
     if (!apple || !head) return;
 
     if (
-      head.sprite.x <= 60 ||
-      head.sprite.x >= 1580 ||
-      head.sprite.y <= 60 ||
-      head.sprite.y >= 1580
+      head.sprite.x <= application.app!.screen.width / 40 ||
+      head.sprite.x >= application.app!.screen.width ||
+      head.sprite.y <= application.app!.screen.height / 40 ||
+      head.sprite.y >= application.app!.screen.height
     ) {
       const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
 
@@ -65,10 +70,13 @@ export default class EventsSystem extends System {
         head.sprite.y >= apple.sprite.y &&
         head.sprite.y <= apple.sprite.y + apple.sprite.height
       ) {
-        apple.sprite.x = Math.floor(Math.random() * (1580 - 60)) + 60;
-        apple.sprite.y = Math.floor(Math.random() * (1580 - 60)) + 60;
+        apple.sprite.x = Math.floor(Math.random() * (application.app!.screen.width - 60)) + 60;
+        apple.sprite.y = Math.floor(Math.random() * (application.app!.screen.height - 60)) + 60;
 
-        const newBody = GamePrefabs.createBody(currentSize, tail, velocity);
+        const newBody = GamePrefabs.createBody(
+            application.app?.screen.width ?? 0,
+            application.app?.screen.height ?? 0,
+            currentSize, tail, velocity);
 
         this.entityManager.addEntity(newBody);
         this.componentManager.addComponents(newBody);
@@ -101,6 +109,41 @@ export default class EventsSystem extends System {
     console.log(sprites);
   }
 
+  setNextDirectionSnake(direction: Direction, snakeHead: Snake, snakeHeadGraphics: Graphics) {
+    const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+    const application = this.componentManager.getComponentByType("Application") as Application;
+    const blockSize = application.blockSizeX;
+    let x = Math.floor(snakeHeadGraphics!.sprite!.x / blockSize) * blockSize;
+    let y = Math.floor(snakeHeadGraphics!.sprite!.y / blockSize) * blockSize;
+
+    if (snakeHead.direction == Direction.DOWN) {
+      y += blockSize;
+    } else if (snakeHead.direction == Direction.RIGHT) {
+      x += blockSize;
+    }
+
+    snakeHead!.angles = [];
+    snakeHead!.angles.push({
+      direction: direction,
+      x: x,
+      y: y,
+      validate: true
+    });
+    for (const s of snake) {
+      if (s.idEntity == snakeHead!.idEntity)
+        continue;
+      s.angles.filter((value) => {
+        return !value.validate;
+      });
+      s.angles.push({
+        direction: direction,
+        x: x,
+        y: y,
+        validate: false
+      });
+    }
+  }
+
   update(delta: number) {
     const pause = this.componentManager.getComponentByType(getNamePause()) as Pause;
 
@@ -110,7 +153,7 @@ export default class EventsSystem extends System {
       return;
     }
     this.localDelta += delta;
-    const sprites = this.componentManager.getComponentsByType(getNameSprite());
+    // const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
     // sprites.map((s) => {
     //   const sprite = s as Sprite;
@@ -127,92 +170,85 @@ export default class EventsSystem extends System {
     //   }
     // });
 
-    const velocities = this.componentManager.getComponentsByType(
-      getNameVelocity()
-    );
+    // const velocities = this.componentManager.getComponentsByType(
+    //   getNameVelocity()
+    // );
 
     // TODO: how to get head
-    const apple = sprites[0] as Sprite;
-    const head = sprites[1] as Sprite;
-    const tail = sprites[sprites.length - 1] as Sprite;
+    // const apple = sprites[0] as Graphics;
+    // const head = sprites[1] as Graphics;
+    // const tail = sprites[sprites.length - 1] as Graphics;
 
-    const headSpeed = this.entityManager.getComponentsOfEntity(head?.idEntity)?.get("Velocity")?.[0] as Velocity | undefined;
+    // const headSpeed = this.entityManager.getComponentsOfEntity(head?.idEntity)?.get("Velocity")?.[0] as Velocity | undefined;
 
     let prevPosX;
     let prevPosY;
-    if (headSpeed) {
-      head.sprite.x += headSpeed.x;
-      head.sprite.y += headSpeed.y;
-      prevPosX = head.sprite.x;
-      prevPosY = head.sprite.y;
-    }
-    if (this.localDelta > 30) {
-      sprites.map((s, idx) => {
-        const sprite = s as Sprite;
-        if (idx > 0) {
-          const tempX = sprite.sprite.x;
-          const tempY = sprite.sprite.y;
-          sprite.sprite.x = prevPosX;
-          sprite.sprite.y = prevPosY;
-          prevPosX = tempX;
-          prevPosY = tempY;
-        }
-      });
-      this.localDelta = 0;
-    }
+    // if (headSpeed) {
+    //   head.sprite.x += headSpeed.x;
+    //   head.sprite.y += headSpeed.y;
+    //   prevPosX = head.sprite.x;
+    //   prevPosY = head.sprite.y;
+    // }
+    // if (this.localDelta > 30) {
+    //   sprites.map((s, idx) => {
+    //     const sprite = s as Graphics;
+    //     if (idx > 0) {
+    //       const tempX = sprite.sprite.x;
+    //       const tempY = sprite.sprite.y;
+    //       sprite.sprite.x = prevPosX;
+    //       sprite.sprite.y = prevPosY;
+    //       prevPosX = tempX;
+    //       prevPosY = tempY;
+    //     }
+    //   });
+    //   this.localDelta = 0;
+    // }
 
-    this.checkCollision(
-      apple,
-      head,
-      sprites.length - 1,
-      tail,
-      velocities[0] as Velocity
-    );
+    // this.checkCollision(
+    //   apple,
+    //   head,
+    //   sprites.length - 1,
+    //   tail,
+    //   velocities[0] as Velocity
+    // );
 
-    const headVelocity = velocities[0] as Velocity;
+    // const headVelocity = velocities[0] as Velocity;
 
     document.onkeydown = (e) => {
-      const angle = head.sprite.angle;
+      const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+      let snakeHead: Snake;
+      let snakeHeadGraphics: Graphics;
+      let direction;
 
-      if (e.key === "ArrowLeft" && angle !== 90) {
-        head.sprite.angle = 270;
-        headVelocity.x = -2 * delta;
-        headVelocity.y = 0;
-        // velocities.map((v) => {
-        //   const velocity = v as Velocity;
-        //   velocity.x = -2 * delta;
-        //   velocity.y = 0;
-        // });
+      for (const s of snake) {
+        const graphics = this.entityManager.getComponentsByType(s.idEntity!, getNameGraphics()) as Array<Graphics>;
+        let found = false;
+
+        for (const graphic of graphics) {
+          if (graphic.type == GraphicsType.SNAKE_HEAD) {
+            direction = s.direction;
+            found = true;
+            snakeHead = s;
+            snakeHeadGraphics = graphic;
+            break;
+          }
+        }
+        if (found) {
+          break;
+        }
       }
-      if (e.key === "ArrowRight" && angle !== 270) {
-        head.sprite.angle = 90;
-        headVelocity.x = 2 * delta;
-        headVelocity.y = 0;
-        // velocities.map((v) => {
-        //   const velocity = v as Velocity;
-        //   velocity.x = 2 * delta;
-        //   velocity.y = 0;
-        // });
+
+      if (e.key === "ArrowLeft" && direction !== Direction.RIGHT && direction !== Direction.LEFT) {
+        this.setNextDirectionSnake(Direction.LEFT, snakeHead!, snakeHeadGraphics!);
       }
-      if (e.key === "ArrowUp" && angle !== 180) {
-        head.sprite.angle = 0;
-        headVelocity.x = 0;
-        headVelocity.y = -2 * delta;
-        // velocities.map((v) => {
-        //   const velocity = v as Velocity;
-        //   velocity.x = 0;
-        //   velocity.y = -2 * delta;
-        // });
+      if (e.key === "ArrowRight" && direction !== Direction.LEFT && direction !== Direction.RIGHT) {
+        this.setNextDirectionSnake(Direction.RIGHT, snakeHead!, snakeHeadGraphics!);
       }
-      if (e.key === "ArrowDown" && angle !== 0) {
-        head.sprite.angle = 180;
-        headVelocity.x = 0;
-        headVelocity.y = 2 * delta;
-        // velocities.map((v) => {
-        //   const velocity = v as Velocity;
-        //   velocity.x = 0;
-        //   velocity.y = 2 * delta;
-        // });
+      if (e.key === "ArrowUp" && direction !== Direction.DOWN && direction !== Direction.UP) {
+        this.setNextDirectionSnake(Direction.UP, snakeHead!, snakeHeadGraphics!);
+      }
+      if (e.key === "ArrowDown" && direction !== Direction.UP && direction !== Direction.DOWN) {
+        this.setNextDirectionSnake(Direction.DOWN, snakeHead!, snakeHeadGraphics!);
       }
       if (e.key == "Escape") {
         if (pause) {
@@ -231,10 +267,12 @@ export default class EventsSystem extends System {
     ) as Application;
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
-    );
+    ) as Array<Graphics>;
 
     graphics.map((c) => {
-      app.app?.stage.removeChild((c as Graphics).graphics);
+      if(c.graphics) {
+        app.app?.stage.removeChild(c.graphics);
+      }
     });
   }
 }

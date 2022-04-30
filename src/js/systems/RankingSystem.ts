@@ -1,7 +1,4 @@
-import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
-import GameOver, {getNameGameOver} from "../components/GameOver";
-import Player, {getNamePlayer} from "../components/Player";
 import HighestScores from "../utils/HighestScores";
 import GameOverSystem from "./GameOverSystem";
 
