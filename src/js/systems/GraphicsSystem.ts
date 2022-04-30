@@ -1,7 +1,7 @@
 import Application, { getNameApplication } from "../components/Application";
 import Graphics, { getNameGraphics } from "../components/Graphics";
-import Sprite, { getNameSprite } from "../components/Sprite";
 import { System } from "../libs/ecs/System";
+import Snake, {getNameSnake} from "../components/Snake";
 
 export default class GraphicsSystem extends System {
   awake() {}
@@ -12,18 +12,32 @@ export default class GraphicsSystem extends System {
     ) as Application;
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
-    );
-    const sprites = this.componentManager.getComponentsByType(getNameSprite());
+    ) as Array<Graphics>;
 
     graphics?.map((c) => {
-      app.app?.stage.addChild((c as Graphics).graphics);
-    });
-    sprites?.map((s) => {
-      app.app?.stage.addChild((s as Sprite).sprite);
+      if (c.graphics) {
+        app.app?.stage.addChild(c.graphics);
+      } else if (c.sprite) {
+        app.app?.stage.addChild(c.sprite);
+      }
+      c.isInit = true;
     });
   }
 
-  update(delta: number) {}
+  update(delta: number) {
+    const graphics = this.componentManager.getComponentsByType(getNameGraphics()) as Array<Graphics>;
+    const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
+
+    for (const graphic of graphics) {
+      if (graphic.isInit)
+        continue;
+      if (graphic.graphics) {
+        app.app?.stage.addChild(graphic.graphics);
+      } else if (graphic.sprite) {
+        app.app?.stage.addChild(graphic.sprite);
+      }
+    }
+  }
 
   stop() {}
 
@@ -33,15 +47,14 @@ export default class GraphicsSystem extends System {
     ) as Application;
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
-    );
-    const sprites = this.componentManager.getComponentsByType(getNameSprite());
-
-    sprites?.map((c) => {
-      app.app?.stage.removeChild((c as Sprite).sprite);
-    });
+    ) as Array<Graphics>;
 
     graphics?.map((c) => {
-      app.app?.stage.removeChild((c as Graphics).graphics);
+      if (c.graphics) {
+        app.app?.stage.removeChild(c.graphics);
+      } else if (c.sprite) {
+        app.app?.stage.removeChild(c.sprite);
+      }
     });
   }
 }

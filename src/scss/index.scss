@@ -1,10 +1,183 @@
+@font-face {
+    font-family: 'MELTED PERSONAL USE';
+    src: url('../../assets/fonts/MELTEDPERSONALUSE-Bold.eot');
+    src: url('../../assets/fonts/MELTEDPERSONALUSE-Bold.eot?#iefix') format('embedded-opentype'),
+    url('../../assets/fonts/MELTEDPERSONALUSE-Bold.woff2') format('woff2'),
+    url('../../assets/fonts/MELTEDPERSONALUSE-Bold.woff') format('woff'),
+    url('../../assets/fonts/MELTEDPERSONALUSE-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nasalization Rg';
+    src: url('../../assets/fonts/NasalizationRg-Regular.eot');
+    src: url('../../assets/fonts/NasalizationRg-Regular.eot?#iefix') format('embedded-opentype'),
+    url('../../assets/fonts/NasalizationRg-Regular.woff2') format('woff2'),
+    url('../../assets/fonts/NasalizationRg-Regular.woff') format('woff'),
+    url('../../assets/fonts/NasalizationRg-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --color-dark-brown: #6C584C;
+    --color-brown: #A98467;
+    --color-green: #ADC178;
+    --color-light-green: #DDE5B6;
+    --color-extra-light-green: #F0EAD2;
+}
+
 html, body {
     padding: 0;
     margin: 0;
-    line-height: 0;
-}
-
-#game {
     width: 100%;
     height: 100vh;
+    font-size: 20px;
+    overflow: hidden;
+    font-family: "Nasalization Rg", sans-serif;
+}
+
+h1 {
+    margin: 0;
+    font-family: "MELTED PERSONAL USE", sans-serif;
+    font-size: 8rem;
+}
+
+h2 {
+    margin: 0;
+    font-family: "MELTED PERSONAL USE", sans-serif;
+    font-size: 6rem;
+}
+
+h3 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+p {
+    margin: 0;
+}
+
+input {
+    font-family: "Nasalization Rg", sans-serif;
+    padding: 10px 20px;
+    outline: none;
+    border-radius: 50px;
+    border: 1px solid white;
+    color: white;
+    background-color: transparent;
+}
+
+table {
+    font-family: "Nasalization Rg", sans-serif;
+    text-align: center;
+    width: 100%;
+
+    &, td, th {
+        border-bottom: 1px solid black;
+        border-collapse: collapse;
+
+        .width-100 {
+            width: 100%;
+        }
+    }
+
+    th {
+        background-color: var(--color-dark-brown);
+        color: white;
+        padding: 0;
+    }
+    td, th {
+        padding: 10px 0px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #ffd6a4;
+    }
+
+    tr:nth-child(odd) {
+        background-color: var(--color-brown);
+    }
+}
+
+button {
+    font-family: "Nasalization Rg", sans-serif;
+    padding: 10px 20px;
+    background-color: var(--color-brown);
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.5s;
+
+    &:hover {
+        background-color: var(--color-dark-brown);
+    }
+}
+
+button.main-button {
+    font-size: 3rem;
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+button.small-button {
+    font-size: 1.5rem;
+}
+
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.rotate-minus-90 {
+    transform: rotate(-90deg);
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.white {
+    color: white;
+}
+
+.center {
+    text-align: center;
+}
+
+.font-size-30 {
+    font-size: 1.5rem;
+}
+
+iframe {
+    display: none; // This is for not displaying an extension which make things buggy
+}
+
+@import "scenes/ranking";
+@import "scenes/game";
+@import "scenes/menu";
+
+main {
+    width: 100%;
+    height: auto;
+    transform: translate(0, 0);
+    transition: transform 0.7s ease-out;
+    position: relative;
+
+    &.game {
+        transform: translate(0, -50%);
+    }
+
+    &.ranking {
+        transform: translate(-100%, 0);
+    }
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
 }

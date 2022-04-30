@@ -1,11 +1,16 @@
 import Application from "../components/Application";
-import Sprite from "../components/Sprite";
 import Velocity from "../components/Velocity";
 import Scene from "../libs/ecs/Scene";
 import GamePrefabs from "../prefabs/GamePrefabs";
 import EventsSystem from "../systems/EventsSystem";
 import GraphicsSystem from "../systems/GraphicsSystem";
 import SnakeSystem from "../systems/SnakeSystem";
+import HTMLSystem from "../systems/HTMLSystem";
+import GameOverSystem from "../systems/GameOverSystem";
+import GameDetailsSystem from "../systems/GameDetailsSystem";
+import Graphics from "../components/Graphics";
+import VelocitySystem from "../systems/VelocitySystem";
+import AppleSystem from "../systems/AppleSystem";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -18,41 +23,72 @@ export default class GameScene extends Scene {
     this.systemManager.addSystem(
       new SnakeSystem(this.entityManager, this.componentManager)
     );
+    this.systemManager.addSystem(
+        new HTMLSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new GameOverSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new GameDetailsSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new VelocitySystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new AppleSystem(this.entityManager, this.componentManager)
+    );
   }
 
   initEntities() {
-    const application = this.componentManager.getComponentByType("Application");
+    const application = this.componentManager.getComponentByType("Application") as Application;
 
     if (!application) {
       return;
     }
+    console.log(application.app!.screen.width);
     this.initEntity(
       GamePrefabs.createBoard(
         (application as Application).app?.screen.width ?? 0,
         (application as Application).app?.screen.height ?? 0
       )
     );
-    this.initEntity(GamePrefabs.createButton());
+    this.initEntity(GamePrefabs.createHTMLElement());
     this.initEntity(
       GamePrefabs.createApple(
-        Math.floor(Math.random() * (1580 - 60)) + 60,
-        Math.floor(Math.random() * (1580 - 60)) + 60
+          application.blockSizeX,
+          application.blockSizeY,
+          application.app?.screen.width ?? 0,
+          application.app?.screen.height ?? 0,
+          application.nbBlocks
       )
     );
-    const head = GamePrefabs.createHead();
+    const head = GamePrefabs.createHead(
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
+    );
 
     this.initEntity(head);
 
     let body = GamePrefabs.createBody(
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
       0,
-      head[0] as Sprite,
+      head[0] as Graphics,
       head[1] as Velocity
     );
     this.initEntity(body);
 
     for (let i = 1; i < 3; i++) {
-      body = GamePrefabs.createBody(i, body[0] as Sprite, body[1] as Velocity);
+      body = GamePrefabs.createBody(
+          application.app?.screen.width ?? 0,
+          application.app?.screen.height ?? 0,
+          i, body[0] as Graphics, body[1] as Velocity);
       this.initEntity(body);
     }
+
+    this.initEntity(GamePrefabs.createGameOver());
+    this.initEntity(GamePrefabs.createPlayer());
+    this.initEntity(GamePrefabs.createPause());
   }
 }

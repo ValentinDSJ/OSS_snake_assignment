@@ -1,9 +1,11 @@
 import * as PIXI from "pixi.js";
-import Sprite, {getNameSprite} from "../components/Sprite";
 import Graphics, {getNameGraphics} from "../components/Graphics";
 import EventComponent, {getNameEvent} from "../components/Event";
 import Game from "../Game";
 import {SceneType} from "../utils/SceneType";
+import HTML, {getNameHTML} from "../components/HTML";
+import EntityManager from "../libs/ecs/EntityManager";
+import ComponentManager from "../libs/ecs/ComponentManager";
 
 export default class MenuPrefabs {
     static createButton(): Array<Component> {
@@ -24,6 +26,34 @@ export default class MenuPrefabs {
             fct: (idEntity, em, cm) => {
                 Game.nextScene = SceneType.GAME;
             }
+        });
+        return components;
+    }
+
+    static createMenu(): Array<Component> {
+        let components = Array<Component>();
+        let events = new Map;
+
+        events.set(".play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('game');
+            Game.nextScene = SceneType.GAME;
+        });
+
+        events.set(".ranking-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('ranking');
+            Game.nextScene = SceneType.RANKING;
+        });
+
+        events.set(".exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        });
+
+        components.push(<HTML>{
+            name: getNameHTML(),
+            onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
+                document.querySelector('main')?.classList.remove('game');
+            },
+            element: 'body main .menu',
+            eventsOnClick: events
         });
         return components;
     }

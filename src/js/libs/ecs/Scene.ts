@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import SystemManager from "./SystemManager";
 import ComponentManager from "./ComponentManager";
 import EntityManager from "./EntityManager";
+import Application from "../../components/Application";
 
 export default class Scene {
     protected entityManager: EntityManager;
