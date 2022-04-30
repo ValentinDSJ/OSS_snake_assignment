@@ -4,10 +4,12 @@ import ComponentManager from "./ComponentManager";
 export class System {
     protected entityManager: EntityManager;
     protected componentManager: ComponentManager;
+    protected localDelta: number;
 
     constructor(entityManager: EntityManager, componentManager: ComponentManager) {
         this.entityManager = entityManager;
         this.componentManager = componentManager;
+        this.localDelta = 0;
     }
 
     setEntityManager(entityManager: EntityManager) {
@@ -18,13 +20,13 @@ export class System {
         this.componentManager = componentManager;
     }
 
-    awake() {}
+    awake() { }
 
-    start() {}
+    start() { }
 
-    update(delta: number) {}
+    update(delta: number) { }
 
-    stop() {}
+    stop() { }
 
-    tearDown() {}
+    tearDown() { }
 }

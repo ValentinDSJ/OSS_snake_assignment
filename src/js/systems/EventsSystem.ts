@@ -10,7 +10,7 @@ import Player, {getNamePlayer} from "../components/Player";
 import Pause, {getNamePause} from "../components/Pause";
 
 export default class EventsSystem extends System {
-  awake() {}
+  awake() { }
 
   start() {
     const events = this.componentManager.getComponentsByType(getNameEvent());
@@ -98,7 +98,7 @@ export default class EventsSystem extends System {
       sprite.sprite.y = prevSprite.sprite.y;
     }
 
-    // console.log(sprites);
+    console.log(sprites);
   }
 
   update(delta: number) {
@@ -109,22 +109,23 @@ export default class EventsSystem extends System {
     if (gameOver?.over || pause?.isPaused) {
       return;
     }
+    this.localDelta += delta;
     const sprites = this.componentManager.getComponentsByType(getNameSprite());
 
-    sprites.map((s) => {
-      const sprite = s as Sprite;
+    // sprites.map((s) => {
+    //   const sprite = s as Sprite;
 
-      const entities = this.entityManager.getComponentsOfEntity(
-        sprite.idEntity
-      );
+    //   const entities = this.entityManager.getComponentsOfEntity(
+    //     sprite.idEntity
+    //   );
 
-      const velocity = entities?.get("Velocity")?.[0] as Velocity | undefined;
+    //   const velocity = entities?.get("Velocity")?.[0] as Velocity | undefined;
 
-      if (velocity) {
-        sprite.sprite.x += velocity.x;
-        sprite.sprite.y += velocity.y;
-      }
-    });
+    //   if (velocity) {
+    //     sprite.sprite.x += velocity.x;
+    //     sprite.sprite.y += velocity.y;
+    //   }
+    // });
 
     const velocities = this.componentManager.getComponentsByType(
       getNameVelocity()
@@ -135,6 +136,31 @@ export default class EventsSystem extends System {
     const head = sprites[1] as Sprite;
     const tail = sprites[sprites.length - 1] as Sprite;
 
+    const headSpeed = this.entityManager.getComponentsOfEntity(head?.idEntity)?.get("Velocity")?.[0] as Velocity | undefined;
+
+    let prevPosX;
+    let prevPosY;
+    if (headSpeed) {
+      head.sprite.x += headSpeed.x;
+      head.sprite.y += headSpeed.y;
+      prevPosX = head.sprite.x;
+      prevPosY = head.sprite.y;
+    }
+    if (this.localDelta > 30) {
+      sprites.map((s, idx) => {
+        const sprite = s as Sprite;
+        if (idx > 0) {
+          const tempX = sprite.sprite.x;
+          const tempY = sprite.sprite.y;
+          sprite.sprite.x = prevPosX;
+          sprite.sprite.y = prevPosY;
+          prevPosX = tempX;
+          prevPosY = tempY;
+        }
+      });
+      this.localDelta = 0;
+    }
+
     this.checkCollision(
       apple,
       head,
@@ -143,40 +169,50 @@ export default class EventsSystem extends System {
       velocities[0] as Velocity
     );
 
+    const headVelocity = velocities[0] as Velocity;
+
     document.onkeydown = (e) => {
       const angle = head.sprite.angle;
 
       if (e.key === "ArrowLeft" && angle !== 90) {
         head.sprite.angle = 270;
-        velocities.map((v) => {
-          const velocity = v as Velocity;
-          velocity.x = -2 * delta;
-          velocity.y = 0;
-        });
+        headVelocity.x = -2 * delta;
+        headVelocity.y = 0;
+        // velocities.map((v) => {
+        //   const velocity = v as Velocity;
+        //   velocity.x = -2 * delta;
+        //   velocity.y = 0;
+        // });
       }
       if (e.key === "ArrowRight" && angle !== 270) {
         head.sprite.angle = 90;
-        velocities.map((v) => {
-          const velocity = v as Velocity;
-          velocity.x = 2 * delta;
-          velocity.y = 0;
-        });
+        headVelocity.x = 2 * delta;
+        headVelocity.y = 0;
+        // velocities.map((v) => {
+        //   const velocity = v as Velocity;
+        //   velocity.x = 2 * delta;
+        //   velocity.y = 0;
+        // });
       }
       if (e.key === "ArrowUp" && angle !== 180) {
         head.sprite.angle = 0;
-        velocities.map((v) => {
-          const velocity = v as Velocity;
-          velocity.x = 0;
-          velocity.y = -2 * delta;
-        });
+        headVelocity.x = 0;
+        headVelocity.y = -2 * delta;
+        // velocities.map((v) => {
+        //   const velocity = v as Velocity;
+        //   velocity.x = 0;
+        //   velocity.y = -2 * delta;
+        // });
       }
       if (e.key === "ArrowDown" && angle !== 0) {
         head.sprite.angle = 180;
-        velocities.map((v) => {
-          const velocity = v as Velocity;
-          velocity.x = 0;
-          velocity.y = 2 * delta;
-        });
+        headVelocity.x = 0;
+        headVelocity.y = 2 * delta;
+        // velocities.map((v) => {
+        //   const velocity = v as Velocity;
+        //   velocity.x = 0;
+        //   velocity.y = 2 * delta;
+        // });
       }
       if (e.key == "Escape") {
         if (pause) {
@@ -187,7 +223,7 @@ export default class EventsSystem extends System {
     };
   }
 
-  stop() {}
+  stop() { }
 
   tearDown() {
     const app = this.componentManager.getComponentByType(
