@@ -17,8 +17,9 @@ export default class SharedPrefabs {
       resolution: devicePixelRatio,
     });
     app.app.renderer.resize(view.offsetWidth, view.offsetHeight);
-    app.blockSizeX = app.app.screen.width / 40;
-    app.blockSizeY = app.app.screen.height / 40;
+    app.nbBlocks = 40;
+    app.blockSizeX = app.app.screen.width / app.nbBlocks;
+    app.blockSizeY = app.app.screen.height / app.nbBlocks;
     components.push(app);
 
     return components;

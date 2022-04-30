@@ -52,10 +52,11 @@ export default class GameScene extends Scene {
     this.initEntity(GamePrefabs.createHTMLElement());
     this.initEntity(
       GamePrefabs.createApple(
+          application.blockSizeX,
+          application.blockSizeY,
           application.app?.screen.width ?? 0,
           application.app?.screen.height ?? 0,
-        Math.floor(Math.random() * (application.app!.screen.width - 60)) + 60,
-        Math.floor(Math.random() * (application.app!.screen.height - 60)) + 60
+          application.nbBlocks
       )
     );
     const head = GamePrefabs.createHead(

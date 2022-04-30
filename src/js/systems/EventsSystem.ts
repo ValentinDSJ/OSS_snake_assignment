@@ -85,7 +85,7 @@ export default class EventsSystem extends System {
           "Application"
         ) as Application;
 
-        app.app?.stage.addChild((newBody[0] as Sprite).sprite);
+        app.app?.stage.addChild((newBody[0] as Graphics).sprite);
 
         const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
 
@@ -95,24 +95,12 @@ export default class EventsSystem extends System {
     apple.sprite.x;
   }
 
-  moveBody() {
-    const sprites = this.componentManager.getComponentsByType("Sprite");
-
-    for (let i = 2; i < sprites.length; i++) {
-      const sprite = sprites[i] as Sprite;
-      const prevSprite = sprites[i - 1] as Sprite;
-
-      sprite.sprite.x = prevSprite.sprite.x;
-      sprite.sprite.y = prevSprite.sprite.y;
-    }
-
-    console.log(sprites);
-  }
-
   setNextDirectionSnake(direction: Direction, snakeHead: Snake, snakeHeadGraphics: Graphics) {
     const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const application = this.componentManager.getComponentByType("Application") as Application;
     const blockSize = application.blockSizeX;
+    // let x = Math.floor(snakeHeadGraphics!.sprite!.x / blockSize) * blockSize + blockSize / 2;
+    // let y = Math.floor(snakeHeadGraphics!.sprite!.y / blockSize) * blockSize + blockSize / 2;
     let x = Math.floor(snakeHeadGraphics!.sprite!.x / blockSize) * blockSize;
     let y = Math.floor(snakeHeadGraphics!.sprite!.y / blockSize) * blockSize;
 
@@ -122,24 +110,21 @@ export default class EventsSystem extends System {
       x += blockSize;
     }
 
-    snakeHead!.angles = [];
     snakeHead!.angles.push({
       direction: direction,
       x: x,
-      y: y,
-      validate: true
+      y: y
     });
     for (const s of snake) {
       if (s.idEntity == snakeHead!.idEntity)
         continue;
-      s.angles.filter((value) => {
-        return !value.validate;
-      });
+      // s.angles.filter((value) => {
+      //   return !value.validate;
+      // });
       s.angles.push({
         direction: direction,
         x: x,
-        y: y,
-        validate: false
+        y: y
       });
     }
   }
@@ -181,8 +166,6 @@ export default class EventsSystem extends System {
 
     // const headSpeed = this.entityManager.getComponentsOfEntity(head?.idEntity)?.get("Velocity")?.[0] as Velocity | undefined;
 
-    let prevPosX;
-    let prevPosY;
     // if (headSpeed) {
     //   head.sprite.x += headSpeed.x;
     //   head.sprite.y += headSpeed.y;

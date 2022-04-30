@@ -1,8 +1,7 @@
 interface Angle {
     direction: number,
     x: number,
-    y: number,
-    validate: boolean
+    y: number
 }
 
 export enum Direction {

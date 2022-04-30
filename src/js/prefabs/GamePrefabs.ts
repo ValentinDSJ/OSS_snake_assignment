@@ -51,12 +51,15 @@ export default class GamePrefabs {
     snake.x = screenWidth / 40 * 20;
     snake.y = screenHeight / 40 * 20;
 
-    // snake.anchor.set(0.5);
-
     snake.width = screenWidth / 40;
     snake.height = screenHeight / 40;
 
+    // snake.x += snake.width / 2;
+    // snake.y += snake.height / 2;
+
+
     snake.angle = 0;
+    // snake.anchor.set(0.5);
 
     components.push(<Graphics>{
       name: getNameGraphics(),
@@ -67,7 +70,8 @@ export default class GamePrefabs {
       name: getNameVelocity(),
       x: 0,
       y: -2,
-      speed: 2
+      speed: 2,
+      skip: 0
     });
     components.push(<Snake>{
       name: getNameSnake(),
@@ -94,6 +98,7 @@ export default class GamePrefabs {
     snake.width = screenWidth / 40;
     snake.height = screenHeight / 40;
 
+    // snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
     components.push(<Graphics>{
@@ -105,7 +110,8 @@ export default class GamePrefabs {
       name: getNameVelocity(),
       x: velocity.x,
       y: velocity.y,
-      speed: velocity.speed
+      speed: velocity.speed,
+      skip: 0
     });
     components.push(<Snake>{
       name: getNameSnake(),
@@ -115,12 +121,12 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createApple(screenWidth: number, screenHeight: number, posX: number, posY: number): Array<Component> {
+  static createApple(blockSizeX: number, blockSizeY: number, screenWidth: number, screenHeight: number, nbBlocks: number): Array<Component> {
     let components = Array<Component>();
 
     const apple = PIXI.Sprite.from(appleSprite);
-    apple.x = posX;
-    apple.y = posY;
+    apple.x = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeX;
+    apple.y = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeY;
     apple.width = screenWidth / 40;
     apple.height = screenHeight / 40;
 
