@@ -12,8 +12,10 @@ import Graphics from "../components/Graphics";
 import AppleSystem from "../systems/AppleSystem";
 import SaveSystem from "../systems/SaveSystem";
 import VelocitySystem from "../systems/VelocitySystem";
-import Save from "../components/Save";
 import GameSaved from "../utils/GameSaved";
+import Game from "../Game";
+import {SceneType} from "../utils/SceneType";
+import RestartSystem from "../systems/RestartSystem";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -44,6 +46,9 @@ export default class GameScene extends Scene {
     this.systemManager.addSystem(
         new SaveSystem(this.entityManager, this.componentManager)
     );
+    this.systemManager.addSystem(
+        new RestartSystem(this.entityManager, this.componentManager)
+    );
   }
 
   initEntities() {
@@ -56,6 +61,7 @@ export default class GameScene extends Scene {
     }
     this.initEntity(
       GamePrefabs.createBoard(
+          application,
         (application as Application).app?.screen.width ?? 0,
         (application as Application).app?.screen.height ?? 0
       )
@@ -65,34 +71,43 @@ export default class GameScene extends Scene {
     if (loadGame && savedGameString) {
       const savedGame = JSON.parse(savedGameString) as GameSaved;
 
-      for (const apple of savedGame.apples) {
-        this.initEntity(GamePrefabs.createSavedApple(
-            application.blockSizeX,
-            application.blockSizeY,
-            apple.x,
-            apple.y,
-            apple.isAte
-        ));
-      }
-      for (const snake of savedGame.snakes) {
-        this.initEntity(GamePrefabs.createSavedSnake(
-            snake,
-            application.blockSizeX,
-            application.blockSizeY,
-        ))
+      try {
+        this.initEntity(GamePrefabs.createPlayer(savedGame.score));
+        for (const apple of savedGame.apples) {
+          this.initEntity(GamePrefabs.createSavedApple(
+              application.blockSizeX,
+              application.blockSizeY,
+              apple.x,
+              apple.y,
+              apple.isAte
+          ));
+        }
+        for (const snake of savedGame.snakes) {
+          this.initEntity(GamePrefabs.createSavedSnake(
+              snake,
+              application.blockSizeX,
+              application.blockSizeY,
+          ))
+        }
+      } catch (e) {
+        Game.nextScene = SceneType.MENU;
+        localStorage.removeItem("saveGame");
+        return;
       }
     } else {
       this.initEntity(
         GamePrefabs.createApple(
+            application,
             application.blockSizeX,
             application.blockSizeY,
             application.app?.screen.width ?? 0,
             application.app?.screen.height ?? 0,
-            application.nbBlocks
+            application.nbBlocksWithWall
         )
       );
 
       const head = GamePrefabs.createHead(
+          application,
           application.app?.screen.width ?? 0,
           application.app?.screen.height ?? 0,
       );
@@ -100,6 +115,7 @@ export default class GameScene extends Scene {
       this.initEntity(head);
 
       let body = GamePrefabs.createBody(
+          application,
           application.app?.screen.width ?? 0,
           application.app?.screen.height ?? 0,
         0,
@@ -110,15 +126,16 @@ export default class GameScene extends Scene {
 
       for (let i = 1; i < 3; i++) {
         body = GamePrefabs.createBody(
+            application,
             application.app?.screen.width ?? 0,
             application.app?.screen.height ?? 0,
             i, body[0] as Graphics, body[1] as Velocity);
         this.initEntity(body);
       }
+      this.initEntity(GamePrefabs.createPlayer());
     }
 
     this.initEntity(GamePrefabs.createGameOver());
-    this.initEntity(GamePrefabs.createPlayer());
     this.initEntity(GamePrefabs.createPause());
 
     localStorage.removeItem("loadGame");

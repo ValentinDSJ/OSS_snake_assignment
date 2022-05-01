@@ -54,6 +54,11 @@ export default class SnakeSystem extends System {
       let width;
       let height;
 
+      let width2 = snakeHeadGraphics.sprite!.width;
+      let height2 = snakeHeadGraphics.sprite!.height;
+      let x2 = snakeHeadGraphics.sprite!.x - (width2 / 2);
+      let y2 = snakeHeadGraphics.sprite!.y - (height2 / 2);
+
       if (graphic.graphics) {
         x = graphic.graphics.getBounds().x;
         y = graphic.graphics.getBounds().y;
@@ -64,14 +69,17 @@ export default class SnakeSystem extends System {
         y = graphic.sprite.y;
         width = graphic.sprite.width;
         height = graphic.sprite.height;
+        if (graphic.type == GraphicsType.SNAKE) {
+          x -= width / 2;
+          y -= height / 2;
+        }
       }
 
-
       if (
-          snakeHeadGraphics.sprite!.x < x + width &&
-          snakeHeadGraphics.sprite!.x + snakeHeadGraphics.sprite!.width > x &&
-          snakeHeadGraphics.sprite!.y < y + height &&
-          snakeHeadGraphics.sprite!.y + snakeHeadGraphics.sprite!.height > y
+          x2 < x + width &&
+          x2 + width2 > x &&
+          y2 < y + height &&
+          y2 + height2 > y
       ) {
         switch (graphic.type) {
           case GraphicsType.APPLE:
@@ -80,7 +88,7 @@ export default class SnakeSystem extends System {
             if (apple.isAte) {
               break;
             }
-            if (snakes.length == (application.nbBlocks) * (application.nbBlocks)) {
+            if (snakes.length == (application.nbBlocksGrass) * (application.nbBlocksGrass)) {
               this.gameOver();
               break;
             }
@@ -230,7 +238,7 @@ export default class SnakeSystem extends System {
         } else if (graphics.sprite) {
           // graphics.sprite.setTransform(0, 0, 1, 1, newAngle, 0, 0, graphics.sprite.width / 2, graphics.sprite.height / 2);
           // graphics.sprite.angle = newAngle;
-          // graphics.sprite.rotation = newAngle;
+          graphics.sprite.rotation = newAngle;
           graphics.sprite.x = newPosX;
           graphics.sprite.y = newPosY;
         }

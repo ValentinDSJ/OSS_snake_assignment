@@ -40,14 +40,14 @@ export default class EventsSystem extends System {
   setNextDirectionSnake(direction: Direction, snakeHead: Snake, snakeHeadGraphics: Graphics) {
     const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const application = this.componentManager.getComponentByType("Application") as Application;
-    const blockSize = application.blockSizeX;
-    let x = Math.floor(snakeHeadGraphics!.sprite!.x / blockSize) * blockSize;
-    let y = Math.floor(snakeHeadGraphics!.sprite!.y / blockSize) * blockSize;
+    // const blockSize = application.blockSizeX;
+    let x = Math.floor((snakeHeadGraphics!.sprite!.x - (snakeHeadGraphics!.sprite!.width / 2)) / application.blockSizeX) * application.blockSizeX + (application.blockSizeX / 2);
+    let y = Math.floor((snakeHeadGraphics!.sprite!.y - (snakeHeadGraphics!.sprite!.height / 2)) / application.blockSizeY) * application.blockSizeY + (application.blockSizeY / 2);
 
     if (snakeHead.direction == Direction.DOWN) {
-      y += blockSize;
+      y += application.blockSizeY;
     } else if (snakeHead.direction == Direction.RIGHT) {
-      x += blockSize;
+      x += application.blockSizeX;
     }
 
     snakeHead!.angles.push({

@@ -33,8 +33,8 @@ export default class AppleSystem extends System {
     let y;
 
     do {
-      x = (Math.floor(Math.random() * (app.nbBlocks - 2)) + 1) * app.blockSizeX;
-      y = (Math.floor(Math.random() * (app.nbBlocks - 2)) + 1) * app.blockSizeY;
+      x = (Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeX);
+      y = (Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeY);
     } while (this.positionIsAlreadyTaken(x, y, app.blockSizeX, app.blockSizeY))
     return [x, y];
   }
@@ -55,17 +55,17 @@ export default class AppleSystem extends System {
         width2 = graphic.graphics.getBounds().width;
         height2 = graphic.graphics.getBounds().height;
       } else if (graphic.sprite) {
-        x2 = graphic.sprite.x;
-        y2 = graphic.sprite.y;
         width2 = graphic.sprite.width;
         height2 = graphic.sprite.height;
+        x2 = graphic.sprite.x - (width2 / 2);
+        y2 = graphic.sprite.y - (height2 / 2);
       }
 
       if (
-          x < x2 + width2 &&
+          (x < x2 + width2 &&
           x + width > x2 &&
           y < y2 + height2 &&
-          y + height > y2
+          y + height > y2) || (x == x2) || (y == y2)
       ) {
         return true;
       }

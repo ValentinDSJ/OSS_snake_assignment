@@ -5,19 +5,22 @@ import Apple, {getNameApple} from "../components/Apple";
 import GameSaved, {AppleSaved, SnakeSaved} from "../utils/GameSaved";
 import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
 import Velocity, {getNameVelocity} from "../components/Velocity";
+import Player, {getNamePlayer} from "../components/Player";
 
 export default class SaveSystem extends System {
   update(delta: number) {
     const save = this.componentManager.getComponentByType(getNameSave()) as Save;
 
-    if (!save.click)
+    if (!save || !save.click)
       return;
     save.click = false;
 
     const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const apples = this.componentManager.getComponentsByType(getNameApple()) as Array<Apple>;
+    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
 
     const gameSaved: GameSaved = <GameSaved>{
+      score: player.score,
       apples: Array<AppleSaved>(),
       snakes: Array<SnakeSaved>()
     };
@@ -52,5 +55,16 @@ export default class SaveSystem extends System {
     }
 
     localStorage.setItem("saveGame", JSON.stringify(gameSaved));
+
+    const toast = document.querySelector(".toast");
+
+    if (!toast)
+      return;
+    toast.classList.add("success");
+    toast.classList.remove("hidden");
+
+    setTimeout(() => {
+      toast.classList.add("hidden");
+    }, 5000);
   }
 }

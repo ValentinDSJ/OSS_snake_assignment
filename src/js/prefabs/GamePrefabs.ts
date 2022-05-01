@@ -17,6 +17,8 @@ import Application from "../components/Application";
 import Save, {getNameSave} from "../components/Save";
 import {SnakeSaved} from "../utils/GameSaved";
 import Apple, {getNameApple} from "../components/Apple";
+import Restart, {getNameRestart} from "../components/Restart";
+import GameOverSystem from "../systems/GameOverSystem";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -44,6 +46,7 @@ export default class GamePrefabs {
   }
 
   static createHead(
+      app: Application,
       screenWidth: number,
       screenHeight: number,
   ): Array<Component> {
@@ -51,18 +54,20 @@ export default class GamePrefabs {
 
     const snake = PIXI.Sprite.from(snakeHead);
 
-    snake.x = screenWidth / 40 * 20;
-    snake.y = screenHeight / 40 * 20;
 
-    snake.width = screenWidth / 40;
-    snake.height = screenHeight / 40;
+    snake.width = app.blockSizeX;
+    snake.height = app.blockSizeY;
 
+    snake.x = app.blockSizeX * 20 + (snake.width / 2);
+    snake.y = app.blockSizeY * 20 + (snake.height / 2);
     // snake.x += snake.width / 2;
     // snake.y += snake.height / 2;
 
 
     snake.angle = 0;
-    // snake.anchor.set(0.5);
+    // snake.pivot.set(snake.width / 2, snake.height / 2)
+    // console.log(snake.pivot);
+    snake.anchor.set(0.5);
 
     components.push(<Graphics>{
       name: getNameGraphics(),
@@ -86,6 +91,7 @@ export default class GamePrefabs {
   }
 
   static createBody(
+      app: Application,
       screenWidth: number,
       screenHeight: number,
       currentSize: number,
@@ -99,10 +105,10 @@ export default class GamePrefabs {
     snake.x = tail.sprite!.x;
     snake.y = tail.sprite!.y + tail.sprite!.height;
 
-    snake.width = screenWidth / 40;
-    snake.height = screenHeight / 40;
+    snake.width = app.blockSizeX;
+    snake.height = app.blockSizeY;
 
-    // snake.anchor.set(0.5);
+    snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
     components.push(<Graphics>{
@@ -141,7 +147,7 @@ export default class GamePrefabs {
     snake.width = app.blockSizeX;
     snake.height = app.blockSizeY;
 
-    // snake.anchor.set(0.5);
+    snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
     components.push(<Graphics>{
@@ -166,14 +172,14 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createApple(blockSizeX: number, blockSizeY: number, screenWidth: number, screenHeight: number, nbBlocks: number): Array<Component> {
+  static createApple(app: Application, blockSizeX: number, blockSizeY: number, screenWidth: number, screenHeight: number, nbBlocks: number): Array<Component> {
     let components = Array<Component>();
 
     const apple = PIXI.Sprite.from(appleSprite);
     apple.x = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeX;
     apple.y = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeY;
-    apple.width = screenWidth / 40;
-    apple.height = screenHeight / 40;
+    apple.width = app.blockSizeX;
+    apple.height = app.blockSizeY;
 
     components.push(<Graphics>{
       name: getNameGraphics(),
@@ -224,7 +230,7 @@ export default class GamePrefabs {
 
 
     snake.angle = 0;
-    // snake.anchor.set(0.5);
+    snake.anchor.set(0.5);
 
     components.push(<Graphics>{
       name: getNameGraphics(),
@@ -247,19 +253,17 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createBoard(x: number, y: number): Array<Component> {
+  static createBoard(app: Application, x: number, y: number): Array<Component> {
     let components = Array<Component>();
 
-    const blockSize = x / 40;
-
     let moduloColor = 1;
-    for (let i = 0; i < 40; i++) {
-      for (let j = 0; j < 40; j++) {
-        if (i == 0 || j == 0 || i == 39 || j == 39) {
+    for (let i = 0; i < app.nbBlocksWithWall; i++) {
+      for (let j = 0; j < app.nbBlocksWithWall; j++) {
+        if (i == 0 || j == 0 || i == app.nbBlocksWithWall - 1 || j == app.nbBlocksWithWall - 1) {
           const graphics = new PIXI.Graphics();
 
           graphics.beginFill(0xA98467);
-          graphics.drawRect(i * blockSize, j * blockSize, blockSize, blockSize);
+          graphics.drawRect(i * app.blockSizeX, j * app.blockSizeY, app.blockSizeX, app.blockSizeY);
           graphics.endFill();
 
           components.push(<Graphics>{
@@ -276,7 +280,7 @@ export default class GamePrefabs {
         } else {
           graphics.beginFill(0xADC178);
         }
-        graphics.drawRect(i * blockSize, j * blockSize, blockSize, blockSize);
+        graphics.drawRect(i * app.blockSizeX, j * app.blockSizeY, app.blockSizeX, app.blockSizeY);
         graphics.endFill();
 
         components.push(<Graphics>{
@@ -302,11 +306,10 @@ export default class GamePrefabs {
       scoreSaved: false
     });
     events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const player = cm.getComponentByType(getNameGameOver()) as Player;
-      const element = document.querySelector('body main .game-scene .game-over');
+      const restart = cm.getComponentByType(getNameRestart()) as Restart;
+      restart.click = true;
 
-      player.score = 0;
-      element?.classList.add("hidden");
+      GameOverSystem.saveLatestScoreIfExist();
     });
 
     events.set(".game-over .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
@@ -330,12 +333,12 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createPlayer(): Array<Component> {
+  static createPlayer(score?: number): Array<Component> {
     let components = Array<Component>();
 
     components.push(<Player>{
       name: getNamePlayer(),
-      score: 0
+      score: score ?? 0
     });
     return components;
   }
@@ -367,9 +370,17 @@ export default class GamePrefabs {
     });
 
     events.set(".pause .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main .game-scene .pause');
+      const element = document.querySelector('body main .game-scene .pause');const pause = cm.getComponentByType(getNamePause()) as Pause;
+
+      if (pause) {
+        pause.isPaused = false;
+      }
 
       element?.classList.add("hidden");
+
+      const restart = cm.getComponentByType(getNameRestart()) as Restart;
+
+      restart.click = true;
     });
 
     events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
@@ -391,6 +402,10 @@ export default class GamePrefabs {
     });
     components.push(<Save>{
       name: getNameSave(),
+      click: false
+    });
+    components.push(<Restart>{
+      name: getNameRestart(),
       click: false
     });
     return components;
