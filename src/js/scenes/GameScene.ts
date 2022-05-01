@@ -15,6 +15,7 @@ import VelocitySystem from "../systems/VelocitySystem";
 import GameSaved from "../utils/GameSaved";
 import Game from "../Game";
 import {SceneType} from "../utils/SceneType";
+import RestartSystem from "../systems/RestartSystem";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -44,6 +45,9 @@ export default class GameScene extends Scene {
     );
     this.systemManager.addSystem(
         new SaveSystem(this.entityManager, this.componentManager)
+    );
+    this.systemManager.addSystem(
+        new RestartSystem(this.entityManager, this.componentManager)
     );
   }
 

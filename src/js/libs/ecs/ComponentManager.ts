@@ -20,7 +20,8 @@ export default class ComponentManager {
 
   removeComponentOfEntity(idEntity: number) {
     this.components.forEach((components, key) => {
-      components.filter((component) => component.idEntity == idEntity);
+      components = components.filter((component) => component.idEntity != idEntity);
+      this.components.set(key, components);
     });
   }
 
