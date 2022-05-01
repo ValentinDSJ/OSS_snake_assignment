@@ -13,7 +13,7 @@ export default class SharedPrefabs {
 
     app.app = new PIXI.Application({
       view,
-      resizeTo: window,
+      // resizeTo: window,
       resolution: devicePixelRatio,
     });
     app.app.renderer.resize(view.offsetWidth, view.offsetHeight);
