@@ -72,6 +72,7 @@ export default class GameScene extends Scene {
       const savedGame = JSON.parse(savedGameString) as GameSaved;
 
       try {
+        this.initEntity(GamePrefabs.createPlayer(savedGame.score));
         for (const apple of savedGame.apples) {
           this.initEntity(GamePrefabs.createSavedApple(
               application.blockSizeX,
@@ -131,10 +132,10 @@ export default class GameScene extends Scene {
             i, body[0] as Graphics, body[1] as Velocity);
         this.initEntity(body);
       }
+      this.initEntity(GamePrefabs.createPlayer());
     }
 
     this.initEntity(GamePrefabs.createGameOver());
-    this.initEntity(GamePrefabs.createPlayer());
     this.initEntity(GamePrefabs.createPause());
 
     localStorage.removeItem("loadGame");

@@ -333,12 +333,12 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createPlayer(): Array<Component> {
+  static createPlayer(score?: number): Array<Component> {
     let components = Array<Component>();
 
     components.push(<Player>{
       name: getNamePlayer(),
-      score: 0
+      score: score ?? 0
     });
     return components;
   }

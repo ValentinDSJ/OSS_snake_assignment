@@ -26,7 +26,7 @@ export default class GameDetailsSystem extends System {
       }
       if (player) {
         player.highestScore = highestScore ? parseInt(highestScore) : 0;
-        player.score = 0;
+        // player.score = 0;
       }
     }
   }

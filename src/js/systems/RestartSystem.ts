@@ -35,6 +35,7 @@ export default class RestartSystem extends System {
         graphic.sprite.destroy();
         // app.app?.stage.removeChild(graphic.sprite);
       }
+      i--;
     }
 
     let i = 1;

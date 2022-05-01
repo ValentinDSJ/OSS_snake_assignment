@@ -5,6 +5,7 @@ import Apple, {getNameApple} from "../components/Apple";
 import GameSaved, {AppleSaved, SnakeSaved} from "../utils/GameSaved";
 import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
 import Velocity, {getNameVelocity} from "../components/Velocity";
+import Player, {getNamePlayer} from "../components/Player";
 
 export default class SaveSystem extends System {
   update(delta: number) {
@@ -16,8 +17,10 @@ export default class SaveSystem extends System {
 
     const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const apples = this.componentManager.getComponentsByType(getNameApple()) as Array<Apple>;
+    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
 
     const gameSaved: GameSaved = <GameSaved>{
+      score: player.score,
       apples: Array<AppleSaved>(),
       snakes: Array<SnakeSaved>()
     };
