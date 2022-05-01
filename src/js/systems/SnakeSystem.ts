@@ -116,8 +116,6 @@ export default class SnakeSystem extends System {
     const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const application = this.componentManager.getComponentByType("Application") as Application;
 
-    console.log(snake[snake.length - 1]);
-    console.log(snake[snake.length - 2]);
     for (const s of snake) {
       if (s.dependsOn) {
         const graphic = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
@@ -126,8 +124,6 @@ export default class SnakeSystem extends System {
         const velocityDependsOn = this.entityManager.getComponentByType(s.dependsOn.idEntity!, getNameVelocity()) as Velocity;
         let pass = false;
 
-        console.log(graphicDependsOn.sprite!.x, graphicDependsOn.sprite!.y);
-        console.log(graphic.sprite!.x, graphic.sprite!.y);
         switch (s.dependsOn.direction) {
           case Direction.UP:
             if (graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height <= graphic.sprite!.y) {
@@ -161,10 +157,12 @@ export default class SnakeSystem extends System {
         if (pass) {
           velocity.x = velocityDependsOn.x;
           velocity.y = velocityDependsOn.y;
+          s.angles = [];
           s.angles = [...s.dependsOn.angles];
           s.direction = s.dependsOn.direction;
           s.dependsOn = undefined;
         }
+        continue;
       }
 
       if (s.angles.length == 0)
