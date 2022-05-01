@@ -52,5 +52,16 @@ export default class SaveSystem extends System {
     }
 
     localStorage.setItem("saveGame", JSON.stringify(gameSaved));
+
+    const toast = document.querySelector(".toast");
+
+    if (!toast)
+      return;
+    toast.classList.add("success");
+    toast.classList.remove("hidden");
+
+    setTimeout(() => {
+      toast.classList.add("hidden");
+    }, 5000);
   }
 }
