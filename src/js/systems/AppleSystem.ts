@@ -33,8 +33,8 @@ export default class AppleSystem extends System {
     let y;
 
     do {
-      x = (Math.floor(Math.random() * (app.nbBlocks - 2)) + 1) * app.blockSizeX;
-      y = (Math.floor(Math.random() * (app.nbBlocks - 2)) + 1) * app.blockSizeY;
+      x = (Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeX);
+      y = (Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeY);
     } while (this.positionIsAlreadyTaken(x, y, app.blockSizeX, app.blockSizeY))
     return [x, y];
   }

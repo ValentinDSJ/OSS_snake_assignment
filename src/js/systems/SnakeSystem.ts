@@ -88,7 +88,7 @@ export default class SnakeSystem extends System {
             if (apple.isAte) {
               break;
             }
-            if (snakes.length == (application.nbBlocks) * (application.nbBlocks)) {
+            if (snakes.length == (application.nbBlocksGrass) * (application.nbBlocksGrass)) {
               this.gameOver();
               break;
             }
