@@ -51,18 +51,20 @@ export default class GamePrefabs {
 
     const snake = PIXI.Sprite.from(snakeHead);
 
-    snake.x = screenWidth / 40 * 20;
-    snake.y = screenHeight / 40 * 20;
 
     snake.width = screenWidth / 40;
     snake.height = screenHeight / 40;
 
+    snake.x = screenWidth / 40 * 20 + (snake.width / 2);
+    snake.y = screenHeight / 40 * 20 + (snake.height / 2);
     // snake.x += snake.width / 2;
     // snake.y += snake.height / 2;
 
 
     snake.angle = 0;
-    // snake.anchor.set(0.5);
+    // snake.pivot.set(snake.width / 2, snake.height / 2)
+    // console.log(snake.pivot);
+    snake.anchor.set(0.5);
 
     components.push(<Graphics>{
       name: getNameGraphics(),
@@ -102,7 +104,7 @@ export default class GamePrefabs {
     snake.width = screenWidth / 40;
     snake.height = screenHeight / 40;
 
-    // snake.anchor.set(0.5);
+    snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
     components.push(<Graphics>{
@@ -141,7 +143,7 @@ export default class GamePrefabs {
     snake.width = app.blockSizeX;
     snake.height = app.blockSizeY;
 
-    // snake.anchor.set(0.5);
+    snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
     components.push(<Graphics>{

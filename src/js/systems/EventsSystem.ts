@@ -41,8 +41,8 @@ export default class EventsSystem extends System {
     const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const application = this.componentManager.getComponentByType("Application") as Application;
     const blockSize = application.blockSizeX;
-    let x = Math.floor(snakeHeadGraphics!.sprite!.x / blockSize) * blockSize;
-    let y = Math.floor(snakeHeadGraphics!.sprite!.y / blockSize) * blockSize;
+    let x = Math.floor((snakeHeadGraphics!.sprite!.x - (snakeHeadGraphics!.sprite!.width / 2)) / blockSize) * blockSize + (blockSize / 2);
+    let y = Math.floor((snakeHeadGraphics!.sprite!.y - (snakeHeadGraphics!.sprite!.height / 2)) / blockSize) * blockSize + (blockSize / 2);
 
     if (snakeHead.direction == Direction.DOWN) {
       y += blockSize;
