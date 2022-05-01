@@ -20,9 +20,11 @@ Then, to run the project, you must be at the root of the repository and run thes
 
 ```bash
 yarn install # Install dependencies
-yarn parcel src/index.html # For development
-yarn parcel build src/index.html # For production
+yarn parcel src/index.html # For development and then go to this url http://localhost:1234/
+yarn parcel build src/index.html # For production, but you need a server to serve the build files.
 ```
+
+To visualize the project, we recommend to launch the yarn parcel command for development and then go to this url http://localhost:1234/ 
 
 ## 📜 Rules
 
