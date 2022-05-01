@@ -34,6 +34,18 @@ export default class MenuPrefabs {
         let components = Array<Component>();
         let events = new Map;
 
+        if (!localStorage.getItem("saveGame")) {
+            if (document.querySelector("body main .menu .load-button")) {
+                // @ts-ignore
+                document.querySelector("body main .menu .load-button")!.disabled = true;
+            }
+        } else {
+            if (document.querySelector("body main .menu .load-button")) {
+                // @ts-ignore
+                document.querySelector("body main .menu .load-button")!.disabled = false;
+            }
+        }
+
         events.set(".play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
             document.querySelector('main')?.classList.add('game');
             Game.nextScene = SceneType.GAME;

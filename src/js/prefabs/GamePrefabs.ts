@@ -228,7 +228,7 @@ export default class GamePrefabs {
 
 
     snake.angle = 0;
-    // snake.anchor.set(0.5);
+    snake.anchor.set(0.5);
 
     components.push(<Graphics>{
       name: getNameGraphics(),
