@@ -10,7 +10,7 @@ export default class SaveSystem extends System {
   update(delta: number) {
     const save = this.componentManager.getComponentByType(getNameSave()) as Save;
 
-    if (!save.click)
+    if (!save || !save.click)
       return;
     save.click = false;
 

@@ -12,8 +12,9 @@ import Graphics from "../components/Graphics";
 import AppleSystem from "../systems/AppleSystem";
 import SaveSystem from "../systems/SaveSystem";
 import VelocitySystem from "../systems/VelocitySystem";
-import Save from "../components/Save";
 import GameSaved from "../utils/GameSaved";
+import Game from "../Game";
+import {SceneType} from "../utils/SceneType";
 
 export default class GameScene extends Scene {
   initSystems() {
@@ -66,21 +67,27 @@ export default class GameScene extends Scene {
     if (loadGame && savedGameString) {
       const savedGame = JSON.parse(savedGameString) as GameSaved;
 
-      for (const apple of savedGame.apples) {
-        this.initEntity(GamePrefabs.createSavedApple(
-            application.blockSizeX,
-            application.blockSizeY,
-            apple.x,
-            apple.y,
-            apple.isAte
-        ));
-      }
-      for (const snake of savedGame.snakes) {
-        this.initEntity(GamePrefabs.createSavedSnake(
-            snake,
-            application.blockSizeX,
-            application.blockSizeY,
-        ))
+      try {
+        for (const apple of savedGame.apples) {
+          this.initEntity(GamePrefabs.createSavedApple(
+              application.blockSizeX,
+              application.blockSizeY,
+              apple.x,
+              apple.y,
+              apple.isAte
+          ));
+        }
+        for (const snake of savedGame.snakes) {
+          this.initEntity(GamePrefabs.createSavedSnake(
+              snake,
+              application.blockSizeX,
+              application.blockSizeY,
+          ))
+        }
+      } catch (e) {
+        Game.nextScene = SceneType.MENU;
+        localStorage.removeItem("saveGame");
+        return;
       }
     } else {
       this.initEntity(
