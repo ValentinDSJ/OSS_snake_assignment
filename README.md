@@ -14,7 +14,7 @@ Once npm is installed, you can run the following command to install yarn.
 npm install -g yarn
 ```
 
-If yarn is not working after running this command, try to close your terminal or reopen it. Or visit https://classic.yarnpkg.com/lang/en/docs/install
+If yarn is not working after running this command, try to close your terminal and reopen it. Or visit https://classic.yarnpkg.com/lang/en/docs/install
 
 Then, to run the project, you must be at the root of the repository and run these following commands.
 
