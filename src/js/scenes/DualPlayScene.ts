@@ -55,55 +55,55 @@ export default class DualPlayScene extends Scene {
     if (!application) {
       return;
     }
-    // this.initEntity(
-    //   GamePrefabs.createBoard(
-    //       application,
-    //     (application as Application).app?.screen.width ?? 0,
-    //     (application as Application).app?.screen.height ?? 0
-    //   )
-    // );
-    // this.initEntity(GamePrefabs.createHTMLElement());
-    //
-    // this.initEntity(
-    //   GamePrefabs.createApple(
-    //     application,
-    //     application.blockSizeX,
-    //     application.blockSizeY,
-    //     application.app?.screen.width ?? 0,
-    //     application.app?.screen.height ?? 0,
-    //     application.nbBlocksWithWall
-    //   )
-    // );
-    //
-    // const head = GamePrefabs.createHead(
-    //     application,
-    //     application.app?.screen.width ?? 0,
-    //     application.app?.screen.height ?? 0,
-    // );
-    //
-    // this.initEntity(head);
-    //
-    // let body = GamePrefabs.createBody(
-    //     application,
-    //     application.app?.screen.width ?? 0,
-    //     application.app?.screen.height ?? 0,
-    //   0,
-    //   head[0] as Graphics,
-    //   head[1] as Velocity
-    // );
-    // this.initEntity(body);
-    //
-    // for (let i = 1; i < 3; i++) {
-    //   body = GamePrefabs.createBody(
-    //       application,
-    //       application.app?.screen.width ?? 0,
-    //       application.app?.screen.height ?? 0,
-    //       i, body[0] as Graphics, body[1] as Velocity);
-    //   this.initEntity(body);
-    // }
-    // this.initEntity(GamePrefabs.createPlayer());
+    this.initEntity(
+      GamePrefabs.createBoard(
+          application,
+        (application as Application).app?.screen.width ?? 0,
+        (application as Application).app?.screen.height ?? 0
+      )
+    );
+    this.initEntity(GamePrefabs.createHTMLElement());
 
-    // this.initEntity(GamePrefabs.createGameOver());
+    this.initEntity(
+      GamePrefabs.createApple(
+        application,
+        application.blockSizeX,
+        application.blockSizeY,
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
+        application.nbBlocksWithWall
+      )
+    );
+
+    const head = GamePrefabs.createHead(
+        application,
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
+    );
+
+    this.initEntity(head);
+
+    let body = GamePrefabs.createBody(
+        application,
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
+      0,
+      head[0] as Graphics,
+      head[1] as Velocity
+    );
+    this.initEntity(body);
+
+    for (let i = 1; i < 3; i++) {
+      body = GamePrefabs.createBody(
+          application,
+          application.app?.screen.width ?? 0,
+          application.app?.screen.height ?? 0,
+          i, body[0] as Graphics, body[1] as Velocity);
+      this.initEntity(body);
+    }
+    this.initEntity(GamePrefabs.createPlayer());
+
+    this.initEntity(GamePrefabs.createGameOver());
     this.initEntity(DualPlayPrefabs.createPause());
   }
 }

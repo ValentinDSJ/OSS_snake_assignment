@@ -15,9 +15,10 @@ export default class Scene {
         this.systemManager = new SystemManager();
     }
 
-    initEntity(components: Array<Component>) {
-        this.entityManager.addEntity(components);
+    initEntity(components: Array<Component>): number {
+        let id = this.entityManager.addEntity(components);
         this.componentManager.addComponents(components);
+        return id;
     }
 
     initSystems() { };

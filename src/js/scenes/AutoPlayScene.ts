@@ -97,7 +97,7 @@ export default class AutoPlayScene extends Scene {
           i, body[0] as Graphics, body[1] as Velocity);
       this.initEntity(body);
     }
-    this.initEntity(GamePrefabs.createPlayer());
+    this.initEntity(AutoPlayPrefabs.createBot());
 
     this.initEntity(GamePrefabs.createGameOver());
     this.initEntity(AutoPlayPrefabs.createPause());

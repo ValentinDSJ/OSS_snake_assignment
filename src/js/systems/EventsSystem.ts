@@ -5,6 +5,7 @@ import {System} from "../libs/ecs/System";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Pause, {getNamePause} from "../components/Pause";
 import Snake, {Direction, getNameSnake} from "../components/Snake";
+import Player, {getNamePlayer} from "../components/Player";
 
 export default class EventsSystem extends System {
   awake() { }
@@ -83,41 +84,28 @@ export default class EventsSystem extends System {
       if (gameOver?.over || pause?.isPaused) {
         return;
       }
-      const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
-      let snakeHead: Snake;
-      let snakeHeadGraphics: Graphics;
-      let direction;
+      const players = this.componentManager.getComponentsByType(getNamePlayer()) as Array<Player>;
 
-      for (const s of snake) {
-        const graphics = this.entityManager.getComponentsByType(s.idEntity!, getNameGraphics()) as Array<Graphics>;
-        let found = false;
+      for (const player of players) {
+        let snakeHead: Snake = this.entityManager.getComponentByType(player.head, getNameSnake()) as Snake;
+        let snakeHeadGraphics: Graphics = this.entityManager.getComponentByType(player.head, getNameGraphics()) as Graphics;
+        let direction = snakeHead.direction;
 
-        for (const graphic of graphics) {
-          if (graphic.type == GraphicsType.SNAKE_HEAD) {
-            direction = s.direction;
-            found = true;
-            snakeHead = s;
-            snakeHeadGraphics = graphic;
-            break;
-          }
+        console.log(player.keyEventLeft);
+        if (e.key === player.keyEventLeft && direction !== Direction.RIGHT && direction !== Direction.LEFT) {
+          this.setNextDirectionSnake(Direction.LEFT, snakeHead!, snakeHeadGraphics!);
         }
-        if (found) {
-          break;
+        if (e.key === player.keyEventRight && direction !== Direction.LEFT && direction !== Direction.RIGHT) {
+          this.setNextDirectionSnake(Direction.RIGHT, snakeHead!, snakeHeadGraphics!);
+        }
+        if (e.key === player.keyEventUp && direction !== Direction.DOWN && direction !== Direction.UP) {
+          this.setNextDirectionSnake(Direction.UP, snakeHead!, snakeHeadGraphics!);
+        }
+        if (e.key === player.keyEventDown && direction !== Direction.UP && direction !== Direction.DOWN) {
+          this.setNextDirectionSnake(Direction.DOWN, snakeHead!, snakeHeadGraphics!);
         }
       }
 
-      if (e.key === "ArrowLeft" && direction !== Direction.RIGHT && direction !== Direction.LEFT) {
-        this.setNextDirectionSnake(Direction.LEFT, snakeHead!, snakeHeadGraphics!);
-      }
-      if (e.key === "ArrowRight" && direction !== Direction.LEFT && direction !== Direction.RIGHT) {
-        this.setNextDirectionSnake(Direction.RIGHT, snakeHead!, snakeHeadGraphics!);
-      }
-      if (e.key === "ArrowUp" && direction !== Direction.DOWN && direction !== Direction.UP) {
-        this.setNextDirectionSnake(Direction.UP, snakeHead!, snakeHeadGraphics!);
-      }
-      if (e.key === "ArrowDown" && direction !== Direction.UP && direction !== Direction.DOWN) {
-        this.setNextDirectionSnake(Direction.DOWN, snakeHead!, snakeHeadGraphics!);
-      }
       if (e.key == "Escape") {
         if (pause) {
           pause.isPaused = true;

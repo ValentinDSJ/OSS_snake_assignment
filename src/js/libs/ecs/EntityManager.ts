@@ -7,7 +7,7 @@ export default class EntityManager {
     this.nextIdEntity = 0;
   }
 
-  addEntity(components: Array<Component>) {
+  addEntity(components: Array<Component>): number {
     components.map((component) => {
       component.idEntity = this.nextIdEntity;
       if (!this.entities.get(this.nextIdEntity)) {
@@ -16,14 +16,15 @@ export default class EntityManager {
           new Map<string, Array<Component>>()
         );
       }
-      if (!this.entities.get(this.nextIdEntity).get(component.name)) {
+      if (!this.entities.get(this.nextIdEntity)!.get(component.name)) {
         this.entities
-          .get(this.nextIdEntity)
+          .get(this.nextIdEntity)!
           .set(component.name, new Array<Component>());
       }
-      this.entities.get(this.nextIdEntity).get(component.name).push(component);
+      this.entities.get(this.nextIdEntity)!.get(component.name)!.push(component);
     });
     this.nextIdEntity++;
+    return this.nextIdEntity - 1;
   }
 
   addComponentToEntity(idEntity: number, component: Component) {
@@ -43,7 +44,9 @@ export default class EntityManager {
   }
 
   removeComponentOfEntity(idEntity: number, type: string) {
-    this.entities.get(idEntity).delete(type);
+    if (this.entities.get(idEntity)) {
+      this.entities.get(idEntity)!.delete(type);
+    }
   }
 
   getComponentsByType(idEntity: number, type: string): Array<Component> {
@@ -51,8 +54,8 @@ export default class EntityManager {
       return [];
     }
     if (!this.entities.get(idEntity)) return [];
-    if (!this.entities.get(idEntity).get(type)) return [];
-    return this.entities.get(idEntity).get(type);
+    if (!this.entities.get(idEntity)!.get(type)) return [];
+    return this.entities.get(idEntity)!.get(type)!;
   }
 
   getComponentByType(idEntity: number, type: string): Component {

@@ -22,6 +22,17 @@ import GameOverSystem from "../systems/GameOverSystem";
 
 export default class AutoPlayPrefabs {
 
+    static createBot(score?: number): Array<Component> {
+        let components = Array<Component>();
+
+        components.push(<Player>{
+            name: getNamePlayer(),
+            score: score ?? 0,
+            isBot: true
+        });
+        return components;
+    }
+
     static createPause(): Array<Component> {
         let components = Array<Component>();
         let events = new Map;

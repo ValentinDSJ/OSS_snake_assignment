@@ -8,7 +8,7 @@ import SnakeSystem from "../systems/SnakeSystem";
 import HTMLSystem from "../systems/HTMLSystem";
 import GameOverSystem from "../systems/GameOverSystem";
 import GameDetailsSystem from "../systems/GameDetailsSystem";
-import Graphics from "../components/Graphics";
+import Graphics, {GraphicsType} from "../components/Graphics";
 import AppleSystem from "../systems/AppleSystem";
 import SaveSystem from "../systems/SaveSystem";
 import VelocitySystem from "../systems/VelocitySystem";
@@ -72,7 +72,9 @@ export default class GameScene extends Scene {
       const savedGame = JSON.parse(savedGameString) as GameSaved;
 
       try {
-        this.initEntity(GamePrefabs.createPlayer(savedGame.score));
+        let head;
+        let body = Array<number>();
+
         for (const apple of savedGame.apples) {
           this.initEntity(GamePrefabs.createSavedApple(
               application.blockSizeX,
@@ -82,13 +84,24 @@ export default class GameScene extends Scene {
               apple.isAte
           ));
         }
+        let i = 0;
         for (const snake of savedGame.snakes) {
-          this.initEntity(GamePrefabs.createSavedSnake(
-              snake,
-              application.blockSizeX,
-              application.blockSizeY,
-          ))
+          if (snake.type == GraphicsType.SNAKE_HEAD) {
+            head = this.initEntity(GamePrefabs.createSavedSnake(
+                snake,
+                application.blockSizeX,
+                application.blockSizeY,
+            ));
+          } else {
+            body.push(this.initEntity(GamePrefabs.createSavedSnake(
+                snake,
+                application.blockSizeX,
+                application.blockSizeY,
+            )));
+          }
+          i++;
         }
+        this.initEntity(GamePrefabs.createPlayer(head, body, savedGame.score));
       } catch (e) {
         Game.nextScene = SceneType.MENU;
         localStorage.removeItem("saveGame");
@@ -112,9 +125,10 @@ export default class GameScene extends Scene {
           application.app?.screen.height ?? 0,
       );
 
-      this.initEntity(head);
+      let headId = this.initEntity(head);
+      let body = Array<number>();
 
-      let body = GamePrefabs.createBody(
+      let fsBody = GamePrefabs.createBody(
           application,
           application.app?.screen.width ?? 0,
           application.app?.screen.height ?? 0,
@@ -122,17 +136,16 @@ export default class GameScene extends Scene {
         head[0] as Graphics,
         head[1] as Velocity
       );
-      this.initEntity(body);
+      body.push(this.initEntity(fsBody));
 
       for (let i = 1; i < 3; i++) {
-        body = GamePrefabs.createBody(
+        body.push(this.initEntity(GamePrefabs.createBody(
             application,
             application.app?.screen.width ?? 0,
             application.app?.screen.height ?? 0,
-            i, body[0] as Graphics, body[1] as Velocity);
-        this.initEntity(body);
+            i, fsBody[0] as Graphics, fsBody[1] as Velocity)));
       }
-      this.initEntity(GamePrefabs.createPlayer());
+      this.initEntity(GamePrefabs.createPlayer(headId, body));
     }
 
     this.initEntity(GamePrefabs.createGameOver());
