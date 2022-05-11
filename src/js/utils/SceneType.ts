@@ -1,5 +1,7 @@
 export enum SceneType {
     MENU = 1,
     GAME,
-    RANKING
+    RANKING,
+    AUTO_PLAY,
+    DUAL_PLAY
 }

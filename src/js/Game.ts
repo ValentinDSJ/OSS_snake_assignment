@@ -6,6 +6,8 @@ import Application, { getNameApplication } from "./components/Application";
 import * as PIXI from "pixi.js";
 import {SceneType} from "./utils/SceneType";
 import RankingScene from "./scenes/RankingScene";
+import AutoPlayScene from "./scenes/AutoPlayScene";
+import DualPlayScene from "./scenes/DualPlayScene";
 
 export default class Game {
     private readonly sharedEntities: Array<Array<Component>>;
@@ -47,6 +49,8 @@ export default class Game {
         this.scenes = new Map<SceneType, () => Scene>();
         this.scenes.set(SceneType.MENU, () => new MenuScene());
         this.scenes.set(SceneType.GAME, () => new GameScene());
+        this.scenes.set(SceneType.AUTO_PLAY, () => new AutoPlayScene());
+        this.scenes.set(SceneType.DUAL_PLAY, () => new DualPlayScene());
         this.scenes.set(SceneType.RANKING, () => new RankingScene());
     }
 

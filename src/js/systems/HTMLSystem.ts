@@ -1,4 +1,3 @@
-import Sprite from "../components/Sprite";
 import { System } from "../libs/ecs/System";
 import HTML, {getNameHTML} from "../components/HTML";
 
@@ -28,6 +27,10 @@ export default class HTMLSystem extends System {
 
     components?.map(component => {
       // document.querySelector(component.element)?.classList.add('hidden');
+
+      if (component.onFinish) {
+        component.onFinish(component.idEntity!, this.entityManager, this.componentManager);
+      }
 
       component.eventsOnClick.forEach((value, key, map) => {
         const element = document.querySelector(`${component.element} ${key}`);

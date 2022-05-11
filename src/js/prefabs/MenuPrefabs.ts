@@ -62,6 +62,16 @@ export default class MenuPrefabs {
             Game.nextScene = SceneType.GAME;
         });
 
+        events.set(".dual-play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('game');
+            Game.nextScene = SceneType.DUAL_PLAY;
+        });
+
+        events.set(".auto-play-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+            document.querySelector('main')?.classList.add('game');
+            Game.nextScene = SceneType.AUTO_PLAY;
+        });
+
         events.set(".exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
         });
 
