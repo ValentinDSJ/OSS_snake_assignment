@@ -125,10 +125,16 @@ button {
 
 button.main-button {
     font-size: 3rem;
-    width: 350px;
+    width: 450px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
+}
+
+button.square-button {
+    width: 250px;
+    height: 250px;
+    font-size: 2.5rem;
 }
 
 button.small-button {

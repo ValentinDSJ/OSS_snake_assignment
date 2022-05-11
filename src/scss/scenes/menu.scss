@@ -6,6 +6,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     background: var(--color-extra-light-green);
     background: linear-gradient(180deg, var(--color-extra-light-green) 0%, var(--color-light-green) 50%, var(--color-green) 100%);
     background-size: cover;
@@ -13,13 +14,34 @@
     .title {
         text-align: center;
         padding-top: 50px;
+
+        h1 {
+            line-height: 6rem;
+        }
     }
 
     .buttons {
+        padding-inline: 10%;
         display: flex;
         flex-direction: column;
+        gap: 50px;
+        justify-content: center;
         text-align: center;
         margin-top: auto;
         margin-bottom: auto;
+
+        .exit-button {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            font-size: 2em;
+            width: 200px;
+        }
+
+        .l {
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+        }
     }
 }
