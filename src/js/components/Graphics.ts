@@ -6,7 +6,8 @@ export enum GraphicsType {
     SNAKE,
     SNAKE_HEAD,
     APPLE,
-    GRASS
+    GRASS,
+    SNAKE_TAIL
 }
 
 export default interface Graphics extends Component {

@@ -44,7 +44,7 @@ export default class EventsSystem extends System {
     // const blockSize = application.blockSizeX;
     let x = Math.floor((snakeHeadGraphics!.sprite!.x - (snakeHeadGraphics!.sprite!.width / 2)) / application.blockSizeX) * application.blockSizeX + (application.blockSizeX / 2);
     let y = Math.floor((snakeHeadGraphics!.sprite!.y - (snakeHeadGraphics!.sprite!.height / 2)) / application.blockSizeY) * application.blockSizeY + (application.blockSizeY / 2);
-    let nbToRemove = 0;
+    let nbToRemove: number;
 
     if (snakeHead.direction == Direction.DOWN) {
       y += application.blockSizeY;

@@ -19,6 +19,7 @@ import {SnakeSaved} from "../utils/GameSaved";
 import Apple, {getNameApple} from "../components/Apple";
 import Restart, {getNameRestart} from "../components/Restart";
 import GameOverSystem from "../systems/GameOverSystem";
+import Board, {getNameBoard} from "../components/Board";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -292,6 +293,9 @@ export default class GamePrefabs {
       }
       moduloColor++;
     }
+    components.push(<Board>{
+      name: getNameBoard()
+    });
     return components;
   }
 
