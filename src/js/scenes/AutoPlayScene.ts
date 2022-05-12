@@ -13,6 +13,7 @@ import AppleSystem from "../systems/AppleSystem";
 import VelocitySystem from "../systems/VelocitySystem";
 import RestartSystem from "../systems/RestartSystem";
 import AutoPlayPrefabs from "../prefabs/AutoPlayPrefabs";
+import AIControllerSystem from "../systems/AIControllerSystem";
 
 export default class AutoPlayScene extends Scene {
   initSystems() {
@@ -43,6 +44,9 @@ export default class AutoPlayScene extends Scene {
     this.systemManager.addSystem(
         new RestartSystem(this.entityManager, this.componentManager)
     );
+    this.systemManager.addSystem(
+        new AIControllerSystem(this.entityManager, this.componentManager)
+    );
   }
 
   initEntities() {
@@ -52,23 +56,23 @@ export default class AutoPlayScene extends Scene {
       return;
     }
     this.initEntity(
-      GamePrefabs.createBoard(
-          application,
-        (application as Application).app?.screen.width ?? 0,
-        (application as Application).app?.screen.height ?? 0
-      )
+        GamePrefabs.createBoard(
+            application,
+            (application as Application).app?.screen.width ?? 0,
+            (application as Application).app?.screen.height ?? 0
+        )
     );
     this.initEntity(GamePrefabs.createHTMLElement());
 
     this.initEntity(
-      GamePrefabs.createApple(
-        application,
-        application.blockSizeX,
-        application.blockSizeY,
-        application.app?.screen.width ?? 0,
-        application.app?.screen.height ?? 0,
-        application.nbBlocksWithWall
-      )
+        GamePrefabs.createApple(
+            application,
+            application.blockSizeX,
+            application.blockSizeY,
+            application.app?.screen.width ?? 0,
+            application.app?.screen.height ?? 0,
+            application.nbBlocksWithWall
+        )
     );
 
     const head = GamePrefabs.createHead(
@@ -77,27 +81,27 @@ export default class AutoPlayScene extends Scene {
         application.app?.screen.height ?? 0,
     );
 
-    this.initEntity(head);
+    let headId = this.initEntity(head);
+    let body = Array<number>();
 
-    let body = GamePrefabs.createBody(
+    let fsBody = GamePrefabs.createBody(
         application,
         application.app?.screen.width ?? 0,
         application.app?.screen.height ?? 0,
-      0,
-      head[0] as Graphics,
-      head[1] as Velocity
+        0,
+        head[0] as Graphics,
+        head[1] as Velocity
     );
-    this.initEntity(body);
+    body.push(this.initEntity(fsBody));
 
     for (let i = 1; i < 3; i++) {
-      body = GamePrefabs.createBody(
+      body.push(this.initEntity(GamePrefabs.createBody(
           application,
           application.app?.screen.width ?? 0,
           application.app?.screen.height ?? 0,
-          i, body[0] as Graphics, body[1] as Velocity);
-      this.initEntity(body);
+          i, fsBody[0] as Graphics, fsBody[1] as Velocity)));
     }
-    this.initEntity(AutoPlayPrefabs.createBot());
+    this.initEntity(AutoPlayPrefabs.createBot(headId, body));
 
     this.initEntity(GamePrefabs.createGameOver());
     this.initEntity(AutoPlayPrefabs.createPause());

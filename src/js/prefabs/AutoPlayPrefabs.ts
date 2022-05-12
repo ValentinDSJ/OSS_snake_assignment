@@ -22,12 +22,18 @@ import GameOverSystem from "../systems/GameOverSystem";
 
 export default class AutoPlayPrefabs {
 
-    static createBot(score?: number): Array<Component> {
+    static createBot(head: number, body: Array<number>, score?: number): Array<Component> {
         let components = Array<Component>();
 
         components.push(<Player>{
             name: getNamePlayer(),
             score: score ?? 0,
+            keyEventRight: 'ArrowRight',
+            keyEventLeft: 'ArrowLeft',
+            keyEventDown: 'ArrowDown',
+            keyEventUp: 'ArrowUp',
+            head: head,
+            body: body,
             isBot: true
         });
         return components;

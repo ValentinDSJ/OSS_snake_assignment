@@ -18,7 +18,7 @@ export default class RestartSystem extends System {
     const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
 
     for (let i = 0; i < snakes.length; i++) {
-      if (i < 4) {
+      if (i < 3) {
         continue;
       }
       const snake = snakes.pop();

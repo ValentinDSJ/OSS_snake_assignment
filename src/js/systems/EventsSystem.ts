@@ -44,6 +44,7 @@ export default class EventsSystem extends System {
     // const blockSize = application.blockSizeX;
     let x = Math.floor((snakeHeadGraphics!.sprite!.x - (snakeHeadGraphics!.sprite!.width / 2)) / application.blockSizeX) * application.blockSizeX + (application.blockSizeX / 2);
     let y = Math.floor((snakeHeadGraphics!.sprite!.y - (snakeHeadGraphics!.sprite!.height / 2)) / application.blockSizeY) * application.blockSizeY + (application.blockSizeY / 2);
+    let nbToRemove = 0;
 
     if (snakeHead.direction == Direction.DOWN) {
       y += application.blockSizeY;
@@ -51,6 +52,10 @@ export default class EventsSystem extends System {
       x += application.blockSizeX;
     }
 
+    nbToRemove = snakeHead!.angles.length;
+    for (let i = 0; i < nbToRemove; i++) {
+      snakeHead!.angles.pop();
+    }
     snakeHead!.angles.push({
       direction: direction,
       x: x,
@@ -59,6 +64,9 @@ export default class EventsSystem extends System {
     for (const s of snake) {
       if (s.idEntity == snakeHead!.idEntity)
         continue;
+      for (let i = 0; i < nbToRemove; i++) {
+        s.angles.pop();
+      }
       s.angles.push({
         direction: direction,
         x: x,
@@ -91,7 +99,6 @@ export default class EventsSystem extends System {
         let snakeHeadGraphics: Graphics = this.entityManager.getComponentByType(player.head, getNameGraphics()) as Graphics;
         let direction = snakeHead.direction;
 
-        console.log(player.keyEventLeft);
         if (e.key === player.keyEventLeft && direction !== Direction.RIGHT && direction !== Direction.LEFT) {
           this.setNextDirectionSnake(Direction.LEFT, snakeHead!, snakeHeadGraphics!);
         }
