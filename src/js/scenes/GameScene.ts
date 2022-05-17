@@ -8,13 +8,13 @@ import SnakeSystem from "../systems/SnakeSystem";
 import HTMLSystem from "../systems/HTMLSystem";
 import GameOverSystem from "../systems/GameOverSystem";
 import GameDetailsSystem from "../systems/GameDetailsSystem";
-import Graphics, {GraphicsType} from "../components/Graphics";
+import Graphics, { GraphicsType } from "../components/Graphics";
 import AppleSystem from "../systems/AppleSystem";
 import SaveSystem from "../systems/SaveSystem";
 import VelocitySystem from "../systems/VelocitySystem";
 import GameSaved from "../utils/GameSaved";
 import Game from "../Game";
-import {SceneType} from "../utils/SceneType";
+import { SceneType } from "../utils/SceneType";
 import RestartSystem from "../systems/RestartSystem";
 
 export default class GameScene extends Scene {
@@ -29,30 +29,32 @@ export default class GameScene extends Scene {
       new SnakeSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new HTMLSystem(this.entityManager, this.componentManager)
+      new HTMLSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new GameOverSystem(this.entityManager, this.componentManager)
+      new GameOverSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new GameDetailsSystem(this.entityManager, this.componentManager)
+      new GameDetailsSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new VelocitySystem(this.entityManager, this.componentManager)
+      new VelocitySystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new AppleSystem(this.entityManager, this.componentManager)
+      new AppleSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new SaveSystem(this.entityManager, this.componentManager)
+      new SaveSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new RestartSystem(this.entityManager, this.componentManager)
+      new RestartSystem(this.entityManager, this.componentManager)
     );
   }
 
   initEntities() {
-    const application = this.componentManager.getComponentByType("Application") as Application;
+    const application = this.componentManager.getComponentByType(
+      "Application"
+    ) as Application;
     const loadGame = localStorage.getItem("loadGame") == "true";
     const savedGameString = localStorage.getItem("saveGame");
 
@@ -61,7 +63,7 @@ export default class GameScene extends Scene {
     }
     this.initEntity(
       GamePrefabs.createBoard(
-          application,
+        application,
         (application as Application).app?.screen.width ?? 0,
         (application as Application).app?.screen.height ?? 0
       )
@@ -76,28 +78,36 @@ export default class GameScene extends Scene {
         let body = Array<number>();
 
         for (const apple of savedGame.apples) {
-          this.initEntity(GamePrefabs.createSavedApple(
+          this.initEntity(
+            GamePrefabs.createSavedApple(
               application.blockSizeX,
               application.blockSizeY,
               apple.x,
               apple.y,
               apple.isAte
-          ));
+            )
+          );
         }
         let i = 0;
         for (const snake of savedGame.snakes) {
           if (snake.type == GraphicsType.SNAKE_HEAD) {
-            head = this.initEntity(GamePrefabs.createSavedSnake(
+            head = this.initEntity(
+              GamePrefabs.createSavedSnake(
                 snake,
                 application.blockSizeX,
-                application.blockSizeY,
-            ));
+                application.blockSizeY
+              )
+            );
           } else {
-            body.push(this.initEntity(GamePrefabs.createSavedSnake(
-                snake,
-                application.blockSizeX,
-                application.blockSizeY,
-            )));
+            body.push(
+              this.initEntity(
+                GamePrefabs.createSavedSnake(
+                  snake,
+                  application.blockSizeX,
+                  application.blockSizeY
+                )
+              )
+            );
           }
           i++;
         }
@@ -110,40 +120,39 @@ export default class GameScene extends Scene {
     } else {
       this.initEntity(
         GamePrefabs.createApple(
-            application,
-            application.blockSizeX,
-            application.blockSizeY,
-            application.app?.screen.width ?? 0,
-            application.app?.screen.height ?? 0,
-            application.nbBlocksWithWall
+          application,
+          application.blockSizeX,
+          application.blockSizeY,
+          application.app?.screen.width ?? 0,
+          application.app?.screen.height ?? 0,
+          application.nbBlocksWithWall
         )
       );
 
-      const head = GamePrefabs.createHead(
-          application,
-          application.app?.screen.width ?? 0,
-          application.app?.screen.height ?? 0,
-      );
+      const head = GamePrefabs.createHead(application, "middle");
 
       let headId = this.initEntity(head);
       let body = Array<number>();
 
       let fsBody = GamePrefabs.createBody(
-          application,
-          application.app?.screen.width ?? 0,
-          application.app?.screen.height ?? 0,
-        0,
+        application,
+        "middle",
         head[0] as Graphics,
         head[1] as Velocity
       );
       body.push(this.initEntity(fsBody));
 
       for (let i = 1; i < 3; i++) {
-        body.push(this.initEntity(GamePrefabs.createBody(
-            application,
-            application.app?.screen.width ?? 0,
-            application.app?.screen.height ?? 0,
-            i, fsBody[0] as Graphics, fsBody[1] as Velocity)));
+        body.push(
+          this.initEntity(
+            GamePrefabs.createBody(
+              application,
+              "middle",
+              fsBody[0] as Graphics,
+              fsBody[1] as Velocity
+            )
+          )
+        );
       }
       this.initEntity(GamePrefabs.createPlayer(headId, body));
     }

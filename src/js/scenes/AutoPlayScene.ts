@@ -27,79 +27,80 @@ export default class AutoPlayScene extends Scene {
       new SnakeSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new HTMLSystem(this.entityManager, this.componentManager)
+      new HTMLSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new GameOverSystem(this.entityManager, this.componentManager)
+      new GameOverSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new GameDetailsSystem(this.entityManager, this.componentManager)
+      new GameDetailsSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new VelocitySystem(this.entityManager, this.componentManager)
+      new VelocitySystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new AppleSystem(this.entityManager, this.componentManager)
+      new AppleSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new RestartSystem(this.entityManager, this.componentManager)
+      new RestartSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new AIControllerSystem(this.entityManager, this.componentManager)
+      new AIControllerSystem(this.entityManager, this.componentManager)
     );
   }
 
   initEntities() {
-    const application = this.componentManager.getComponentByType("Application") as Application;
+    const application = this.componentManager.getComponentByType(
+      "Application"
+    ) as Application;
 
     if (!application) {
       return;
     }
     this.initEntity(
-        GamePrefabs.createBoard(
-            application,
-            (application as Application).app?.screen.width ?? 0,
-            (application as Application).app?.screen.height ?? 0
-        )
+      GamePrefabs.createBoard(
+        application,
+        (application as Application).app?.screen.width ?? 0,
+        (application as Application).app?.screen.height ?? 0
+      )
     );
     this.initEntity(GamePrefabs.createHTMLElement());
 
     this.initEntity(
-        GamePrefabs.createApple(
-            application,
-            application.blockSizeX,
-            application.blockSizeY,
-            application.app?.screen.width ?? 0,
-            application.app?.screen.height ?? 0,
-            application.nbBlocksWithWall
-        )
-    );
-
-    const head = GamePrefabs.createHead(
+      GamePrefabs.createApple(
         application,
+        application.blockSizeX,
+        application.blockSizeY,
         application.app?.screen.width ?? 0,
         application.app?.screen.height ?? 0,
+        application.nbBlocksWithWall
+      )
     );
+
+    const head = GamePrefabs.createHead(application, "middle");
 
     let headId = this.initEntity(head);
     let body = Array<number>();
 
     let fsBody = GamePrefabs.createBody(
-        application,
-        application.app?.screen.width ?? 0,
-        application.app?.screen.height ?? 0,
-        0,
-        head[0] as Graphics,
-        head[1] as Velocity
+      application,
+      "middle",
+      head[0] as Graphics,
+      head[1] as Velocity
     );
     body.push(this.initEntity(fsBody));
 
     for (let i = 1; i < 3; i++) {
-      body.push(this.initEntity(GamePrefabs.createBody(
-          application,
-          application.app?.screen.width ?? 0,
-          application.app?.screen.height ?? 0,
-          i, fsBody[0] as Graphics, fsBody[1] as Velocity)));
+      body.push(
+        this.initEntity(
+          GamePrefabs.createBody(
+            application,
+            "middle",
+            fsBody[0] as Graphics,
+            fsBody[1] as Velocity
+          )
+        )
+      );
     }
     this.initEntity(AutoPlayPrefabs.createBot(headId, body));
 

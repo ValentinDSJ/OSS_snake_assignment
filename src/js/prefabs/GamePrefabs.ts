@@ -2,102 +2,147 @@ import * as PIXI from "pixi.js";
 import appleSprite from "../../../assets/sprites/food.png";
 import snakeBody from "../../../assets/sprites/nibbler_snake_core.png";
 import snakeHead from "../../../assets/sprites/nibbler_snake_head.png";
-import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
-import Velocity, {getNameVelocity} from "../components/Velocity";
+import Graphics, {
+  getNameGraphics,
+  GraphicsType,
+} from "../components/Graphics";
+import Velocity, { getNameVelocity } from "../components/Velocity";
 import Game from "../Game";
-import {SceneType} from "../utils/SceneType";
+import { SceneType } from "../utils/SceneType";
 import EntityManager from "../libs/ecs/EntityManager";
 import ComponentManager from "../libs/ecs/ComponentManager";
-import HTML, {getNameHTML} from "../components/HTML";
-import GameOver, {getNameGameOver} from "../components/GameOver";
-import Player, {getNamePlayer} from "../components/Player";
-import Pause, {getNamePause} from "../components/Pause";
-import Snake, {Direction, getNameSnake} from "../components/Snake";
+import HTML, { getNameHTML } from "../components/HTML";
+import GameOver, { getNameGameOver } from "../components/GameOver";
+import Player, { getNamePlayer } from "../components/Player";
+import Pause, { getNamePause } from "../components/Pause";
+import Snake, { Direction, getNameSnake } from "../components/Snake";
 import Application from "../components/Application";
-import Save, {getNameSave} from "../components/Save";
-import {SnakeSaved} from "../utils/GameSaved";
-import Apple, {getNameApple} from "../components/Apple";
-import Restart, {getNameRestart} from "../components/Restart";
+import Save, { getNameSave } from "../components/Save";
+import { SnakeSaved } from "../utils/GameSaved";
+import Apple, { getNameApple } from "../components/Apple";
+import Restart, { getNameRestart } from "../components/Restart";
 import GameOverSystem from "../systems/GameOverSystem";
-import Board, {getNameBoard} from "../components/Board";
+import Board, { getNameBoard } from "../components/Board";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
     let components = Array<Component>();
-    let events = new Map;
+    let events = new Map();
 
-    events.set(".instructions .labels", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('.instructions');
-      if (element?.classList.contains('close')) {
-        element.classList.remove('close');
-      } else {
-        element?.classList.add('close');
+    events.set(
+      ".instructions .labels",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        const element = document.querySelector(".instructions");
+        if (element?.classList.contains("close")) {
+          element.classList.remove("close");
+        } else {
+          element?.classList.add("close");
+        }
       }
-    });
+    );
 
     components.push(<HTML>{
       name: getNameHTML(),
       onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
-        document.querySelector('main')?.classList.add('game');
+        document.querySelector("main")?.classList.add("game");
       },
-      element: 'body main .game-scene',
-      eventsOnClick: events
+      element: "body main .game-scene",
+      eventsOnClick: events,
     });
     return components;
   }
 
   static createHead(
-      app: Application,
-      screenWidth: number,
-      screenHeight: number,
+    app: Application,
+    corner: "top-left" | "middle" | "bottom-right"
   ): Array<Component> {
     let components = Array<Component>();
 
     const snake = PIXI.Sprite.from(snakeHead);
 
-
     snake.width = app.blockSizeX;
     snake.height = app.blockSizeY;
 
-    snake.x = app.blockSizeX * 20 + (snake.width / 2);
-    snake.y = app.blockSizeY * 20 + (snake.height / 2);
-    // snake.x += snake.width / 2;
-    // snake.y += snake.height / 2;
+    console.log("blockSizeX", app.blockSizeX);
+    console.log("blockSizeY", app.blockSizeY);
 
-
-    snake.angle = 0;
-    // snake.pivot.set(snake.width / 2, snake.height / 2)
-    // console.log(snake.pivot);
+    if (corner === "middle") {
+      snake.x = app.blockSizeX * 20 + snake.width / 2;
+      snake.y = app.blockSizeY * 20 + snake.height / 2;
+      snake.angle = 0;
+      components.push(<Graphics>{
+        name: getNameGraphics(),
+        sprite: snake,
+        type: GraphicsType.SNAKE_HEAD,
+      });
+      components.push(<Velocity>{
+        name: getNameVelocity(),
+        x: 0,
+        y: -2,
+        speed: 2,
+        skip: 0,
+      });
+      components.push(<Snake>{
+        name: getNameSnake(),
+        direction: Direction.UP,
+        angles: [],
+        isInit: true,
+      });
+    } else if (corner === "top-left") {
+      snake.x = app.blockSizeX + 10;
+      snake.y = app.blockSizeY + 10;
+      snake.angle = 90;
+      components.push(<Graphics>{
+        name: getNameGraphics(),
+        sprite: snake,
+        type: GraphicsType.SNAKE_HEAD,
+      });
+      components.push(<Velocity>{
+        name: getNameVelocity(),
+        x: 0,
+        y: 2,
+        speed: 2,
+        skip: 0,
+      });
+      components.push(<Snake>{
+        name: getNameSnake(),
+        direction: Direction.DOWN,
+        angles: [],
+        isInit: true,
+      });
+    } else if (corner === "bottom-right") {
+      snake.x = app.blockSizeX * 20 - 10;
+      snake.y = app.blockSizeY * 20 - 10;
+      snake.angle = 0;
+      components.push(<Graphics>{
+        name: getNameGraphics(),
+        sprite: snake,
+        type: GraphicsType.SNAKE_HEAD,
+      });
+      components.push(<Velocity>{
+        name: getNameVelocity(),
+        x: 0,
+        y: -2,
+        speed: 2,
+        skip: 0,
+      });
+      components.push(<Snake>{
+        name: getNameSnake(),
+        direction: Direction.UP,
+        angles: [],
+        isInit: true,
+      });
+    }
     snake.anchor.set(0.5);
 
-    components.push(<Graphics>{
-      name: getNameGraphics(),
-      sprite: snake,
-      type: GraphicsType.SNAKE_HEAD
-    });
-    components.push(<Velocity>{
-      name: getNameVelocity(),
-      x: 0,
-      y: -2,
-      speed: 2,
-      skip: 0
-    });
-    components.push(<Snake>{
-      name: getNameSnake(),
-      direction: Direction.UP,
-      angles: [],
-      isInit: true
-    });
     return components;
   }
 
   static createBody(
-      app: Application,
-      screenWidth: number,
-      screenHeight: number,
-      currentSize: number,
-      tail: Graphics,
-      velocity: Velocity
+    app: Application,
+    corner: "top-left" | "middle" | "bottom-right",
+    tail: Graphics,
+    velocity: Velocity
   ): Array<Component> {
     let components = Array<Component>();
 
@@ -115,28 +160,28 @@ export default class GamePrefabs {
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,
-      type: GraphicsType.SNAKE
+      type: GraphicsType.SNAKE,
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
       x: velocity.x,
       y: velocity.y,
       speed: velocity.speed,
-      skip: 0
+      skip: 0,
     });
     components.push(<Snake>{
       name: getNameSnake(),
-      direction: Direction.UP,
-      angles: []
+      direction: corner === "top-left" ? Direction.DOWN : Direction.UP,
+      angles: [],
     });
     return components;
   }
 
   static createDynamicBody(
-      app: Application,
-      tail: Graphics,
-      velocity: Velocity,
-      dependsOn: Snake
+    app: Application,
+    tail: Graphics,
+    velocity: Velocity,
+    dependsOn: Snake
   ): Array<Component> {
     let components = Array<Component>();
 
@@ -155,25 +200,32 @@ export default class GamePrefabs {
       name: getNameGraphics(),
       sprite: snake,
       type: GraphicsType.SNAKE,
-      isInit: false
+      isInit: false,
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
       x: 0,
       y: 0,
       speed: velocity.speed,
-      skip: 0
+      skip: 0,
     });
     components.push(<Snake>{
       name: getNameSnake(),
       direction: Direction.UP,
       angles: [],
-      dependsOn: dependsOn
+      dependsOn: dependsOn,
     });
     return components;
   }
 
-  static createApple(app: Application, blockSizeX: number, blockSizeY: number, screenWidth: number, screenHeight: number, nbBlocks: number): Array<Component> {
+  static createApple(
+    app: Application,
+    blockSizeX: number,
+    blockSizeY: number,
+    screenWidth: number,
+    screenHeight: number,
+    nbBlocks: number
+  ): Array<Component> {
     let components = Array<Component>();
 
     const apple = PIXI.Sprite.from(appleSprite);
@@ -185,16 +237,22 @@ export default class GamePrefabs {
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: apple,
-      type: GraphicsType.APPLE
+      type: GraphicsType.APPLE,
     });
     components.push(<Apple>{
       name: getNameApple(),
-      isAte: false
+      isAte: false,
     });
     return components;
   }
 
-  static createSavedApple(blockSizeX: number, blockSizeY: number, x: number, y: number, isAte: boolean): Array<Component> {
+  static createSavedApple(
+    blockSizeX: number,
+    blockSizeY: number,
+    x: number,
+    y: number,
+    isAte: boolean
+  ): Array<Component> {
     let components = Array<Component>();
 
     const apple = PIXI.Sprite.from(appleSprite);
@@ -206,19 +264,25 @@ export default class GamePrefabs {
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: apple,
-      type: GraphicsType.APPLE
+      type: GraphicsType.APPLE,
     });
     components.push(<Apple>{
       name: getNameApple(),
-      isAte: isAte
+      isAte: isAte,
     });
     return components;
   }
 
-  static createSavedSnake(savedSnake: SnakeSaved, blockSizeX: number, blockSizeY: number): Array<Component> {
+  static createSavedSnake(
+    savedSnake: SnakeSaved,
+    blockSizeX: number,
+    blockSizeY: number
+  ): Array<Component> {
     let components = Array<Component>();
 
-    const snake = PIXI.Sprite.from(savedSnake.type == GraphicsType.SNAKE_HEAD ? snakeHead : snakeBody);
+    const snake = PIXI.Sprite.from(
+      savedSnake.type == GraphicsType.SNAKE_HEAD ? snakeHead : snakeBody
+    );
 
     snake.x = savedSnake.x;
     snake.y = savedSnake.y;
@@ -228,7 +292,6 @@ export default class GamePrefabs {
 
     // snake.x += snake.width / 2;
     // snake.y += snake.height / 2;
-
 
     snake.angle = 0;
     snake.anchor.set(0.5);
@@ -243,13 +306,13 @@ export default class GamePrefabs {
       x: savedSnake.velocity.x,
       y: savedSnake.velocity.y,
       speed: savedSnake.velocity.speed,
-      skip: savedSnake.velocity.skip
+      skip: savedSnake.velocity.skip,
     });
     components.push(<Snake>{
       name: getNameSnake(),
       direction: savedSnake.direction,
       angles: savedSnake.angles,
-      isInit: savedSnake.isInit
+      isInit: savedSnake.isInit,
     });
     return components;
   }
@@ -260,163 +323,206 @@ export default class GamePrefabs {
     let moduloColor = 1;
     for (let i = 0; i < app.nbBlocksWithWall; i++) {
       for (let j = 0; j < app.nbBlocksWithWall; j++) {
-        if (i == 0 || j == 0 || i == app.nbBlocksWithWall - 1 || j == app.nbBlocksWithWall - 1) {
+        if (
+          i == 0 ||
+          j == 0 ||
+          i == app.nbBlocksWithWall - 1 ||
+          j == app.nbBlocksWithWall - 1
+        ) {
           const graphics = new PIXI.Graphics();
 
-          graphics.beginFill(0xA98467);
-          graphics.drawRect(i * app.blockSizeX, j * app.blockSizeY, app.blockSizeX, app.blockSizeY);
+          graphics.beginFill(0xa98467);
+          graphics.drawRect(
+            i * app.blockSizeX,
+            j * app.blockSizeY,
+            app.blockSizeX,
+            app.blockSizeY
+          );
           graphics.endFill();
 
           components.push(<Graphics>{
             name: getNameGraphics(),
             graphics: graphics,
-            type: GraphicsType.WALL
+            type: GraphicsType.WALL,
           });
           continue;
         }
         const graphics = new PIXI.Graphics();
 
         if (moduloColor % 2) {
-          graphics.beginFill(0xDDE5B6);
+          graphics.beginFill(0xdde5b6);
         } else {
-          graphics.beginFill(0xADC178);
+          graphics.beginFill(0xadc178);
         }
-        graphics.drawRect(i * app.blockSizeX, j * app.blockSizeY, app.blockSizeX, app.blockSizeY);
+        graphics.drawRect(
+          i * app.blockSizeX,
+          j * app.blockSizeY,
+          app.blockSizeX,
+          app.blockSizeY
+        );
         graphics.endFill();
 
         components.push(<Graphics>{
           name: getNameGraphics(),
           graphics: graphics,
-          type: GraphicsType.GRASS
+          type: GraphicsType.GRASS,
         });
         moduloColor++;
       }
       moduloColor++;
     }
     components.push(<Board>{
-      name: getNameBoard()
+      name: getNameBoard(),
     });
     return components;
   }
 
   static createGameOver(): Array<Component> {
     let components = Array<Component>();
-    let events = new Map;
+    let events = new Map();
 
     let gameOver = components.push(<GameOver>{
       name: getNameGameOver(),
       over: false,
       exit: false,
-      scoreSaved: false
+      scoreSaved: false,
     });
-    events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const restart = cm.getComponentByType(getNameRestart()) as Restart;
-      restart.click = true;
+    events.set(
+      ".game-over .restart-button",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        const restart = cm.getComponentByType(getNameRestart()) as Restart;
+        restart.click = true;
 
-      GameOverSystem.saveLatestScoreIfExist();
-    });
+        GameOverSystem.saveLatestScoreIfExist();
+      }
+    );
 
-    events.set(".game-over .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      let gameOver = cm.getComponentByType(getNameGameOver()) as GameOver;
-      const element = document.querySelector('body main');
-      const pauseElement = document.querySelector('body main .game-scene .game-over');
+    events.set(
+      ".game-over .exit-button",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        let gameOver = cm.getComponentByType(getNameGameOver()) as GameOver;
+        const element = document.querySelector("body main");
+        const pauseElement = document.querySelector(
+          "body main .game-scene .game-over"
+        );
 
-      gameOver.exit = true;
-      pauseElement?.classList.add("hidden");
-      element?.classList.remove("game");
-      setTimeout(function () {
-        Game.nextScene = SceneType.MENU;
-      }, 500);
-    });
+        gameOver.exit = true;
+        pauseElement?.classList.add("hidden");
+        element?.classList.remove("game");
+        setTimeout(function () {
+          Game.nextScene = SceneType.MENU;
+        }, 500);
+      }
+    );
 
     components.push(<HTML>{
       name: getNameHTML(),
-      element: 'body main .game-scene',
-      eventsOnClick: events
+      element: "body main .game-scene",
+      eventsOnClick: events,
     });
     return components;
   }
 
-  static createPlayer(head: number, body: Array<number>, score?: number): Array<Component> {
+  static createPlayer(
+    head: number,
+    body: Array<number>,
+    score?: number,
+    playerNb: number = 0
+  ): Array<Component> {
     let components = Array<Component>();
 
     components.push(<Player>{
       name: getNamePlayer(),
       score: score ?? 0,
-      keyEventRight: 'ArrowRight',
-      keyEventLeft: 'ArrowLeft',
-      keyEventDown: 'ArrowDown',
-      keyEventUp: 'ArrowUp',
+      keyEventRight: playerNb === 0 ? "ArrowRight" : "d",
+      keyEventLeft: playerNb === 0 ? "ArrowLeft" : "a",
+      keyEventDown: playerNb === 0 ? "ArrowDown" : "s",
+      keyEventUp: playerNb === 0 ? "ArrowUp" : "w",
       head: head,
-      body: body
+      body: body,
     });
     return components;
   }
 
   static createPause(): Array<Component> {
     let components = Array<Component>();
-    let events = new Map;
+    let events = new Map();
 
-    events.set(".pause .resume-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main .game-scene .pause');
-      const pause = cm.getComponentByType(getNamePause()) as Pause;
+    events.set(
+      ".pause .resume-button",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        const element = document.querySelector("body main .game-scene .pause");
+        const pause = cm.getComponentByType(getNamePause()) as Pause;
 
-      if (pause) {
-        pause.isPaused = false;
+        if (pause) {
+          pause.isPaused = false;
+        }
+
+        element?.classList.add("hidden");
       }
+    );
 
-      element?.classList.add("hidden");
-    });
+    events.set(
+      ".pause .exit-button",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        const element = document.querySelector("body main");
+        const pauseElement = document.querySelector(
+          "body main .game-scene .pause"
+        );
 
-    events.set(".pause .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main');
-      const pauseElement = document.querySelector('body main .game-scene .pause');
-
-      pauseElement?.classList.add("hidden");
-      element?.classList.remove("game");
-      setTimeout(function () {
-        Game.nextScene = SceneType.MENU;
-      }, 500);
-    });
-
-    events.set(".pause .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const element = document.querySelector('body main .game-scene .pause');const pause = cm.getComponentByType(getNamePause()) as Pause;
-
-      if (pause) {
-        pause.isPaused = false;
+        pauseElement?.classList.add("hidden");
+        element?.classList.remove("game");
+        setTimeout(function () {
+          Game.nextScene = SceneType.MENU;
+        }, 500);
       }
+    );
 
-      element?.classList.add("hidden");
+    events.set(
+      ".pause .restart-button",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        const element = document.querySelector("body main .game-scene .pause");
+        const pause = cm.getComponentByType(getNamePause()) as Pause;
 
-      const restart = cm.getComponentByType(getNameRestart()) as Restart;
+        if (pause) {
+          pause.isPaused = false;
+        }
 
-      restart.click = true;
-    });
+        element?.classList.add("hidden");
 
-    events.set(".pause .save-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
-      const save = cm.getComponentByType(getNameSave()) as Save;
+        const restart = cm.getComponentByType(getNameRestart()) as Restart;
 
-      save.click = true;
-    });
+        restart.click = true;
+      }
+    );
+
+    events.set(
+      ".pause .save-button",
+      (idEntity: number, em: EntityManager, cm: ComponentManager) => {
+        const save = cm.getComponentByType(getNameSave()) as Save;
+
+        save.click = true;
+      }
+    );
     components.push(<HTML>{
       name: getNameHTML(),
       onReady: (idEntity, em: EntityManager, cm: ComponentManager) => {
-        document.querySelector('main')?.classList.add('game');
+        document.querySelector("main")?.classList.add("game");
       },
-      element: 'body main .game-scene',
-      eventsOnClick: events
+      element: "body main .game-scene",
+      eventsOnClick: events,
     });
     components.push(<Pause>{
       name: getNamePause(),
-      isPaused: false
+      isPaused: false,
     });
     components.push(<Save>{
       name: getNameSave(),
-      click: false
+      click: false,
     });
     components.push(<Restart>{
       name: getNameRestart(),
-      click: false
+      click: false,
     });
     return components;
   }
