@@ -53,6 +53,11 @@ export default class EventsSystem extends System {
     }
 
     nbToRemove = snakeHead!.angles.length;
+
+    if (nbToRemove > 0 && snakeHead!.angles[0].direction == direction) {
+      return
+    }
+
     for (let i = 0; i < nbToRemove; i++) {
       snakeHead!.angles.pop();
     }

@@ -14,6 +14,7 @@ import VelocitySystem from "../systems/VelocitySystem";
 import RestartSystem from "../systems/RestartSystem";
 import AutoPlayPrefabs from "../prefabs/AutoPlayPrefabs";
 import AIControllerSystem from "../systems/AIControllerSystem";
+import AIController2System from "../systems/AIController2System";
 
 export default class AutoPlayScene extends Scene {
   initSystems() {
@@ -45,7 +46,7 @@ export default class AutoPlayScene extends Scene {
         new RestartSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new AIControllerSystem(this.entityManager, this.componentManager)
+        new AIController2System(this.entityManager, this.componentManager)
     );
   }
 
