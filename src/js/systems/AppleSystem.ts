@@ -33,10 +33,10 @@ export default class AppleSystem extends System {
     let y;
 
     do {
-      x = Math.floor(Math.random() * (app.nbBlocksGrass) + 1);
-      y = Math.floor(Math.random() * (app.nbBlocksGrass) + 1);
+      x = Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeX;
+      y = Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeY;
     } while (this.positionIsAlreadyTaken(x, y, app.blockSizeX, app.blockSizeY))
-    return [x * app.blockSizeX, y * app.blockSizeY];
+    return [x, y];
   }
 
   positionIsAlreadyTaken(x: number, y: number, width: number, height: number): boolean {
@@ -46,8 +46,8 @@ export default class AppleSystem extends System {
     for (const snake of snakes) {
       const graphic = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
 
-      let snakeX = Math.floor((graphic!.sprite!.x - (graphic!.sprite!.width / 2)) / application.blockSizeX)
-      let snakeY = Math.floor((graphic!.sprite!.y - (graphic!.sprite!.height / 2)) / application.blockSizeY)
+      let snakeX = Math.floor((graphic!.sprite!.getBounds().x) / application.blockSizeX)
+      let snakeY = Math.floor((graphic!.sprite!.getBounds().y) / application.blockSizeY)
 
       // for (const angle of snake.angles) {
       //   let angleX = Math.floor((angle.x - (graphic!.sprite!.width / 2)) / application.blockSizeX)
@@ -59,9 +59,10 @@ export default class AppleSystem extends System {
         snakeX += application.blockSizeX;
       }
 
-      if (x == snakeX && y == snakeY) {
-        return true
-      }
+      // console.log(snakeX, snakeY, x, y)
+      // if (x == snakeX && y == snakeY) {
+      //   return true
+      // }
 
       // let x2;
       // let y2;
@@ -80,14 +81,14 @@ export default class AppleSystem extends System {
       //   y2 = graphic.sprite.y - (height2 / 2);
       // }
 
-      // if (
-      //     (x < x2 + width2 &&
-      //     x + width > x2 &&
-      //     y < y2 + height2 &&
-      //     y + height > y2) || (x == x2) || (y == y2)
-      // ) {
-      //   return true;
-      // }
+      if (
+          x < graphic.sprite!.getBounds().x + graphic.sprite!.getBounds().width &&
+          x + width > graphic.sprite!.getBounds().x &&
+          y < graphic.sprite!.getBounds().y + graphic.sprite!.getBounds().height &&
+          y + height > graphic.sprite!.getBounds().y
+      ) {
+        return true;
+      }
     }
     return false;
   }

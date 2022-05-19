@@ -13,7 +13,8 @@ interface Case {
   x: number,
   y: number,
   width: number,
-  height: number
+  height: number,
+  direction?: Direction
 }
 
 interface Node {
@@ -22,7 +23,8 @@ interface Node {
   g: number, // The sum of all the cells that have been visited since leaving the first cell
   h: number, // Estimated cost of the moving
   f: number, // the sum of g + h
-  parent?: Node
+  parent?: Node,
+  state: Array<Array<Case>>
 }
 
 export default class AIController2System extends System {
@@ -56,7 +58,7 @@ export default class AIController2System extends System {
     }
   }
 
-  getNewType(caseElement: Case): GraphicsType {
+  getNewType(caseElement: Case): [GraphicsType, Direction?] {
     const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const apples = this.componentManager.getComponentsByType(getNameApple()) as Array<Apple>;
     const application = this.componentManager.getComponentByType("Application") as Application;
@@ -70,44 +72,99 @@ export default class AIController2System extends System {
           caseElement.y < graphic.sprite!.y + graphic.sprite!.height &&
           caseElement.y + caseElement.height > graphic.sprite!.y
       ) {
-        return graphic.type;
+        return [graphic.type];
       }
     }
 
     for (const snake of snakes) {
       const graphic = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
 
-      let x = Math.floor((graphic!.sprite!.x - (graphic!.sprite!.width / 2)) / application.blockSizeX) * application.blockSizeX
-      let y = Math.floor((graphic!.sprite!.y - (graphic!.sprite!.height / 2)) / application.blockSizeY) * application.blockSizeY
+      let x = Math.floor((graphic!.sprite!.getBounds().x) / application.blockSizeX) * application.blockSizeX
+      let y = Math.floor((graphic!.sprite!.getBounds().y) / application.blockSizeY) * application.blockSizeY
 
-      if (snake.direction == Direction.DOWN) {
-        y += application.blockSizeY;
-      } else if (snake.direction == Direction.RIGHT) {
-        x += application.blockSizeX;
-      }
-      if (caseElement.x == x && caseElement.y == y) {
-        return graphic.type
+      // if (snake.direction == Direction.DOWN) {
+      //   y += application.blockSizeY;
+      // } else if (snake.direction == Direction.RIGHT) {
+      //   x += application.blockSizeX;
+      // }
+      // if (caseElement.x == x && caseElement.y == y) {
+      //   console.log(x, y, graphic!.sprite!.getBounds());
+      //   return [graphic.type, snake.direction]
+      // }
+
+      if (
+          caseElement.x < graphic.sprite!.getBounds().x + graphic.sprite!.getBounds().width &&
+          caseElement.x + caseElement.width > graphic.sprite!.getBounds().x &&
+          caseElement.y < graphic.sprite!.getBounds().y + graphic.sprite!.getBounds().height &&
+          caseElement.y + caseElement.height > graphic.sprite!.getBounds().y
+      ) {
+        return [graphic.type, snake.direction]
       }
     }
 
-    return GraphicsType.GRASS;
+    return [GraphicsType.GRASS];
   }
 
   updateCases() {
+    const headPositions = Array<Position>();
+
     for (let y = 0; y < this.cases.length; y++) {
       for (let x = 0; x < this.cases[y].length; x++) {
         if (this.cases[y][x].type == GraphicsType.WALL) {
           continue;
         }
-        this.cases[y][x].type = this.getNewType(this.cases[y][x]);
+        const [type, direction] = this.getNewType(this.cases[y][x])
+
+        this.cases[y][x].direction = direction
+        this.cases[y][x].type = type
 
         if (this.cases[y][x].type == GraphicsType.SNAKE_HEAD) {
+          headPositions.push(<Position>{
+            x: x,
+            y: y
+          })
           this.startPos.x = x
           this.startPos.y = y
         } else if (this.cases[y][x].type == GraphicsType.APPLE) {
           this.endPos.x = x
           this.endPos.y = y
         }
+      }
+    }
+
+    if (headPositions.length == 1) {
+      return
+    }
+    for (const headPosition of headPositions) {
+      switch (this.cases[headPosition.y][headPosition.x].direction) {
+        case Direction.UP:
+          if (this.cases[headPosition.y - 1][headPosition.x].type == GraphicsType.SNAKE_HEAD) {
+            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
+            this.startPos.y = headPosition.y - 1;
+            this.startPos.x = headPosition.x;
+          }
+          break
+        case Direction.RIGHT:
+          if (this.cases[headPosition.y][headPosition.x + 1].type == GraphicsType.SNAKE_HEAD) {
+            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
+            this.startPos.y = headPosition.y;
+            this.startPos.x = headPosition.x + 1;
+          }
+          break
+        case Direction.LEFT:
+          if (this.cases[headPosition.y][headPosition.x - 1].type == GraphicsType.SNAKE_HEAD) {
+            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
+            this.startPos.y = headPosition.y;
+            this.startPos.x = headPosition.x - 1;
+          }
+          break
+        case Direction.DOWN:
+          if (this.cases[headPosition.y + 1][headPosition.x].type == GraphicsType.SNAKE_HEAD) {
+            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
+            this.startPos.y = headPosition.y + 1;
+            this.startPos.x = headPosition.x;
+          }
+          break
       }
     }
   }
@@ -129,21 +186,10 @@ export default class AIController2System extends System {
         continue;
 
       if (!this.pathComputed) {
-        // console.log(this.startPos)
-        // console.log(this.endPos)
-        // console.log(this.cases)
-        // console.log(this.cases[this.startPos.y][this.startPos.x])
-        // console.log(this.cases[this.endPos.y][this.endPos.x])
         this.path = this.aStarAlgorithm(this.startPos, this.endPos)
         if (this.path.length == 0) {
           return;
         }
-        // console.log(this.path)
-        // console.log(this.startPos)
-        // console.log(nextNode)
-        // const nextNode = this.path[this.path.length - 1]
-        // console.log(nextNode)
-        // console.log(this.cases[this.startPos.y][this.startPos.x])
         this.pathComputed = true;
       }
       const nextNode = this.path[this.path.length - 1]
@@ -174,17 +220,18 @@ export default class AIController2System extends System {
         } else {
           this.keyToTap = undefined
         }
+        this.pathComputed = false;
       }
 
       if (this.keyToTap) {
-        console.log(this.keyToTap)
+        // console.log(this.keyToTap)
         document.dispatchEvent(new KeyboardEvent('keydown',  {'key': this.keyToTap}));
       }
     }
   }
 
   aStarAlgorithm(src: Position, dest: Position): Array<Node> {
-    let startNode = <Node>{x: src.x, y: src.y, g: 0, h: 0, f: 0};
+    let startNode = <Node>{x: src.x, y: src.y, g: 0, h: 0, f: 0, state: this.copyState(this.cases)};
     let destNode = <Node>{x: dest.x, y: dest.y, g: 0, h: 0, f: 0};
     let openList = Array<Node>()
     let closeList = Array<Node>()
@@ -192,13 +239,7 @@ export default class AIController2System extends System {
 
     openList.push(startNode)
 
-    let i = 0;
     while (openList.length !== 0) {
-      i++
-      // if (i > 500) {
-      //   console.log("mdr")
-      //   break
-      // }
       let currentNode = openList.reduce(function(node1, node2): Node {
         return (node1.f < node2.f ? node1 : node2)
       });
@@ -227,11 +268,26 @@ export default class AIController2System extends System {
       <Position>{x: currentNode.x, y: currentNode.y + 1},
       <Position>{x: currentNode.x + 1, y: currentNode.y},
     ];
+    const directions = <Array<Direction>>[
+      Direction.LEFT,
+      Direction.UP,
+      Direction.DOWN,
+      Direction.RIGHT
+    ];
 
     for (let i = 0; i < successors.length; i++) {
-      if (!this.isValid(successors[i]) || !this.isGrass(successors[i])) {
+
+      if (!this.isValid(successors[i]) || !this.isGrass(successors[i], currentNode.state)) {
         continue
       }
+
+
+      // console.log("Move " + directions[i].toString() + " from ", {x: currentNode.x, y: currentNode.y}, " to ", successors[i]);
+      // console.log(currentNode.state);
+      const state = this.cases
+      // const state: Array<Array<Case>> = this.updateState(this.copyState(currentNode.state), {...successors[i]}, directions[i])
+      // console.log(currentNode.state);
+      // console.log(currentNode.state[successors[i].y][successors[i].x])
       // console.log("la", this.cases[successors[i].y][successors[i].x])
 
       // Skip if the successor is already in the close list
@@ -257,7 +313,8 @@ export default class AIController2System extends System {
         g: g,
         h: h,
         f: f,
-        parent: currentNode
+        parent: currentNode,
+        state: state
       });
     }
   }
@@ -266,7 +323,74 @@ export default class AIController2System extends System {
     return pos.x >= 0 && pos.x < this.cases.length && pos.y >= 0 && pos.y < this.cases[0].length
   }
 
-  isGrass(pos: Position) {
-    return this.cases[pos.y][pos.x].type === GraphicsType.GRASS || this.cases[pos.y][pos.x].type === GraphicsType.APPLE;
+  isGrass(pos: Position, state: Array<Array<Case>>) {
+    return state[pos.y][pos.x].type === GraphicsType.GRASS || state[pos.y][pos.x].type === GraphicsType.APPLE;
+  }
+
+  updateState(currentState: Array<Array<Case>>, position: Position, newDirection: Direction): Array<Array<Case>> {
+
+    if (currentState[position.y][position.x].type == GraphicsType.GRASS || currentState[position.y][position.x].type == GraphicsType.APPLE) {
+      currentState[position.y][position.x].direction = undefined;
+      return currentState
+    }
+
+    currentState[position.y][position.x].direction = newDirection;
+
+    // if (newDirection === undefined) {
+    //   console.log(currentState)
+    //   return currentState;
+    // }
+    switch (newDirection) {
+      case Direction.UP:
+        currentState[position.y][position.x].type = currentState[position.y + 1][position.x].type;
+        if (currentState[position.y][position.x].type == GraphicsType.GRASS || currentState[position.y][position.x].type == GraphicsType.APPLE) {
+          currentState[position.y][position.x].direction = undefined;
+        }
+        position.y++;
+        break
+      case Direction.RIGHT:
+        currentState[position.y][position.x].type = currentState[position.y][position.x - 1].type;
+        if (currentState[position.y][position.x].type == GraphicsType.GRASS || currentState[position.y][position.x].type == GraphicsType.APPLE) {
+          currentState[position.y][position.x].direction = undefined;
+        }
+        position.x--;
+        break
+      case Direction.LEFT:
+        currentState[position.y][position.x].type = currentState[position.y][position.x + 1].type;
+        if (currentState[position.y][position.x].type == GraphicsType.GRASS || currentState[position.y][position.x].type == GraphicsType.APPLE) {
+          currentState[position.y][position.x].direction = undefined;
+        }
+        position.x++;
+        break
+      case Direction.DOWN:
+        currentState[position.y][position.x].type = currentState[position.y - 1][position.x].type;
+        if (currentState[position.y][position.x].type == GraphicsType.GRASS || currentState[position.y][position.x].type == GraphicsType.APPLE) {
+          currentState[position.y][position.x].direction = undefined;
+        }
+        position.y--;
+        break
+    }
+    let lastType = currentState[position.y][position.x].type;
+    let lastDirection = currentState[position.y][position.x].direction;
+
+    if (lastDirection == undefined || (lastType != GraphicsType.SNAKE_HEAD && lastType != GraphicsType.SNAKE)) {
+      currentState[position.y][position.x].direction = undefined;
+      return currentState;
+    }
+    // console.log(position, currentState[position.y][position.x].type, currentState[position.y][position.x].direction)
+    return this.updateState(currentState, position, lastDirection)
+  }
+
+  copyState(currentState: Array<Array<Case>>): Array<Array<Case>> {
+    let newState = Array<Array<Case>>();
+
+    for (let i = 0; i < currentState.length; i++) {
+      newState.push(Array<Case>(currentState[i].length));
+
+      for (let j = 0; j < currentState[i].length; j++) {
+        newState[i][j] = {...currentState[i][j]};
+      }
+    }
+    return newState;
   }
 }

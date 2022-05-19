@@ -166,7 +166,7 @@ export default class GamePrefabs {
     });
     components.push(<Snake>{
       name: getNameSnake(),
-      direction: Direction.UP,
+      direction: dependsOn.direction,
       angles: [],
       dependsOn: dependsOn
     });
