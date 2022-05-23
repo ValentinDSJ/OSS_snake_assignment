@@ -1,9 +1,6 @@
 import Application, { getNameApplication } from "../components/Application";
 import EventComponent, { getNameEvent } from "../components/Event";
-import Graphics, {
-  getNameGraphics,
-  GraphicsType,
-} from "../components/Graphics";
+import Graphics, { getNameGraphics } from "../components/Graphics";
 import { System } from "../libs/ecs/System";
 import GameOver, { getNameGameOver } from "../components/GameOver";
 import Pause, { getNamePause } from "../components/Pause";

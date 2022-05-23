@@ -1,19 +1,23 @@
 import { System } from "../libs/ecs/System";
-import Velocity, {getNameVelocity} from "../components/Velocity";
-import Graphics, {getNameGraphics} from "../components/Graphics";
-import Apple, {getNameApple} from "../components/Apple";
-import Application, {getNameApplication} from "../components/Application";
-import Snake, {getNameSnake} from "../components/Snake";
+import Velocity, { getNameVelocity } from "../components/Velocity";
+import Graphics, { getNameGraphics } from "../components/Graphics";
+import Apple, { getNameApple } from "../components/Apple";
+import Application, { getNameApplication } from "../components/Application";
+import Snake, { getNameSnake } from "../components/Snake";
 
 export default class AppleSystem extends System {
   update(delta: number) {
-    const apples = this.componentManager.getComponentsByType(getNameApple()) as Array<Apple>;
-    const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
+    const apples = this.componentManager.getComponentsByType(
+      getNameApple()
+    ) as Array<Apple>;
+    // const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
 
     for (const apple of apples) {
-      if (!apple.isAte)
-        continue;
-      const graphic = this.entityManager.getComponentByType(apple.idEntity!, getNameGraphics()) as Graphics;
+      if (!apple.isAte) continue;
+      const graphic = this.entityManager.getComponentByType(
+        apple.idEntity!,
+        getNameGraphics()
+      ) as Graphics;
       const [x, y] = this.setRandomPosition();
 
       if (graphic.graphics) {
@@ -28,22 +32,33 @@ export default class AppleSystem extends System {
   }
 
   setRandomPosition(): [number, number] {
-    const app = this.componentManager.getComponentByType(getNameApplication()) as Application;
+    const app = this.componentManager.getComponentByType(
+      getNameApplication()
+    ) as Application;
     let x;
     let y;
 
     do {
-      x = (Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeX);
-      y = (Math.floor(Math.random() * (app.nbBlocksGrass) + 1) * app.blockSizeY);
-    } while (this.positionIsAlreadyTaken(x, y, app.blockSizeX, app.blockSizeY))
+      x = Math.floor(Math.random() * app.nbBlocksGrass + 1) * app.blockSizeX;
+      y = Math.floor(Math.random() * app.nbBlocksGrass + 1) * app.blockSizeY;
+    } while (this.positionIsAlreadyTaken(x, y, app.blockSizeX, app.blockSizeY));
     return [x, y];
   }
 
-  positionIsAlreadyTaken(x: number, y: number, width: number, height: number): boolean {
-    const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+  positionIsAlreadyTaken(
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): boolean {
+    const snakes = this.componentManager.getComponentsByType(
+      getNameSnake()
+    ) as Array<Snake>;
 
     for (const snake of snakes) {
-      const graphic = this.componentManager.getComponentByType(getNameSnake()) as Graphics;
+      const graphic = this.componentManager.getComponentByType(
+        getNameSnake()
+      ) as Graphics;
       let x2;
       let y2;
       let width2;
@@ -57,15 +72,17 @@ export default class AppleSystem extends System {
       } else if (graphic.sprite) {
         width2 = graphic.sprite.width;
         height2 = graphic.sprite.height;
-        x2 = graphic.sprite.x - (width2 / 2);
-        y2 = graphic.sprite.y - (height2 / 2);
+        x2 = graphic.sprite.x - width2 / 2;
+        y2 = graphic.sprite.y - height2 / 2;
       }
 
       if (
-          (x < x2 + width2 &&
+        (x < x2 + width2 &&
           x + width > x2 &&
           y < y2 + height2 &&
-          y + height > y2) || (x == x2) || (y == y2)
+          y + height > y2) ||
+        x == x2 ||
+        y == y2
       ) {
         return true;
       }
