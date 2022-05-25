@@ -20,6 +20,7 @@ import Apple, {getNameApple} from "../components/Apple";
 import Restart, {getNameRestart} from "../components/Restart";
 import GameOverSystem from "../systems/GameOverSystem";
 import Board, {getNameBoard} from "../components/Board";
+import Position from "../components/Position";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -73,7 +74,9 @@ export default class GamePrefabs {
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,
-      type: GraphicsType.SNAKE_HEAD
+      type: GraphicsType.SNAKE_HEAD,
+      posInBoard: <Position>{x: 20, y: 20},
+      lastPosInBoard: <Position>{x: 20, y: 20},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -86,7 +89,8 @@ export default class GamePrefabs {
       name: getNameSnake(),
       direction: Direction.UP,
       angles: [],
-      isInit: true
+      isInit: true,
+      lastDirection: Direction.UP
     });
     return components;
   }
@@ -115,7 +119,9 @@ export default class GamePrefabs {
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,
-      type: GraphicsType.SNAKE
+      type: GraphicsType.SNAKE,
+      posInBoard: <Position>{x: tail.posInBoard.x, y: tail.posInBoard.y + 1},
+      lastPosInBoard: <Position>{x: tail.posInBoard.x, y: tail.posInBoard.y + 1},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -127,7 +133,8 @@ export default class GamePrefabs {
     components.push(<Snake>{
       name: getNameSnake(),
       direction: Direction.UP,
-      angles: []
+      angles: [],
+      lastDirection: Direction.UP
     });
     return components;
   }
@@ -151,11 +158,14 @@ export default class GamePrefabs {
     snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
+    console.log("Create dynamic body :", tail.posInBoard, tail.lastPosInBoard);
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,
       type: GraphicsType.SNAKE,
-      isInit: false
+      isInit: false,
+      posInBoard: <Position>{x: tail.posInBoard.x, y: tail.posInBoard.y},
+      lastPosInBoard: <Position>{x: tail.lastPosInBoard.x, y: tail.lastPosInBoard.y},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -168,24 +178,29 @@ export default class GamePrefabs {
       name: getNameSnake(),
       direction: dependsOn.direction,
       angles: [],
-      dependsOn: dependsOn
+      dependsOn: dependsOn,
+      lastDirection: dependsOn.direction
     });
     return components;
   }
 
   static createApple(app: Application, blockSizeX: number, blockSizeY: number, screenWidth: number, screenHeight: number, nbBlocks: number): Array<Component> {
     let components = Array<Component>();
+    let x = Math.floor(Math.random() * (nbBlocks - 2)) + 1;
+    let y = Math.floor(Math.random() * (nbBlocks - 2)) + 1;
 
     const apple = PIXI.Sprite.from(appleSprite);
-    apple.x = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeX;
-    apple.y = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeY;
+    apple.x = x * blockSizeX;
+    apple.y = y * blockSizeY;
     apple.width = app.blockSizeX;
     apple.height = app.blockSizeY;
 
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: apple,
-      type: GraphicsType.APPLE
+      type: GraphicsType.APPLE,
+      posInBoard: <Position>{x: x, y: y},
+      lastPosInBoard: <Position>{x: x, y: y},
     });
     components.push(<Apple>{
       name: getNameApple(),
@@ -206,7 +221,9 @@ export default class GamePrefabs {
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: apple,
-      type: GraphicsType.APPLE
+      type: GraphicsType.APPLE,
+      posInBoard: <Position>{x: x, y: y},
+      lastPosInBoard: <Position>{x: x, y: y},
     });
     components.push(<Apple>{
       name: getNameApple(),
@@ -237,6 +254,8 @@ export default class GamePrefabs {
       name: getNameGraphics(),
       sprite: snake,
       type: savedSnake.type,
+      posInBoard: <Position>{x: 0, y: 0},
+      lastPosInBoard: <Position>{x: 0, y: 0},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -249,7 +268,8 @@ export default class GamePrefabs {
       name: getNameSnake(),
       direction: savedSnake.direction,
       angles: savedSnake.angles,
-      isInit: savedSnake.isInit
+      isInit: savedSnake.isInit,
+      lastDirection: savedSnake.direction
     });
     return components;
   }

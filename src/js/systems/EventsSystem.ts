@@ -58,6 +58,7 @@ export default class EventsSystem extends System {
       return
     }
 
+    // console.log("Next direction", x, y);
     for (let i = 0; i < nbToRemove; i++) {
       snakeHead!.angles.pop();
     }

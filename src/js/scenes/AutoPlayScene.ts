@@ -15,6 +15,7 @@ import RestartSystem from "../systems/RestartSystem";
 import AutoPlayPrefabs from "../prefabs/AutoPlayPrefabs";
 import AIControllerSystem from "../systems/AIControllerSystem";
 import AIController2System from "../systems/AIController2System";
+import ComponentManager from "../libs/ecs/ComponentManager";
 
 export default class AutoPlayScene extends Scene {
   initSystems() {
@@ -84,6 +85,7 @@ export default class AutoPlayScene extends Scene {
 
     let headId = this.initEntity(head);
     let body = Array<number>();
+    let snakesBodyComponents = Array<Array<Component>>();
 
     let fsBody = GamePrefabs.createBody(
         application,
@@ -94,13 +96,17 @@ export default class AutoPlayScene extends Scene {
         head[1] as Velocity
     );
     body.push(this.initEntity(fsBody));
+    snakesBodyComponents.push(fsBody);
 
     for (let i = 1; i < 3; i++) {
-      body.push(this.initEntity(GamePrefabs.createBody(
+      snakesBodyComponents.push(GamePrefabs.createBody(
           application,
           application.app?.screen.width ?? 0,
           application.app?.screen.height ?? 0,
-          i, fsBody[0] as Graphics, fsBody[1] as Velocity)));
+          i,
+          snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
+          snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
+      body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
     }
     this.initEntity(AutoPlayPrefabs.createBot(headId, body));
 

@@ -7,6 +7,7 @@ import GamePrefabs from "../prefabs/GamePrefabs";
 import Player, {getNamePlayer} from "../components/Player";
 import GameOver, {getNameGameOver} from "../components/GameOver";
 import Apple, {getNameApple} from "../components/Apple";
+import Pause, {getNamePause} from "../components/Pause";
 
 export default class SnakeSystem extends System {
   spawnApple() {
@@ -123,8 +124,16 @@ export default class SnakeSystem extends System {
   update(delta: number) {
     const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const application = this.componentManager.getComponentByType("Application") as Application;
+    const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+    const pause = this.componentManager.getComponentByType(getNamePause()) as Pause;
+
+    if (gameOver.over || pause.isPaused) {
+      return;
+    }
 
     for (const s of snake) {
+
+      // If snake has a dependsOn, it means that we must create the snake just right after the dependsOn snake
       if (s.dependsOn) {
         const graphic = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
         const velocity = this.entityManager.getComponentByType(s.idEntity!, getNameVelocity()) as Velocity;
@@ -167,14 +176,20 @@ export default class SnakeSystem extends System {
           velocity.y = velocityDependsOn.y;
           s.angles = [];
           s.angles = [...s.dependsOn.angles];
+          s.lastDirection = s.direction
           s.direction = s.dependsOn.direction;
+          // graphic.posInBoard = {...graphicDependsOn.posInBoard};
+          // graphic.lastPosInBoard = {...graphicDependsOn.lastPosInBoard};
           s.dependsOn = undefined;
         }
         continue;
       }
 
-      if (s.angles.length == 0)
+      if (s.angles.length == 0) {
+        this.keepStraight(s);
         continue;
+      }
+
       const nextAngle = s.angles[0];
       const graphics = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
       const velocity = this.entityManager.getComponentByType(s.idEntity!, getNameVelocity()) as Velocity;
@@ -200,6 +215,7 @@ export default class SnakeSystem extends System {
         let newPosY = 0;
         let diffX = Math.abs(x - nextAngle.x);
         let diffY = Math.abs(y - nextAngle.y);
+        s.lastDirection = s.direction
         s.direction = nextAngle.direction;
         s.angles.shift();
         switch (s.direction) {
@@ -209,6 +225,8 @@ export default class SnakeSystem extends System {
             newVelocity.y = velocity.speed;
             newPosX = nextAngle.x;
             newPosY = nextAngle.y + diffX;
+            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.posInBoard.y++;
             break;
           case Direction.LEFT:
             newAngle = 270 * Math.PI / 180;
@@ -216,6 +234,8 @@ export default class SnakeSystem extends System {
             newVelocity.y = 0;
             newPosX = nextAngle.x - diffY;
             newPosY = nextAngle.y;
+            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.posInBoard.x--;
             break;
           case Direction.UP:
             newAngle = 0 * Math.PI / 180;
@@ -223,6 +243,8 @@ export default class SnakeSystem extends System {
             newVelocity.y = -velocity.speed;
             newPosX = nextAngle.x;
             newPosY = nextAngle.y - diffX;
+            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.posInBoard.y--;
             break;
           case Direction.RIGHT:
             newAngle = 90 * Math.PI / 180;
@@ -230,6 +252,8 @@ export default class SnakeSystem extends System {
             newVelocity.y = 0;
             newPosX = nextAngle.x + diffY;
             newPosY = nextAngle.y;
+            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.posInBoard.x++;
             break;
         }
         if (graphics.graphics) {
@@ -245,10 +269,57 @@ export default class SnakeSystem extends System {
         velocity.x = newVelocity.x;
         velocity.y = newVelocity.y;
         // this.setSkipForOnLoop();
+      } else {
+        this.keepStraight(s);
       }
     }
 
     this.checkCollisions();
+  }
+
+  keepStraight(snake: Snake) {
+    const application = this.componentManager.getComponentByType("Application") as Application;
+    const graphics = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
+    const velocity = this.entityManager.getComponentByType(snake.idEntity!, getNameVelocity()) as Velocity;
+    let x = Math.floor((graphics!.sprite!.x - (graphics!.sprite!.width / 2)) / application.blockSizeX) * application.blockSizeX;
+    let y = Math.floor((graphics!.sprite!.y - (graphics!.sprite!.height / 2)) / application.blockSizeY) * application.blockSizeY;
+
+    if (snake.direction == Direction.DOWN) {
+      y += application.blockSizeY;
+    } else if (snake.direction == Direction.RIGHT) {
+      x += application.blockSizeX;
+    } else if (snake.direction == Direction.UP) {
+      // y -= application.blockSizeY;
+    } else if (snake.direction == Direction.LEFT) {
+      // x -= application.blockSizeX;
+    }
+    // y += application.blockSizeY;
+    // x += application.blockSizeX;
+
+    // console.log(x, y, graphics.posInBoard.x * application.blockSizeX, graphics.posInBoard.y * application.blockSizeY);
+
+    if (
+        (snake.direction == Direction.LEFT && x != graphics.posInBoard.x * application.blockSizeX) ||
+        (snake.direction == Direction.RIGHT && x != graphics.posInBoard.x * application.blockSizeX) ||
+        (snake.direction == Direction.UP && y != graphics.posInBoard.y * application.blockSizeY) ||
+        (snake.direction == Direction.DOWN && y != graphics.posInBoard.y * application.blockSizeY)
+    ) {
+      graphics.lastPosInBoard = {...graphics.posInBoard};
+      switch (snake.direction) {
+        case Direction.UP:
+          graphics.posInBoard.y--;
+          break;
+        case Direction.RIGHT:
+          graphics.posInBoard.x++;
+          break;
+        case Direction.LEFT:
+          graphics.posInBoard.x--;
+          break;
+        case Direction.DOWN:
+          graphics.posInBoard.y++;
+          break;
+      }
+    }
   }
 
   setSkipForOnLoop() {

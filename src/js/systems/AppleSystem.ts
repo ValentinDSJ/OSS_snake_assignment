@@ -17,9 +17,19 @@ export default class AppleSystem extends System {
       const [x, y] = this.setRandomPosition();
 
       if (graphic.graphics) {
+        // graphic.lastPosInBoard.push({...graphic.posInBoard})
+        graphic.lastPosInBoard.y = graphic.posInBoard.y;
+        graphic.lastPosInBoard.x = graphic.posInBoard.x;
+        graphic.posInBoard.y = y / app.blockSizeY;
+        graphic.posInBoard.x = x / app.blockSizeX;
         graphic.graphics.x = x;
         graphic.graphics.y = y;
       } else if (graphic.sprite) {
+        // graphic.lastPosInBoard.push({...graphic.posInBoard})
+        graphic.lastPosInBoard.y = graphic.posInBoard.y;
+        graphic.lastPosInBoard.x = graphic.posInBoard.x;
+        graphic.posInBoard.y = y / app.blockSizeY;
+        graphic.posInBoard.x = x / app.blockSizeX;
         graphic.sprite.x = x;
         graphic.sprite.y = y;
       }
@@ -49,37 +59,11 @@ export default class AppleSystem extends System {
       let snakeX = Math.floor((graphic!.sprite!.getBounds().x) / application.blockSizeX)
       let snakeY = Math.floor((graphic!.sprite!.getBounds().y) / application.blockSizeY)
 
-      // for (const angle of snake.angles) {
-      //   let angleX = Math.floor((angle.x - (graphic!.sprite!.width / 2)) / application.blockSizeX)
-      //   let angleY = Math.floor((angle.y - (graphic!.sprite!.height / 2)) / application.blockSizeY)
-      // }
       if (snake.direction == Direction.DOWN) {
         snakeY += application.blockSizeY;
       } else if (snake.direction == Direction.RIGHT) {
         snakeX += application.blockSizeX;
       }
-
-      // console.log(snakeX, snakeY, x, y)
-      // if (x == snakeX && y == snakeY) {
-      //   return true
-      // }
-
-      // let x2;
-      // let y2;
-      // let width2;
-      // let height2;
-      //
-      // if (graphic.graphics) {
-      //   x2 = graphic.graphics.getBounds().x;
-      //   y2 = graphic.graphics.getBounds().y;
-      //   width2 = graphic.graphics.getBounds().width;
-      //   height2 = graphic.graphics.getBounds().height;
-      // } else if (graphic.sprite) {
-      //   width2 = graphic.sprite.width;
-      //   height2 = graphic.sprite.height;
-      //   x2 = graphic.sprite.x - (width2 / 2);
-      //   y2 = graphic.sprite.y - (height2 / 2);
-      // }
 
       if (
           x < graphic.sprite!.getBounds().x + graphic.sprite!.getBounds().width &&
