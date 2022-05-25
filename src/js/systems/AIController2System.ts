@@ -27,6 +27,14 @@ interface Node {
   state: Array<Array<Case>>
 }
 
+// Indicate the state of the AI
+enum State {
+  NOTHING,
+  APPLE,
+  TAIL,
+  FARAWAY
+}
+
 export default class AIController2System extends System {
   private cases: Array<Array<Case>> = Array<Array<Case>>();
   private startPos: Position = <Position>{x: 0, y: 0};
@@ -36,6 +44,38 @@ export default class AIController2System extends System {
   private direction: Direction = Direction.UP
   private keyToTap?: string
   private tailPosition?: Position
+  private state: State = State.NOTHING
+
+  getPositionFaraway(): Position {
+    let bestNbMove = 0;
+    let posFaraway = <Position>{x: -1, y: -1};
+    const incrementalPositions = <Array<Position>>[
+      <Position>{x: 0, y: 1},
+      <Position>{x: 0, y: -1},
+      <Position>{x: 1, y: 0},
+      <Position>{x: -1, y: 0},
+    ]
+
+    for (let i = 0; i < 4; i++) {
+      let nbMove = 0;
+      let pos = {...this.startPos}
+
+      pos.x += incrementalPositions[i].x;
+      pos.y += incrementalPositions[i].y;
+      while (this.cases[pos.y][pos.x].type != GraphicsType.WALL && this.cases[pos.y][pos.x].type != GraphicsType.SNAKE) {
+        nbMove++;
+        pos.x += incrementalPositions[i].x;
+        pos.y += incrementalPositions[i].y;
+      }
+      if (nbMove > bestNbMove) {
+        bestNbMove = nbMove;
+        pos.x -= incrementalPositions[i].x;
+        pos.y -= incrementalPositions[i].y;
+        posFaraway = {...pos};
+      }
+    }
+    return posFaraway;
+  }
 
   awake() {
     const application = this.componentManager.getComponentByType(getNameApplication()) as Application;
@@ -98,15 +138,12 @@ export default class AIController2System extends System {
   }
 
   updateCases() {
-    const headPositions = Array<Position>();
     const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
     const apples = this.componentManager.getComponentsByType(getNameApple()) as Array<Apple>;
-    const application = this.componentManager.getComponentByType("Application") as Application;
 
     for (const apple of apples) {
       const graphic = this.entityManager.getComponentByType(apple.idEntity!, getNameGraphics()) as Graphics;
 
-      // console.log("Pos in board apple :", graphic.posInBoard);
       this.cases[graphic.posInBoard.y][graphic.posInBoard.x].type = GraphicsType.GRASS;
       this.cases[graphic.posInBoard.y][graphic.posInBoard.x].direction = undefined;
       this.endPos.x = graphic.posInBoard.x;
@@ -114,6 +151,7 @@ export default class AIController2System extends System {
     }
 
     let i = 0;
+    let lastPosSaved = <Position>{x: 0, y: 0}
     for (const snake of snakes) {
       i++;
       const graphic = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
@@ -121,9 +159,9 @@ export default class AIController2System extends System {
       if (snake.dependsOn)
         continue;
 
-      console.log("Pos in board snake :", graphic.posInBoard);
+      // console.log("Pos in board snake :", graphic.posInBoard);
 
-      if (!this.isValid(graphic.posInBoard)) {
+      if (i != 1 && (!this.isValid(graphic.posInBoard) || (lastPosSaved.x != graphic.posInBoard.x || lastPosSaved.y != graphic.posInBoard.y))) {
         console.log("error");
         const lastSnake = snakes[i - 2];
         const graphicLastSnake = this.entityManager.getComponentByType(lastSnake.idEntity!, getNameGraphics()) as Graphics;
@@ -146,6 +184,7 @@ export default class AIController2System extends System {
         }
         console.log("Repair with ", graphic.posInBoard);
       }
+      lastPosSaved = {...graphic.lastPosInBoard}
 
       this.cases[graphic.posInBoard.y][graphic.posInBoard.x].type = graphic.type;
       this.cases[graphic.posInBoard.y][graphic.posInBoard.x].direction = snake.direction;
@@ -159,52 +198,15 @@ export default class AIController2System extends System {
         }
         this.tailPosition = {...graphic.lastPosInBoard};
       } else {
-        this.cases[graphic.lastPosInBoard.y][graphic.lastPosInBoard.x].type = GraphicsType.GRASS;
-        this.cases[graphic.lastPosInBoard.y][graphic.lastPosInBoard.x].direction = undefined;
+        if (graphic.posInBoard.x != graphic.lastPosInBoard.x || graphic.posInBoard.y != graphic.lastPosInBoard.y) {
+          this.cases[graphic.lastPosInBoard.y][graphic.lastPosInBoard.x].type = GraphicsType.GRASS;
+          this.cases[graphic.lastPosInBoard.y][graphic.lastPosInBoard.x].direction = undefined;
+        }
       }
 
-
-      // console.log("Pos in board snake :", graphic.posInBoard);
       if (graphic.type == GraphicsType.SNAKE_HEAD) {
         this.startPos.x = graphic.posInBoard.x;
         this.startPos.y = graphic.posInBoard.y;
-      }
-    }
-
-    if (headPositions.length == 1) {
-      return
-    }
-    // Sometimes the head can be in two different position, to prevent this, we check the direction store previously
-    for (const headPosition of headPositions) {
-      switch (this.cases[headPosition.y][headPosition.x].direction) {
-        case Direction.UP:
-          if (this.cases[headPosition.y - 1][headPosition.x].type == GraphicsType.SNAKE_HEAD) {
-            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
-            this.startPos.y = headPosition.y - 1;
-            this.startPos.x = headPosition.x;
-          }
-          break
-        case Direction.RIGHT:
-          if (this.cases[headPosition.y][headPosition.x + 1].type == GraphicsType.SNAKE_HEAD) {
-            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
-            this.startPos.y = headPosition.y;
-            this.startPos.x = headPosition.x + 1;
-          }
-          break
-        case Direction.LEFT:
-          if (this.cases[headPosition.y][headPosition.x - 1].type == GraphicsType.SNAKE_HEAD) {
-            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
-            this.startPos.y = headPosition.y;
-            this.startPos.x = headPosition.x - 1;
-          }
-          break
-        case Direction.DOWN:
-          if (this.cases[headPosition.y + 1][headPosition.x].type == GraphicsType.SNAKE_HEAD) {
-            this.cases[headPosition.y][headPosition.x].type = GraphicsType.SNAKE;
-            this.startPos.y = headPosition.y + 1;
-            this.startPos.x = headPosition.x;
-          }
-          break
       }
     }
   }
@@ -228,15 +230,66 @@ export default class AIController2System extends System {
         continue;
 
       if (!this.pathComputed) {
-        this.path = this.aStarAlgorithm(this.startPos, this.endPos)
-        if (this.path.length == 0) {
-          // console.log(this.cases)
-          // console.log(this.startPos)
-          // console.log(this.endPos)
-          // console.log("Not path found")
-          return;
+        // We try first with the AStar algorithm to find the shortest path
+        let path = this.aStarAlgorithm(this.startPos, this.endPos)
+
+        // If no path has been found, it means we can't go eat the apple, so we try with a different technique
+        if (path.length == 0) {
+
+          // If we have the tail position, the tail position will always be set but in case
+          if (this.tailPosition) {
+            // We try to find the shortest path to the tail position
+            path = this.aStarAlgorithm(this.startPos, this.tailPosition);
+
+            // If no path has been found, it means we can't go to the tail of the snake, so we try with a different technique
+            if (path.length == 0 && this.state != State.FARAWAY) {
+              // We get the point the most faraway from the position
+              const posFaraway = this.getPositionFaraway();
+
+              if (posFaraway.x == this.startPos.x && posFaraway.y == this.startPos.y) {
+                return;
+              }
+              path = this.aStarAlgorithm(this.startPos, posFaraway);
+
+              if (path.length == 0) {
+                this.path = path;
+                return;
+              }
+              this.state = State.FARAWAY;
+            } else if (this.path.length == 0 && this.state == State.FARAWAY) {
+              path = this.path;
+            } else {
+              this.state = State.TAIL;
+            }
+          } else {
+            if (this.state != State.FARAWAY) {
+              const posFaraway = this.getPositionFaraway();
+
+              if (posFaraway.x == this.startPos.x && posFaraway.y == this.startPos.y) {
+                return;
+              }
+              path = this.aStarAlgorithm(this.startPos, posFaraway);
+
+              if (path.length == 0) {
+                this.path = path;
+                return;
+              }
+              this.state = State.FARAWAY;
+            } else {
+              path = this.path;
+            }
+          }
+        } else {
+          this.state = State.APPLE;
         }
+        this.path = path;
         this.pathComputed = true;
+      }
+      if (this.path.length == 0) {
+        this.pathComputed = false
+        this.keyToTap = undefined
+        this.state = State.NOTHING;
+        return;
       }
       const nextNode = this.path[this.path.length - 1]
 
@@ -252,6 +305,7 @@ export default class AIController2System extends System {
         if (this.path.length == 0) {
           this.pathComputed = false
           this.keyToTap = undefined
+          this.state = State.NOTHING;
           return;
         }
         const nextNode = this.path[this.path.length - 1]
@@ -271,7 +325,7 @@ export default class AIController2System extends System {
 
       if (this.keyToTap) {
         // console.log(this.startPos)
-        // console.log(this.keyToTap)
+        console.log(this.keyToTap)
         document.dispatchEvent(new KeyboardEvent('keydown',  {'key': this.keyToTap}));
       }
     }

@@ -61,7 +61,7 @@ export default class GamePrefabs {
     snake.height = app.blockSizeY;
 
     snake.x = app.blockSizeX * 20 + (snake.width / 2);
-    snake.y = app.blockSizeY * 20 + (snake.height / 2);
+    snake.y = app.blockSizeY * 20 + (snake.height / 2) - 5;
     // snake.x += snake.width / 2;
     // snake.y += snake.height / 2;
 
@@ -76,7 +76,7 @@ export default class GamePrefabs {
       sprite: snake,
       type: GraphicsType.SNAKE_HEAD,
       posInBoard: <Position>{x: 20, y: 20},
-      lastPosInBoard: <Position>{x: 20, y: 20},
+      lastPosInBoard: <Position>{x: 20, y: 19},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
