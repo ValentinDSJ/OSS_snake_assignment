@@ -29,25 +29,25 @@ export default class AutoPlayScene extends Scene {
       new SnakeSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new HTMLSystem(this.entityManager, this.componentManager)
+      new HTMLSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new GameOverSystem(this.entityManager, this.componentManager)
+      new GameOverSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new GameDetailsSystem(this.entityManager, this.componentManager)
+      new GameDetailsSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new VelocitySystem(this.entityManager, this.componentManager)
+      new VelocitySystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new AppleSystem(this.entityManager, this.componentManager)
+      new AppleSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new RestartSystem(this.entityManager, this.componentManager)
+      new RestartSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-        new AIController2System(this.entityManager, this.componentManager)
+      new AIControllerSystem(this.entityManager, this.componentManager)
     );
   }
 
@@ -58,29 +58,29 @@ export default class AutoPlayScene extends Scene {
       return;
     }
     this.initEntity(
-        GamePrefabs.createBoard(
-            application,
-            (application as Application).app?.screen.width ?? 0,
-            (application as Application).app?.screen.height ?? 0
-        )
+      GamePrefabs.createBoard(
+        application,
+        (application as Application).app?.screen.width ?? 0,
+        (application as Application).app?.screen.height ?? 0
+      )
     );
     this.initEntity(GamePrefabs.createHTMLElement());
 
     this.initEntity(
-        GamePrefabs.createApple(
-            application,
-            application.blockSizeX,
-            application.blockSizeY,
-            application.app?.screen.width ?? 0,
-            application.app?.screen.height ?? 0,
-            application.nbBlocksWithWall
-        )
+      GamePrefabs.createApple(
+        application,
+        application.blockSizeX,
+        application.blockSizeY,
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
+        application.nbBlocksWithWall
+      )
     );
 
     const head = GamePrefabs.createHead(
-        application,
-        application.app?.screen.width ?? 0,
-        application.app?.screen.height ?? 0,
+      application,
+      application.app?.screen.width ?? 0,
+      application.app?.screen.height ?? 0,
     );
 
     let headId = this.initEntity(head);
@@ -88,24 +88,24 @@ export default class AutoPlayScene extends Scene {
     let snakesBodyComponents = Array<Array<Component>>();
 
     let fsBody = GamePrefabs.createBody(
-        application,
-        application.app?.screen.width ?? 0,
-        application.app?.screen.height ?? 0,
-        0,
-        head[0] as Graphics,
-        head[1] as Velocity
+      application,
+      application.app?.screen.width ?? 0,
+      application.app?.screen.height ?? 0,
+      0,
+      head[0] as Graphics,
+      head[1] as Velocity
     );
     body.push(this.initEntity(fsBody));
     snakesBodyComponents.push(fsBody);
 
     for (let i = 1; i < 3; i++) {
       snakesBodyComponents.push(GamePrefabs.createBody(
-          application,
-          application.app?.screen.width ?? 0,
-          application.app?.screen.height ?? 0,
-          i,
-          snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
-          snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
+        application,
+        application.app?.screen.width ?? 0,
+        application.app?.screen.height ?? 0,
+        i,
+        snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
+        snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
       body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
     }
     this.initEntity(AutoPlayPrefabs.createBot(headId, body));

@@ -4,7 +4,7 @@ import MenuScene from "./scenes/MenuScene";
 import GameScene from "./scenes/GameScene";
 import Application, { getNameApplication } from "./components/Application";
 import * as PIXI from "pixi.js";
-import {SceneType} from "./utils/SceneType";
+import { SceneType } from "./utils/SceneType";
 import RankingScene from "./scenes/RankingScene";
 import AutoPlayScene from "./scenes/AutoPlayScene";
 import DualPlayScene from "./scenes/DualPlayScene";

@@ -1,22 +1,33 @@
-import {System} from "../libs/ecs/System";
-import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
-import Apple, {getNameApple} from "../components/Apple";
-import Application, {getNameApplication} from "../components/Application";
-import Snake, {getNameSnake} from "../components/Snake";
-import Player, {getNamePlayer} from "../components/Player";
-import Pause, {getNamePause} from "../components/Pause";
-import GameOver, {getNameGameOver} from "../components/GameOver";
+import { System } from "../libs/ecs/System";
+import Graphics, { getNameGraphics, GraphicsType } from "../components/Graphics";
+import Apple, { getNameApple } from "../components/Apple";
+import Application, { getNameApplication } from "../components/Application";
+import Snake, { Direction, getNameSnake } from "../components/Snake";
+import Player, { getNamePlayer } from "../components/Player";
+import Pause, { getNamePause } from "../components/Pause";
+import GameOver, { getNameGameOver } from "../components/GameOver";
+import Position from "../components/Position";
 
 interface Case {
   type: GraphicsType,
   x: number,
   y: number,
   width: number,
-  height: number
+  height: number,
+}
+
+enum Move {
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT,
 }
 
 export default class AIControllerSystem extends System {
   private cases: Array<Array<Case>> = Array<Array<Case>>();
+  private applePos: Position = <Position>{ x: 0, y: 0 };
+  private headPos: Position = <Position>{ x: 0, y: 0 };
+  private direction: Direction = Direction.UP;
 
   awake() {
     const application = this.componentManager.getComponentByType(getNameApplication()) as Application;
@@ -48,12 +59,13 @@ export default class AIControllerSystem extends System {
       const graphic = this.entityManager.getComponentByType(apple.idEntity!, getNameGraphics()) as Graphics;
 
       if (
-          caseElement.x < graphic.sprite!.x + graphic.sprite!.width &&
-          caseElement.x + caseElement.width > graphic.sprite!.x &&
-          caseElement.y < graphic.sprite!.y + graphic.sprite!.height &&
-          caseElement.y + caseElement.height > graphic.sprite!.y
+        caseElement.x < graphic.sprite!.x + graphic.sprite!.width &&
+        caseElement.x + caseElement.width > graphic.sprite!.x &&
+        caseElement.y < graphic.sprite!.y + graphic.sprite!.height &&
+        caseElement.y + caseElement.height > graphic.sprite!.y
       ) {
-        console.log(caseElement.type, caseElement.x, caseElement.y);
+        // console.log(caseElement.type, caseElement.x, caseElement.y);
+        this.applePos = { x: caseElement.x, y: caseElement.y };
         return graphic.type;
       }
     }
@@ -64,11 +76,15 @@ export default class AIControllerSystem extends System {
       let x = graphic.sprite!.x - (graphic.sprite!.width / 2);
       let y = graphic.sprite!.y - (graphic.sprite!.height / 2);
       if (
-          caseElement.x < x + graphic.sprite!.width &&
-          caseElement.x + caseElement.width > x &&
-          caseElement.y < y + graphic.sprite!.height &&
-          caseElement.y + caseElement.height > y
+        caseElement.x < x + graphic.sprite!.width &&
+        caseElement.x + caseElement.width > x &&
+        caseElement.y < y + graphic.sprite!.height &&
+        caseElement.y + caseElement.height > y
       ) {
+        if (graphic.type === GraphicsType.SNAKE_HEAD) {
+          this.headPos = { x: caseElement.x, y: caseElement.y };
+          this.direction = snake.direction;
+        }
         return graphic.type;
       }
     }
@@ -105,7 +121,26 @@ export default class AIControllerSystem extends System {
 
       const keysEvent = [player.keyEventLeft, player.keyEventRight, player.keyEventUp, player.keyEventDown];
 
-      document.dispatchEvent(new KeyboardEvent('keydown',  {'key': keysEvent[Math.floor(Math.random() * keysEvent.length)]}));
+      const horizontalDiff = this.applePos.x - this.headPos.x;
+      const verticalDiff = this.applePos.y - this.headPos.y;
+
+      // console.log("Horzion: " + horizontalDiff)
+      // console.log("Vertical: " + verticalDiff)
+      console.log(this.headPos.y)
+      console.log("Direction: " + Direction[this.direction])
+      if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
+        if (horizontalDiff <= 0) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.LEFT ? player.keyEventLeft : player.keyEventDown }));
+        } else if (horizontalDiff > 0) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.RIGHT ? player.keyEventRight : player.keyEventDown }));
+        }
+      } else if (Math.abs(horizontalDiff) < Math.abs(verticalDiff)) {
+        if (horizontalDiff <= 0) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.UP ? player.keyEventUp : player.keyEventLeft }));
+        } else if (horizontalDiff > 0) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.DOWN ? player.keyEventDown : player.keyEventLeft }));
+        }
+      }
     }
   }
 }

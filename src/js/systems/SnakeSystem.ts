@@ -1,13 +1,13 @@
-import {System} from "../libs/ecs/System";
-import Snake, {Direction, getNameSnake} from "../components/Snake";
-import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
-import Velocity, {getNameVelocity} from "../components/Velocity";
-import Application, {getNameApplication} from "../components/Application";
+import { System } from "../libs/ecs/System";
+import Snake, { Direction, getNameSnake } from "../components/Snake";
+import Graphics, { getNameGraphics, GraphicsType } from "../components/Graphics";
+import Velocity, { getNameVelocity } from "../components/Velocity";
+import Application, { getNameApplication } from "../components/Application";
 import GamePrefabs from "../prefabs/GamePrefabs";
-import Player, {getNamePlayer} from "../components/Player";
-import GameOver, {getNameGameOver} from "../components/GameOver";
-import Apple, {getNameApple} from "../components/Apple";
-import Pause, {getNamePause} from "../components/Pause";
+import Player, { getNamePlayer } from "../components/Player";
+import GameOver, { getNameGameOver } from "../components/GameOver";
+import Apple, { getNameApple } from "../components/Apple";
+import Pause, { getNamePause } from "../components/Pause";
 
 export default class SnakeSystem extends System {
   spawnApple() {
@@ -77,10 +77,10 @@ export default class SnakeSystem extends System {
       }
 
       if (
-          x2 < x + width &&
-          x2 + width2 > x &&
-          y2 < y + height &&
-          y2 + height2 > y
+        x2 < x + width &&
+        x2 + width2 > x &&
+        y2 < y + height &&
+        y2 + height2 > y
       ) {
         switch (graphic.type) {
           case GraphicsType.APPLE:
@@ -99,7 +99,7 @@ export default class SnakeSystem extends System {
             this.componentManager.addComponents(newBody);
 
             const app = this.componentManager.getComponentByType(
-                getNameApplication()
+              getNameApplication()
             ) as Application;
 
             const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
@@ -206,10 +206,10 @@ export default class SnakeSystem extends System {
         y = graphics.sprite.y;
       }
       if (
-          (s.direction == Direction.LEFT && x <= nextAngle.x) ||
-          (s.direction == Direction.RIGHT && x >= nextAngle.x) ||
-          (s.direction == Direction.UP && y <= nextAngle.y) ||
-          (s.direction == Direction.DOWN && y >= nextAngle.y)
+        (s.direction == Direction.LEFT && x <= nextAngle.x) ||
+        (s.direction == Direction.RIGHT && x >= nextAngle.x) ||
+        (s.direction == Direction.UP && y <= nextAngle.y) ||
+        (s.direction == Direction.DOWN && y >= nextAngle.y)
       ) {
         let newPosX = 0;
         let newPosY = 0;
@@ -225,7 +225,7 @@ export default class SnakeSystem extends System {
             newVelocity.y = velocity.speed;
             newPosX = nextAngle.x;
             newPosY = nextAngle.y + diffX;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.y++;
             break;
           case Direction.LEFT:
@@ -234,7 +234,7 @@ export default class SnakeSystem extends System {
             newVelocity.y = 0;
             newPosX = nextAngle.x - diffY;
             newPosY = nextAngle.y;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.x--;
             break;
           case Direction.UP:
@@ -243,7 +243,7 @@ export default class SnakeSystem extends System {
             newVelocity.y = -velocity.speed;
             newPosX = nextAngle.x;
             newPosY = nextAngle.y - diffX;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.y--;
             break;
           case Direction.RIGHT:
@@ -252,7 +252,7 @@ export default class SnakeSystem extends System {
             newVelocity.y = 0;
             newPosX = nextAngle.x + diffY;
             newPosY = nextAngle.y;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.x++;
             break;
         }
@@ -299,12 +299,12 @@ export default class SnakeSystem extends System {
     // console.log(x, y, graphics.posInBoard.x * application.blockSizeX, graphics.posInBoard.y * application.blockSizeY);
 
     if (
-        (snake.direction == Direction.LEFT && x != graphics.posInBoard.x * application.blockSizeX) ||
-        (snake.direction == Direction.RIGHT && x != graphics.posInBoard.x * application.blockSizeX) ||
-        (snake.direction == Direction.UP && y != graphics.posInBoard.y * application.blockSizeY) ||
-        (snake.direction == Direction.DOWN && y != graphics.posInBoard.y * application.blockSizeY)
+      (snake.direction == Direction.LEFT && x != graphics.posInBoard.x * application.blockSizeX) ||
+      (snake.direction == Direction.RIGHT && x != graphics.posInBoard.x * application.blockSizeX) ||
+      (snake.direction == Direction.UP && y != graphics.posInBoard.y * application.blockSizeY) ||
+      (snake.direction == Direction.DOWN && y != graphics.posInBoard.y * application.blockSizeY)
     ) {
-      graphics.lastPosInBoard = {...graphics.posInBoard};
+      graphics.lastPosInBoard = { ...graphics.posInBoard };
       switch (snake.direction) {
         case Direction.UP:
           graphics.posInBoard.y--;
