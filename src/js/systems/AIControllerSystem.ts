@@ -126,6 +126,7 @@ export default class AIControllerSystem extends System {
 
       // console.log("Horzion: " + horizontalDiff)
       // console.log("Vertical: " + verticalDiff)
+      console.log(this.headPos.x)
       console.log(this.headPos.y)
       console.log("Direction: " + Direction[this.direction])
       if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
