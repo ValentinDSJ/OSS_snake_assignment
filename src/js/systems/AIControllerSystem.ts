@@ -127,15 +127,15 @@ export default class AIControllerSystem extends System {
       console.log("Direction: " + Direction[this.direction])
       if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
         if (horizontalDiff <= 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.RIGHT ? player.keyEventLeft : player.keyEventDown }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.RIGHT ? player.keyEventLeft : verticalDiff <= 0 ? player.keyEventUp : player.keyEventDown }));
         } else if (horizontalDiff > 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.LEFT ? player.keyEventRight : player.keyEventDown }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.LEFT ? player.keyEventRight : verticalDiff <= 0 ? player.keyEventUp : player.keyEventDown }));
         }
       } else if (Math.abs(horizontalDiff) < Math.abs(verticalDiff)) {
         if (verticalDiff <= 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.DOWN ? player.keyEventUp : player.keyEventLeft }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.DOWN ? player.keyEventUp : horizontalDiff <= 0 ? player.keyEventLeft : player.keyEventRight }));
         } else if (verticalDiff > 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.UP ? player.keyEventDown : player.keyEventLeft }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.UP ? player.keyEventDown : horizontalDiff <= 0 ? player.keyEventLeft : player.keyEventRight }));
         }
       }
     }
