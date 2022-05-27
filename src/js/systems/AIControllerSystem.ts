@@ -119,27 +119,23 @@ export default class AIControllerSystem extends System {
       if (!player.isBot)
         continue;
 
-      const keysEvent = [player.keyEventLeft, player.keyEventRight, player.keyEventUp, player.keyEventDown];
-
       const horizontalDiff = this.applePos.x - this.headPos.x;
       const verticalDiff = this.applePos.y - this.headPos.y;
 
-      // console.log("Horzion: " + horizontalDiff)
-      // console.log("Vertical: " + verticalDiff)
-      console.log(this.headPos.x)
-      console.log(this.headPos.y)
+      console.log("Horzion: " + horizontalDiff)
+      console.log("Vertical: " + verticalDiff)
       console.log("Direction: " + Direction[this.direction])
       if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
         if (horizontalDiff <= 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.LEFT ? player.keyEventLeft : player.keyEventDown }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.RIGHT ? player.keyEventLeft : player.keyEventDown }));
         } else if (horizontalDiff > 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.RIGHT ? player.keyEventRight : player.keyEventDown }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.LEFT ? player.keyEventRight : player.keyEventDown }));
         }
       } else if (Math.abs(horizontalDiff) < Math.abs(verticalDiff)) {
-        if (horizontalDiff <= 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.UP ? player.keyEventUp : player.keyEventLeft }));
-        } else if (horizontalDiff > 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.DOWN ? player.keyEventDown : player.keyEventLeft }));
+        if (verticalDiff <= 0) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.DOWN ? player.keyEventUp : player.keyEventLeft }));
+        } else if (verticalDiff > 0) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.UP ? player.keyEventDown : player.keyEventLeft }));
         }
       }
     }
