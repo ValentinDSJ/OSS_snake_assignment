@@ -141,8 +141,6 @@ export default class AIControllerSystem extends System {
       const horizontalDiff = this.applePos.x - this.headPos.x;
       const verticalDiff = this.applePos.y - this.headPos.y;
 
-      // console.log("Horzion: " + horizontalDiff)
-      // console.log("Vertical: " + verticalDiff)
       // console.log(this.cases)
       if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
         if (horizontalDiff <= 0) {
