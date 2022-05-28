@@ -12,21 +12,17 @@ interface Case {
   type: GraphicsType,
   x: number,
   y: number,
+  cx: number,
+  cy: number,
   width: number,
   height: number,
-}
-
-enum Move {
-  UP,
-  DOWN,
-  LEFT,
-  RIGHT,
 }
 
 export default class AIControllerSystem extends System {
   private cases: Array<Array<Case>> = Array<Array<Case>>();
   private applePos: Position = <Position>{ x: 0, y: 0 };
   private headPos: Position = <Position>{ x: 0, y: 0 };
+  private headCase: Case;
   private direction: Direction = Direction.UP;
 
   awake() {
@@ -39,6 +35,8 @@ export default class AIControllerSystem extends System {
         this.cases[i][j] = <Case>{
           y: i * application.blockSizeX,
           x: j * application.blockSizeY,
+          cy: i,
+          cx: j,
           width: application.blockSizeX,
           height: application.blockSizeY,
           type: GraphicsType.GRASS
@@ -83,6 +81,7 @@ export default class AIControllerSystem extends System {
       ) {
         if (graphic.type === GraphicsType.SNAKE_HEAD) {
           this.headPos = { x: caseElement.x, y: caseElement.y };
+          this.headCase = caseElement;
           this.direction = snake.direction;
         }
         return graphic.type;
@@ -103,6 +102,24 @@ export default class AIControllerSystem extends System {
     }
   }
 
+  checkDirectionCase(newDirection: Direction) {
+    switch (newDirection) {
+      case Direction.UP:
+        if (this.cases[this.headCase.cy - 1][this.headCase.cx].type === GraphicsType.SNAKE) return false;
+        break;
+      case Direction.DOWN:
+        if (this.cases[this.headCase.cy + 1][this.headCase.cx].type === GraphicsType.SNAKE) return false;
+        break;
+      case Direction.LEFT:
+        if (this.cases[this.headCase.cy][this.headCase.cx - 1].type === GraphicsType.SNAKE) return false;
+        break;
+      case Direction.RIGHT:
+        if (this.cases[this.headCase.cy][this.headCase.cx + 1].type === GraphicsType.SNAKE) return false;
+        break;
+    }
+    return true;
+  }
+
   update(delta: number) {
     const pause = this.componentManager.getComponentByType(getNamePause()) as Pause;
     const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
@@ -119,23 +136,29 @@ export default class AIControllerSystem extends System {
       if (!player.isBot)
         continue;
 
+      const movePress = [player.keyEventRight, player.keyEventLeft, player.keyEventDown, player.keyEventUp];
+
       const horizontalDiff = this.applePos.x - this.headPos.x;
       const verticalDiff = this.applePos.y - this.headPos.y;
 
-      console.log("Horzion: " + horizontalDiff)
-      console.log("Vertical: " + verticalDiff)
-      console.log("Direction: " + Direction[this.direction])
+      // console.log("Horzion: " + horizontalDiff)
+      // console.log("Vertical: " + verticalDiff)
+      // console.log(this.cases)
       if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
         if (horizontalDiff <= 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.RIGHT ? player.keyEventLeft : verticalDiff <= 0 ? player.keyEventUp : player.keyEventDown }));
+          const tempDirection = this.direction !== Direction.RIGHT ? Direction.LEFT : verticalDiff <= 0 ? Direction.UP : Direction.DOWN;
+          this.checkDirectionCase(tempDirection) && document.dispatchEvent(new KeyboardEvent('keydown', { 'key': movePress[tempDirection] }));
         } else if (horizontalDiff > 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.LEFT ? player.keyEventRight : verticalDiff <= 0 ? player.keyEventUp : player.keyEventDown }));
+          const tempDirection = this.direction !== Direction.LEFT ? Direction.RIGHT : verticalDiff <= 0 ? Direction.UP : Direction.DOWN;
+          this.checkDirectionCase(tempDirection) && document.dispatchEvent(new KeyboardEvent('keydown', { 'key': movePress[tempDirection] }));
         }
       } else if (Math.abs(horizontalDiff) < Math.abs(verticalDiff)) {
         if (verticalDiff <= 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.DOWN ? player.keyEventUp : horizontalDiff <= 0 ? player.keyEventLeft : player.keyEventRight }));
+          const tempDirection = this.direction !== Direction.DOWN ? Direction.UP : verticalDiff <= 0 ? Direction.LEFT : Direction.RIGHT;
+          this.checkDirectionCase(tempDirection) && document.dispatchEvent(new KeyboardEvent('keydown', { 'key': movePress[tempDirection] }));
         } else if (verticalDiff > 0) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { 'key': this.direction !== Direction.UP ? player.keyEventDown : horizontalDiff <= 0 ? player.keyEventLeft : player.keyEventRight }));
+          const tempDirection = this.direction !== Direction.UP ? Direction.DOWN : verticalDiff <= 0 ? Direction.LEFT : Direction.RIGHT;
+          this.checkDirectionCase(tempDirection) && document.dispatchEvent(new KeyboardEvent('keydown', { 'key': movePress[tempDirection] }));
         }
       }
     }
