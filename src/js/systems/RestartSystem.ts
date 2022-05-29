@@ -21,33 +21,35 @@ export default class RestartSystem extends System {
     const apples = this.componentManager.getComponentsByType(getNameApple()) as Array<Apple>;
 
     for (const player of players) {
-      let i = 0;
-      for (const snake of snakes) {
-        if (snake.idEntity != player.head && player.body.indexOf(snake.idEntity!) == -1)
+      for (let i = 0, j = 0; i < snakes.length; i++) {
+        if (snakes[i].idEntity != player.head && player.body.indexOf(snakes[i].idEntity!) == -1) {
           continue;
-        if (i < 3) {
-          const graphic = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
-          const velocity = this.entityManager.getComponentByType(snake.idEntity!, getNameVelocity()) as Velocity;
+        }
+        if (j < 4) {
+          const graphic = this.entityManager.getComponentByType(snakes[i].idEntity!, getNameGraphics()) as Graphics;
+          const velocity = this.entityManager.getComponentByType(snakes[i].idEntity!, getNameVelocity()) as Velocity;
 
-          snake.direction = snake.initialDirection;
-          snake.dependsOn = undefined;
-          snake.angles = [];
+          snakes[i].direction = snakes[i].initialDirection;
+          snakes[i].dependsOn = undefined;
+          snakes[i].angles = [];
           velocity.x = graphic.initialVelocity.x;
           velocity.y = graphic.initialVelocity.y;
           velocity.skip = 0;
           graphic.sprite!.x = graphic.initialPosition.x;
           graphic.sprite!.y = graphic.initialPosition.y;
+          graphic.posInBoard = {...graphic.initialPosInBoard};
+          graphic.lastPosInBoard = {...graphic.initialLastPosInBoard};
           // graphic.sprite!.x = app.blockSizeX * 20 + (graphic.sprite!.width / 2);
           // graphic.sprite!.y = app.blockSizeY * (20 + i) + (graphic.sprite!.height / 2);
           graphic.sprite!.rotation = 0;
-          i++;
+          j++;
           continue;
         }
 
-        const graphic = this.entityManager.getComponentByType(snake!.idEntity!, getNameGraphics()) as Graphics;
+        const graphic = this.entityManager.getComponentByType(snakes[i]!.idEntity!, getNameGraphics()) as Graphics;
 
-        this.componentManager.removeComponentOfEntity(snake!.idEntity!);
-        this.entityManager.removeEntity(snake!.idEntity!);
+        this.componentManager.removeComponentOfEntity(snakes[i]!.idEntity!);
+        this.entityManager.removeEntity(snakes[i]!.idEntity!);
 
         if (graphic.graphics) {
           graphic.graphics.destroy();
@@ -56,13 +58,18 @@ export default class RestartSystem extends System {
           graphic.sprite.destroy();
           // app.app?.stage.removeChild(graphic.sprite);
         }
-        snakes.splice(snakes.indexOf(snake));
-        console.log(player.body);
-        player.body.splice(player.body.indexOf(snake.idEntity!), 1);
-        console.log(player.body);
-        i++;
+        // console.log(player.body);
+        player.body.splice(player.body.indexOf(snakes[i].idEntity!), 1);
+        // console.log(player.body);
+        this.entityManager.removeEntity(snakes[i].idEntity!);
+        this.componentManager.removeComponentOfEntity(snakes[i].idEntity!);
+        // console.log(snakes);
+        snakes.splice(i, 1);
+        // console.log(snakes);
+        i--;
       }
       player.score = 0;
+      player.reInitBoard = true;
     }
 
     for (const apple of apples) {

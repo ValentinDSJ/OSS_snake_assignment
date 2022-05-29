@@ -20,9 +20,12 @@ export default interface Graphics extends Component {
     isInit: boolean,
     posInBoard: Position,
     lastPosInBoard: Position,
+
     initialPosition: Position,
     initialRotation: number,
     initialVelocity: Velocity,
+    initialPosInBoard: Position,
+    initialLastPosInBoard: Position,
 }
 
 export function getNameGraphics(): string {

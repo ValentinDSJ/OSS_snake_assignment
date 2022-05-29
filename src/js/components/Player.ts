@@ -7,7 +7,8 @@ export default interface Player extends Component {
     keyEventLeft: string,
     keyEventRight: string,
     keyEventDown: string,
-    keyEventUp: string
+    keyEventUp: string,
+    reInitBoard: boolean
 }
 
 export function getNamePlayer(): string {

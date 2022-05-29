@@ -73,6 +73,8 @@ export default class GamePrefabs {
         lastPosInBoard: <Position>{ x: 20, y: 19 },
         initialPosition: <Position>{x: snake.x, y: snake.y},
         initialVelocity: <Velocity>{x: 0, y: -2},
+        initialPosInBoard: <Position>{ x: 20, y: 20 },
+        initialLastPosInBoard: <Position>{ x: 20, y: 19 },
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -107,6 +109,14 @@ export default class GamePrefabs {
         },
         initialPosition: <Position>{x: snake.x, y: snake.y},
         initialVelocity: <Velocity>{x: 0, y: 2},
+        initialPosInBoard: <Position>{
+          x: app.blockSizeX + 10,
+          y: app.blockSizeX + 10,
+        },
+        initialLastPosInBoard: <Position>{
+          x: app.blockSizeX + 10,
+          y: app.blockSizeX + 9,
+        },
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -121,7 +131,7 @@ export default class GamePrefabs {
         angles: [],
         isInit: false,
         lastDirection: Direction.DOWN,
-        initialDirection: Direction.UP,
+        initialDirection: Direction.DOWN,
       });
     } else if (corner === "bottom-right") {
       snake.x = app.blockSizeX * 80 + snake.width / 2;
@@ -141,6 +151,14 @@ export default class GamePrefabs {
         },
         initialPosition: <Position>{x: snake.x, y: snake.y},
         initialVelocity: <Velocity>{x: 0, y: -2},
+        initialPosInBoard: <Position>{
+          x: app.blockSizeX * 20 - 10,
+          y: app.blockSizeX * 20 - 10,
+        },
+        initialLastPosInBoard: <Position>{
+          x: app.blockSizeX * 20 - 10,
+          y: app.blockSizeX * 20 - 9,
+        },
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -205,6 +223,11 @@ export default class GamePrefabs {
       },
       initialPosition: <Position>{x: snake.x, y: snake.y},
       initialVelocity: <Velocity>{x: velocity.x, y: velocity.y},
+      initialPosInBoard: <Position>{ x: tail.posInBoard.x, y: tail.posInBoard.y + 1 },
+      initialLastPosInBoard: <Position>{
+        x: tail.posInBoard.x,
+        y: tail.posInBoard.y + 1,
+      },
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -261,6 +284,14 @@ export default class GamePrefabs {
       },
       initialPosition: <Position>{x: snake.x, y: snake.y},
       initialVelocity: <Velocity>{x: velocity.x, y: velocity.y},
+      initialPosInBoard: <Position>{
+        x: tail[0].posInBoard.x,
+        y: tail[0].posInBoard.y,
+      },
+      initialLastPosInBoard: <Position>{
+        x: tail[0].lastPosInBoard.x,
+        y: tail[0].lastPosInBoard.y,
+      },
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -306,6 +337,8 @@ export default class GamePrefabs {
       type: GraphicsType.APPLE,
       posInBoard: <Position>{ x: x, y: y },
       lastPosInBoard: <Position>{ x: x, y: y },
+      initialPosInBoard: <Position>{ x: x, y: y },
+      initialLastPosInBoard: <Position>{ x: x, y: y },
     });
     components.push(<Apple>{
       name: getNameApple(),
@@ -335,6 +368,8 @@ export default class GamePrefabs {
       type: GraphicsType.APPLE,
       posInBoard: <Position>{ x: x, y: y },
       lastPosInBoard: <Position>{ x: x, y: y },
+      initialPosInBoard: <Position>{ x: x, y: y },
+      initialLastPosInBoard: <Position>{ x: x, y: y },
     });
     components.push(<Apple>{
       name: getNameApple(),
@@ -374,6 +409,8 @@ export default class GamePrefabs {
       lastPosInBoard: <Position>{ x: 0, y: 0 },
       initialPosition: <Position>{x: snake.x, y: snake.y},
       initialVelocity: <Velocity>{x: savedSnake.velocity.x, y: savedSnake.velocity.y},
+      initialPosInBoard: <Position>{ x: 0, y: 0 },
+      initialLastPosInBoard: <Position>{ x: 0, y: 0 },
     });
     components.push(<Velocity>{
       name: getNameVelocity(),

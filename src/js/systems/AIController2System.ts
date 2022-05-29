@@ -41,7 +41,6 @@ export default class AIController2System extends System {
   private endPos: Position = <Position>{x: 0, y: 0};
   private pathComputed: boolean = false
   private path: Array<Node> = Array<Node>()
-  private direction: Direction = Direction.UP
   private keyToTap?: string
   private tailPosition?: Position
   private state: State = State.NOTHING
@@ -309,6 +308,16 @@ export default class AIController2System extends System {
     // console.log(this.cases)
 
     for (const player of players) {
+      if (player.reInitBoard) {
+        this.cases = [];
+        this.path = [];
+        this.state = State.NOTHING;
+        this.pathComputed = false;
+        this.awake();
+        player.reInitBoard = false;
+      }
+
+
       if (!player.isBot)
         continue;
 
@@ -423,12 +432,22 @@ export default class AIController2System extends System {
 
     openList.push(startNode)
 
+    let i = 0;
     while (openList.length !== 0) {
+      // if (i > 1600) {
+      //   console.log(startNode, destNode);
+      //   break;
+      // }
+
       let currentNode = openList.reduce(function(node1, node2): Node {
         return (node1.f < node2.f ? node1 : node2)
       });
 
-      openList.splice(openList.indexOf(currentNode));
+      // console.log(openList.length);
+      openList.splice(openList.findIndex((node) => {
+        return node.x == currentNode.x && node.y == currentNode.y
+      }), 1);
+      // console.log(openList.length);
 
       closeList.push(currentNode)
 
@@ -440,7 +459,8 @@ export default class AIController2System extends System {
         path.push(currentNode)
         return path
       }
-      this.checkSuccessors(currentNode, destNode, openList, closeList)
+      this.checkSuccessors(currentNode, destNode, openList, closeList);
+      i++;
     }
     return []
   }
@@ -478,6 +498,7 @@ export default class AIController2System extends System {
       if (closeList.filter((value) => {
         return value.x == successors[i].x && value.y == successors[i].y
       }).length != 0) {
+        // console.log(successors[i], "alreay")
         continue
       }
 
@@ -487,7 +508,7 @@ export default class AIController2System extends System {
 
       // Skip if is in open list
       if (openList.filter((value) => {
-        return value.x == successors[i].x && value.y == successors[i].y && value.f < f
+        return value.x == successors[i].x && value.y == successors[i].y
       }).length != 0) {
         continue
       }
