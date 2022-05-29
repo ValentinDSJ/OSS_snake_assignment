@@ -53,7 +53,7 @@ export default class AIControllerSystem extends System {
           caseElement.y < graphic.sprite!.y + graphic.sprite!.height &&
           caseElement.y + caseElement.height > graphic.sprite!.y
       ) {
-        console.log(caseElement.type, caseElement.x, caseElement.y);
+        // console.log(caseElement.type, caseElement.x, caseElement.y);
         return graphic.type;
       }
     }

@@ -137,7 +137,7 @@ export default class AIController2System extends System {
     let posFaraway = <Position>{x: -1, y: -1};
     const incrementalPositions = this.computeArea(this.startPos);
 
-    console.log(incrementalPositions);
+    // console.log(incrementalPositions);
     for (let i = 0; i < incrementalPositions.length; i++) {
       let nbMove = 0;
       let pos = {...this.startPos}
@@ -244,7 +244,7 @@ export default class AIController2System extends System {
       // console.log("Pos in board snake :", graphic.posInBoard);
 
       if (i != 1 && (!this.isValid(graphic.posInBoard) || (lastPosSaved.x != graphic.posInBoard.x || lastPosSaved.y != graphic.posInBoard.y))) {
-        console.log("error");
+        // console.log("error");
         const lastSnake = snakes[i - 2];
         const graphicLastSnake = this.entityManager.getComponentByType(lastSnake.idEntity!, getNameGraphics()) as Graphics;
 
@@ -264,7 +264,7 @@ export default class AIController2System extends System {
             graphic.lastPosInBoard.y--;
             break;
         }
-        console.log("Repair with ", graphic.posInBoard);
+        // console.log("Repair with ", graphic.posInBoard);
       }
       lastPosSaved = {...graphic.lastPosInBoard}
 
@@ -417,7 +417,7 @@ export default class AIController2System extends System {
 
       if (this.keyToTap) {
         // console.log(this.startPos)
-        console.log(this.keyToTap)
+        // console.log(this.keyToTap)
         document.dispatchEvent(new KeyboardEvent('keydown',  {'key': this.keyToTap}));
       }
     }

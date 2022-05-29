@@ -264,11 +264,11 @@ export default class GamePrefabs {
     snake.anchor.set(0.5);
     snake.angle = tail[0].sprite!.angle;
 
-    console.log(
-      "Create dynamic body :",
-      tail[0].posInBoard,
-      tail[0].lastPosInBoard
-    );
+    // console.log(
+    //   "Create dynamic body :",
+    //   tail[0].posInBoard,
+    //   tail[0].lastPosInBoard
+    // );
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,

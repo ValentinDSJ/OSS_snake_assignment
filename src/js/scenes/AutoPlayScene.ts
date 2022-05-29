@@ -52,7 +52,7 @@ export default class AutoPlayScene extends Scene {
   }
 
   initEntities() {
-    console.log(  document.querySelector(".game-scene .player-name"))
+    // console.log(  document.querySelector(".game-scene .player-name"))
     // @ts-ignore
     document.querySelector(".game-scene .game-details .player-name").classList.add("visibility-hidden");
     // @ts-ignore
