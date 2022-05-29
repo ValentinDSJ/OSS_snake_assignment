@@ -75,7 +75,7 @@ export default class EventsSystem extends System {
     nbToRemove = snakeHead!.angles.length;
 
     if (nbToRemove > 0 && snakeHead!.angles[0].direction == direction) {
-      return
+      return;
     }
 
     // console.log("Next direction", x, y);
@@ -129,6 +129,8 @@ export default class EventsSystem extends System {
         getNamePlayer()
       ) as Array<Player>;
 
+      console.log("players", players.length);
+
       for (const player of players) {
         let snakeHead: Snake = this.entityManager.getComponentByType(
           player.head,
@@ -139,6 +141,9 @@ export default class EventsSystem extends System {
           getNameGraphics()
         ) as Graphics;
         let direction = snakeHead.direction;
+
+        console.log("e.key", e.key);
+        console.log("palyer", player.keyEventLeft);
 
         if (
           e.key === player.keyEventLeft &&
