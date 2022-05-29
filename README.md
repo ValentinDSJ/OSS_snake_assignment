@@ -51,6 +51,8 @@ Here is the list of features implemented in the game :
 - Classic snake game
 - Pause the game
 - Change username
+- Auto play mode
+- Dual game mode
 
 ## 🧑‍💻 Coding convention
 
@@ -92,5 +94,9 @@ We use parcel to build the application. For more information -> https://parceljs
 <img src="./public/game-over.png" alt="" />
 
 <img src="./public/menu.png" alt="" />
+
+<img src="./public/dual-game.png" alt="" />
+
+<img src="./public/bot.png" alt="" />
 
 <img src="./public/ranking.png" alt="" />
