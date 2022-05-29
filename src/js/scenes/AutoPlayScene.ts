@@ -110,7 +110,7 @@ export default class AutoPlayScene extends Scene {
     }
     this.initEntity(AutoPlayPrefabs.createBot(headId, body));
 
-    this.initEntity(GamePrefabs.createGameOver());
+    this.initEntity(GamePrefabs.createGameOver(false));
     this.initEntity(AutoPlayPrefabs.createPause());
   }
 }

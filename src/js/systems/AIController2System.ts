@@ -46,23 +46,106 @@ export default class AIController2System extends System {
   private tailPosition?: Position
   private state: State = State.NOTHING
 
-  getPositionFaraway(): Position {
-    let bestNbMove = 0;
-    let posFaraway = <Position>{x: -1, y: -1};
+  computeArea(pos: Position): Array<Position> {
+    const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+    let results = Array<Position>();
     const incrementalPositions = <Array<Position>>[
       <Position>{x: 0, y: 1},
       <Position>{x: 0, y: -1},
       <Position>{x: 1, y: 0},
       <Position>{x: -1, y: 0},
     ]
+    let max_area = 0;
 
     for (let i = 0; i < 4; i++) {
+      const openList = Array<Position>();
+      const closeList = Array<Position>();
+      const firstPosition = <Position>{x: pos.x + incrementalPositions[i].x, y: pos.y + incrementalPositions[i].y};
+
+      closeList.push(pos);
+
+      if (!this.isValid(firstPosition) || !this.isGrass(firstPosition))
+        continue;
+
+      openList.push(firstPosition);
+      while (openList.length != 0) {
+        const position = openList.pop();
+
+        if (!position)
+          break;
+        closeList.push(position);
+
+        if (closeList.length > snakes.length * 2) {
+          break;
+        }
+
+        for (let j = 0; j < 4; j++) {
+          const tmp = <Position>{
+            x: position.x + incrementalPositions[j].x,
+            y: position.y + incrementalPositions[j].y,
+          }
+          if (!this.isValid(tmp) || !this.isGrass(tmp)) {
+            continue;
+          }
+          if (closeList.filter((value) => {
+            return value.x == tmp.x && value.y == tmp.y
+          }).length != 0) {
+            continue
+          }
+          openList.push(<Position>{...tmp});
+        }
+      }
+      if (closeList.length > max_area) {
+        results = [];
+        results.push(incrementalPositions[i]);
+        max_area = closeList.length;
+      } else if (closeList.length == max_area) {
+        results.push(incrementalPositions[i]);
+      }
+    }
+    return results;
+  }
+
+  isBlocked(pos: Position): number {
+    const incrementalPositions = <Array<Position>>[
+      <Position>{x: 0, y: 1},
+      <Position>{x: 0, y: -1},
+      <Position>{x: 1, y: 0},
+      <Position>{x: -1, y: 0},
+    ]
+    let nb = 0;
+
+    for (let i = 0; i < 4; i++) {
+      if ((pos.x - this.startPos.x > 0 && incrementalPositions[i].x < 0) ||
+          (pos.y - this.startPos.y > 0 && incrementalPositions[i].y < 0) ||
+          (pos.x - this.startPos.x < 0 && incrementalPositions[i].x > 0) ||
+          (pos.y - this.startPos.y < 0 && incrementalPositions[i].y > 0)
+      ) {
+        continue;
+      }
+      const tmp = <Position>{
+        x: pos.x + incrementalPositions[i].x,
+        y: pos.y + incrementalPositions[i].y,
+      }
+      if (this.isValid(tmp) && this.isGrass(tmp))
+        nb++;
+    }
+    return nb;
+  }
+
+  getPositionFaraway(): Position {
+    let bestNbMove = 0;
+    let posFaraway = <Position>{x: -1, y: -1};
+    const incrementalPositions = this.computeArea(this.startPos);
+
+    console.log(incrementalPositions);
+    for (let i = 0; i < incrementalPositions.length; i++) {
       let nbMove = 0;
       let pos = {...this.startPos}
 
       pos.x += incrementalPositions[i].x;
       pos.y += incrementalPositions[i].y;
-      while (this.cases[pos.y][pos.x].type != GraphicsType.WALL && this.cases[pos.y][pos.x].type != GraphicsType.SNAKE) {
+      while (this.cases[pos.y][pos.x].type != GraphicsType.WALL && this.cases[pos.y][pos.x].type != GraphicsType.SNAKE && this.isBlocked(pos) >= 1) {
         nbMove++;
         pos.x += incrementalPositions[i].x;
         pos.y += incrementalPositions[i].y;

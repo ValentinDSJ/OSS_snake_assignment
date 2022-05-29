@@ -319,7 +319,7 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createGameOver(): Array<Component> {
+  static createGameOver(saveScore: boolean = true): Array<Component> {
     let components = Array<Component>();
     let events = new Map;
 
@@ -327,13 +327,16 @@ export default class GamePrefabs {
       name: getNameGameOver(),
       over: false,
       exit: false,
-      scoreSaved: false
+      scoreSaved: false,
+      saveScore: saveScore
     });
     events.set(".game-over .restart-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
       const restart = cm.getComponentByType(getNameRestart()) as Restart;
       restart.click = true;
 
-      GameOverSystem.saveLatestScoreIfExist();
+      if (saveScore) {
+        GameOverSystem.saveLatestScoreIfExist();
+      }
     });
 
     events.set(".game-over .exit-button", (idEntity: number, em: EntityManager, cm: ComponentManager) => {
