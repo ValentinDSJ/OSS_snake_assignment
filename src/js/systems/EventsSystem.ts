@@ -89,11 +89,11 @@ export default class EventsSystem extends System {
       y: y,
     });
     for (const s of snake) {
-      if (s.idEntity == snakeHead!.idEntity) continue;
-      for (let i = 0; i < nbToRemove; i++) {
-        s.angles.pop();
-      }
-      if (s.idEntity !== undefined && ids.indexOf(s.idEntity) != -1) {
+      if (s.idEntity !== undefined && ids.indexOf(s.idEntity) !== -1) {
+        if (s.idEntity == snakeHead!.idEntity) continue;
+        for (let i = 0; i < nbToRemove; i++) {
+          s.angles.pop();
+        }
         s.angles.push({
           direction: direction,
           x: x,

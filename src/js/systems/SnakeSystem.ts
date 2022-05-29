@@ -14,7 +14,8 @@ import Apple, { getNameApple } from "../components/Apple";
 export default class SnakeSystem extends System {
   spawnApple() {}
 
-  getSnakeHead(): [Snake?, Graphics?, Velocity?] {
+  getSnakeHead(): [Snake?, Graphics?, Velocity?][] {
+    const array: [Snake?, Graphics?, Velocity?][] = [];
     const snakes = this.componentManager.getComponentsByType(
       getNameSnake()
     ) as Array<Snake>;
@@ -31,10 +32,10 @@ export default class SnakeSystem extends System {
       // let found = false;
 
       if (graphic.type == GraphicsType.SNAKE_HEAD) {
-        return [snake, graphic, velocity];
+        array.push([snake, graphic, velocity]);
       }
     }
-    return [];
+    return array;
   }
 
   getSnakeTail(): Graphics {
@@ -61,93 +62,94 @@ export default class SnakeSystem extends System {
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
     ) as Array<Graphics>;
-    const [snakeHead, snakeHeadGraphics, snakeHeadVelocity] =
-      this.getSnakeHead();
+    const array = this.getSnakeHead();
 
-    if (!snakeHeadGraphics || !snakeHead) {
-      return;
-    }
-
-    for (const graphic of graphics) {
-      if (
-        graphic.type == GraphicsType.GRASS ||
-        graphic.type == GraphicsType.SNAKE_HEAD ||
-        graphic.idEntity! == snakeAfterHead.idEntity!
-      )
-        continue;
-      let x;
-      let y;
-      let width;
-      let height;
-
-      let width2 = snakeHeadGraphics.sprite!.width;
-      let height2 = snakeHeadGraphics.sprite!.height;
-      let x2 = snakeHeadGraphics.sprite!.x - width2 / 2;
-      let y2 = snakeHeadGraphics.sprite!.y - height2 / 2;
-
-      if (graphic.graphics) {
-        x = graphic.graphics.getBounds().x;
-        y = graphic.graphics.getBounds().y;
-        width = graphic.graphics.getBounds().width;
-        height = graphic.graphics.getBounds().height;
-      } else if (graphic.sprite) {
-        x = graphic.sprite.x;
-        y = graphic.sprite.y;
-        width = graphic.sprite.width;
-        height = graphic.sprite.height;
-        if (graphic.type == GraphicsType.SNAKE) {
-          x -= width / 2;
-          y -= height / 2;
-        }
+    for (const [snakeHead, snakeHeadGraphics, snakeHeadVelocity] of array) {
+      if (!snakeHeadGraphics || !snakeHead) {
+        return;
       }
 
-      if (
-        x2 < x + width &&
-        x2 + width2 > x &&
-        y2 < y + height &&
-        y2 + height2 > y
-      ) {
-        switch (graphic.type) {
-          case GraphicsType.APPLE:
-            const apple = this.entityManager.getComponentByType(
-              graphic.idEntity!,
-              getNameApple()
-            ) as Apple;
+      for (const graphic of graphics) {
+        if (
+          graphic.type == GraphicsType.GRASS ||
+          graphic.type == GraphicsType.SNAKE_HEAD ||
+          graphic.idEntity! == snakeAfterHead.idEntity!
+        )
+          continue;
+        let x;
+        let y;
+        let width;
+        let height;
 
-            if (apple.isAte) {
+        let width2 = snakeHeadGraphics.sprite!.width;
+        let height2 = snakeHeadGraphics.sprite!.height;
+        let x2 = snakeHeadGraphics.sprite!.x - width2 / 2;
+        let y2 = snakeHeadGraphics.sprite!.y - height2 / 2;
+
+        if (graphic.graphics) {
+          x = graphic.graphics.getBounds().x;
+          y = graphic.graphics.getBounds().y;
+          width = graphic.graphics.getBounds().width;
+          height = graphic.graphics.getBounds().height;
+        } else if (graphic.sprite) {
+          x = graphic.sprite.x;
+          y = graphic.sprite.y;
+          width = graphic.sprite.width;
+          height = graphic.sprite.height;
+          if (graphic.type == GraphicsType.SNAKE) {
+            x -= width / 2;
+            y -= height / 2;
+          }
+        }
+
+        if (
+          x2 < x + width &&
+          x2 + width2 > x &&
+          y2 < y + height &&
+          y2 + height2 > y
+        ) {
+          switch (graphic.type) {
+            case GraphicsType.APPLE:
+              const apple = this.entityManager.getComponentByType(
+                graphic.idEntity!,
+                getNameApple()
+              ) as Apple;
+
+              if (apple.isAte) {
+                break;
+              }
+              if (
+                snakes.length ==
+                application.nbBlocksGrass * application.nbBlocksGrass
+              ) {
+                this.gameOver();
+                break;
+              }
+              apple.isAte = true;
+              const newBody = GamePrefabs.createDynamicBody(
+                application,
+                this.getSnakeTail(),
+                snakeHeadVelocity!,
+                snakes[snakes.length - 1]
+              );
+              this.entityManager.addEntity(newBody);
+              this.componentManager.addComponents(newBody);
+
+              const app = this.componentManager.getComponentByType(
+                getNameApplication()
+              ) as Application;
+
+              const player = this.componentManager.getComponentByType(
+                getNamePlayer()
+              ) as Player;
+
+              player.score++;
               break;
-            }
-            if (
-              snakes.length ==
-              application.nbBlocksGrass * application.nbBlocksGrass
-            ) {
+            case GraphicsType.SNAKE:
+            case GraphicsType.WALL:
               this.gameOver();
               break;
-            }
-            apple.isAte = true;
-            const newBody = GamePrefabs.createDynamicBody(
-              application,
-              this.getSnakeTail(),
-              snakeHeadVelocity!,
-              snakes[snakes.length - 1]
-            );
-            this.entityManager.addEntity(newBody);
-            this.componentManager.addComponents(newBody);
-
-            const app = this.componentManager.getComponentByType(
-              getNameApplication()
-            ) as Application;
-
-            const player = this.componentManager.getComponentByType(
-              getNamePlayer()
-            ) as Player;
-
-            player.score++;
-            break;
-          case GraphicsType.SNAKE:
-          case GraphicsType.WALL:
-            this.gameOver();
-            break;
+          }
         }
       }
     }
@@ -246,7 +248,7 @@ export default class SnakeSystem extends System {
       }
 
       if (s.angles.length == 0) {
-        this.keepStraight(s)
+        this.keepStraight(s);
         continue;
       }
       const nextAngle = s.angles[0];
