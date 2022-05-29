@@ -245,7 +245,10 @@ export default class SnakeSystem extends System {
         continue;
       }
 
-      if (s.angles.length == 0) continue;
+      if (s.angles.length == 0) {
+        this.keepStraight(s)
+        continue;
+      }
       const nextAngle = s.angles[0];
       const graphics = this.entityManager.getComponentByType(
         s.idEntity!,
