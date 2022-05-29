@@ -8,13 +8,9 @@ import SnakeSystem from "../systems/SnakeSystem";
 import HTMLSystem from "../systems/HTMLSystem";
 import GameOverSystem from "../systems/GameOverSystem";
 import GameDetailsSystem from "../systems/GameDetailsSystem";
-import Graphics, { GraphicsType } from "../components/Graphics";
+import Graphics from "../components/Graphics";
 import AppleSystem from "../systems/AppleSystem";
-import SaveSystem from "../systems/SaveSystem";
 import VelocitySystem from "../systems/VelocitySystem";
-import GameSaved from "../utils/GameSaved";
-import Game from "../Game";
-import { SceneType } from "../utils/SceneType";
 import RestartSystem from "../systems/RestartSystem";
 import DualPlayPrefabs from "../prefabs/DualPlayPrefabs";
 
@@ -69,22 +65,17 @@ export default class DualPlayScene extends Scene {
     snakesBodyComponents.push(fsBody);
 
     for (let i = 1; i < 3; i++) {
-      // body.push(
-      //   this.initEntity(
-      //     GamePrefabs.createBody(
-      //       application,
-      //       playerNb === 0 ? "top-left" : "bottom-right",
-      //       fsBody[0] as Graphics,
-      //       fsBody[1] as Velocity
-      //     )
-      //   )
-      // );
-      snakesBodyComponents.push(GamePrefabs.createBody(
+      snakesBodyComponents.push(
+        GamePrefabs.createBody(
           application,
           playerNb === 0 ? "top-left" : "bottom-right",
           snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
-          snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
-      body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
+          snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity
+        )
+      );
+      body.push(
+        this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1])
+      );
     }
     this.initEntity(
       GamePrefabs.createPlayer(headId, body, undefined, playerNb)
