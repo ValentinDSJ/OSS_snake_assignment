@@ -34,6 +34,11 @@ export default class DualPlayScene extends Scene {
     this.systemManager.addSystem(
       new GameDetailsSystem(this.entityManager, this.componentManager)
     );
+    const actualScoreHTML = document.querySelector(
+      ".game-scene .game-details"
+    )!;
+    // @ts-ignore
+    actualScoreHTML.style.visibility = "hidden";
     this.systemManager.addSystem(
       new VelocitySystem(this.entityManager, this.componentManager)
     );
@@ -95,7 +100,7 @@ export default class DualPlayScene extends Scene {
 
     application.nbBlocksWithWallX = 82;
     application.nbBlocksGrassX = 80;
-    document.querySelector('#game')?.classList.add('big');
+    document.querySelector("#game")?.classList.add("big");
     application.app?.renderer.resize(view.offsetWidth, view.offsetHeight);
 
     this.initEntity(
@@ -141,12 +146,12 @@ export default class DualPlayScene extends Scene {
     const view = document.querySelector("#game") as HTMLCanvasElement;
 
     const application = this.componentManager.getComponentByType(
-        "Application"
+      "Application"
     ) as Application;
 
     application.nbBlocksWithWallX = 42;
     application.nbBlocksGrassX = 40;
-    view.classList.remove('big');
+    view.classList.remove("big");
     application.app?.renderer.resize(view.offsetWidth, view.offsetHeight);
   }
 }
