@@ -75,7 +75,7 @@ export default class AutoPlayScene extends Scene {
         application.blockSizeY,
         application.app?.screen.width ?? 0,
         application.app?.screen.height ?? 0,
-        application.nbBlocksWithWall
+        application.nbBlocksWithWallX
       )
     );
 

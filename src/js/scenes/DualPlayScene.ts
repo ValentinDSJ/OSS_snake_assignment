@@ -90,6 +90,14 @@ export default class DualPlayScene extends Scene {
     if (!application) {
       return;
     }
+
+    const view = document.querySelector("#game") as HTMLCanvasElement;
+
+    application.nbBlocksWithWallX = 82;
+    application.nbBlocksGrassX = 80;
+    document.querySelector('#game')?.classList.add('big');
+    application.app?.renderer.resize(view.offsetWidth, view.offsetHeight);
+
     this.initEntity(
       GamePrefabs.createBoard(
         application,
@@ -106,7 +114,7 @@ export default class DualPlayScene extends Scene {
         application.blockSizeY,
         application.app?.screen.width ?? 0,
         application.app?.screen.height ?? 0,
-        application.nbBlocksWithWall
+        application.nbBlocksWithWallX
       )
     );
     this.initEntity(
@@ -116,7 +124,7 @@ export default class DualPlayScene extends Scene {
         application.blockSizeY,
         application.app?.screen.width ?? 0,
         application.app?.screen.height ?? 0,
-        application.nbBlocksWithWall
+        application.nbBlocksWithWallX
       )
     );
 
@@ -125,5 +133,20 @@ export default class DualPlayScene extends Scene {
 
     this.initEntity(GamePrefabs.createGameOver());
     this.initEntity(DualPlayPrefabs.createPause());
+  }
+
+  tearDown() {
+    super.tearDown();
+
+    const view = document.querySelector("#game") as HTMLCanvasElement;
+
+    const application = this.componentManager.getComponentByType(
+        "Application"
+    ) as Application;
+
+    application.nbBlocksWithWallX = 42;
+    application.nbBlocksGrassX = 40;
+    view.classList.remove('big');
+    application.app?.renderer.resize(view.offsetWidth, view.offsetHeight);
   }
 }

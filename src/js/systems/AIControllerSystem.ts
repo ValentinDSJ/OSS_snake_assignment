@@ -21,10 +21,10 @@ export default class AIControllerSystem extends System {
   awake() {
     const application = this.componentManager.getComponentByType(getNameApplication()) as Application;
 
-    for (let i = 0; i < application.nbBlocksWithWall; i++) {
-      this.cases.push(Array<Case>(application.nbBlocksWithWall));
+    for (let i = 0; i < application.nbBlocksWithWallY; i++) {
+      this.cases.push(Array<Case>(application.nbBlocksWithWallX));
 
-      for (let j = 0; j < application.nbBlocksWithWall; j++) {
+      for (let j = 0; j < application.nbBlocksWithWallX; j++) {
         this.cases[i][j] = <Case>{
           y: i * application.blockSizeX,
           x: j * application.blockSizeY,
@@ -33,7 +33,7 @@ export default class AIControllerSystem extends System {
           type: GraphicsType.GRASS
         };
 
-        if (i == 0 || j == 0 || i == application.nbBlocksWithWall - 1 || j == application.nbBlocksWithWall - 1) {
+        if (i == 0 || j == 0 || i == application.nbBlocksWithWallY - 1 || j == application.nbBlocksWithWallX - 1) {
           this.cases[i][j].type = GraphicsType.WALL;
         }
       }

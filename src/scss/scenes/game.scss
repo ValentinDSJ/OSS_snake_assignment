@@ -87,6 +87,7 @@
     }
 
     #game {
+        //width: 1260px;
         width: 630px;
         height: 630px;
         //width: 100%;
@@ -97,6 +98,10 @@
         left:50%;
         transform:translate(-50%, -50%);
         z-index: 1;
+
+        &.big {
+            width: 1230px;
+        }
     }
 
     .instructions {

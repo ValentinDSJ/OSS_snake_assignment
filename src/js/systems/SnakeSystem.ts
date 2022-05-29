@@ -120,7 +120,7 @@ export default class SnakeSystem extends System {
               }
               if (
                 snakes.length ==
-                application.nbBlocksGrass * application.nbBlocksGrass
+                application.nbBlocksGrassX * application.nbBlocksGrassY
               ) {
                 this.gameOver();
                 break;

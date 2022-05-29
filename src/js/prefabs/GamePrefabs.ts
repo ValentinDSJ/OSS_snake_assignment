@@ -91,7 +91,7 @@ export default class GamePrefabs {
       });
     } else if (corner === "top-left") {
       snake.x = app.blockSizeX * 1 + snake.width / 2;
-      snake.y = app.blockSizeY * 3 + snake.height / 2;
+      snake.y = app.blockSizeY * 4 + snake.height / 2;
       snake.angle = 90;
       components.push(<Graphics>{
         name: getNameGraphics(),
@@ -121,8 +121,8 @@ export default class GamePrefabs {
         lastDirection: Direction.DOWN,
       });
     } else if (corner === "bottom-right") {
-      snake.x = app.blockSizeX * 40 + snake.width / 2;
-      snake.y = app.blockSizeY * 40 + snake.height / 2;
+      snake.x = app.blockSizeX * 80 + snake.width / 2;
+      snake.y = app.blockSizeY * 37 + snake.height / 2;
       snake.angle = 0;
       components.push(<Graphics>{
         name: getNameGraphics(),
@@ -271,8 +271,8 @@ export default class GamePrefabs {
     nbBlocks: number
   ): Array<Component> {
     let components = Array<Component>();
-    let x = Math.floor(Math.random() * (nbBlocks - 2)) + 1;
-    let y = Math.floor(Math.random() * (nbBlocks - 2)) + 1;
+    let x = Math.floor(Math.random() * (app.nbBlocksWithWallX - 2)) + 1;
+    let y = Math.floor(Math.random() * (app.nbBlocksWithWallY - 2)) + 1;
 
     const apple = PIXI.Sprite.from(appleSprite);
     apple.x = x * blockSizeX;
@@ -374,13 +374,13 @@ export default class GamePrefabs {
     let components = Array<Component>();
 
     let moduloColor = 1;
-    for (let i = 0; i < app.nbBlocksWithWall; i++) {
-      for (let j = 0; j < app.nbBlocksWithWall; j++) {
+    for (let i = 0; i < app.nbBlocksWithWallX; i++) {
+      for (let j = 0; j < app.nbBlocksWithWallY; j++) {
         if (
           i == 0 ||
           j == 0 ||
-          i == app.nbBlocksWithWall - 1 ||
-          j == app.nbBlocksWithWall - 1
+          i == app.nbBlocksWithWallX - 1 ||
+          j == app.nbBlocksWithWallY - 1
         ) {
           const graphics = new PIXI.Graphics();
 

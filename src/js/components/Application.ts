@@ -4,8 +4,10 @@ export default interface Application extends Component {
     app?: App,
     blockSizeX: number,
     blockSizeY: number,
-    nbBlocksGrass: number,
-    nbBlocksWithWall: number
+    nbBlocksGrassX: number,
+    nbBlocksGrassY: number,
+    nbBlocksWithWallX: number,
+    nbBlocksWithWallY: number,
 }
 
 export function getNameApplication(): string {
