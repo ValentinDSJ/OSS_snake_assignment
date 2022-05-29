@@ -44,26 +44,41 @@ export default class SnakeSystem extends System {
     const snakes = this.componentManager.getComponentsByType(
       getNameSnake()
     ) as Array<Snake>;
+    const players = this.componentManager.getComponentsByType(getNamePlayer()) as Array<Player>;
 
-    for (let i = 0; i < snakes.length - 1; i++) {
-      // head of wanted snake
-      if (snakes[i].idEntity === idEntity) {
-        for (let j = i + 1; j < snakes.length - 1; j++) {
-          const graphic = this.entityManager.getComponentByType(
-            snakes[j].idEntity!,
-            getNameGraphics()
-          ) as Graphics;
-          const nextGraphic = this.entityManager.getComponentByType(
-            snakes[j + 1].idEntity!,
-            getNameGraphics()
-          ) as Graphics;
+    for (const player of players) {
+      if (player.head == idEntity) {
+        let idEntityTail = player.body[player.body.length - 1];
 
-          if (nextGraphic.type == GraphicsType.SNAKE_HEAD) {
-            return [graphic, snakes[j]];
+        for (let i = 0; i < snakes.length; i++) {
+          if (snakes[i].idEntity == idEntityTail) {
+            const graphic = this.entityManager.getComponentByType(idEntityTail, getNameGraphics()) as Graphics;
+
+            return [graphic, snakes[i]];
           }
         }
       }
     }
+
+    // for (let i = 0; i < snakes.length - 1; i++) {
+    //   // head of wanted snake
+    //   if (snakes[i].idEntity === idEntity) {
+    //     for (let j = i + 1; j < snakes.length - 1; j++) {
+    //       const graphic = this.entityManager.getComponentByType(
+    //         snakes[j].idEntity!,
+    //         getNameGraphics()
+    //       ) as Graphics;
+    //       const nextGraphic = this.entityManager.getComponentByType(
+    //         snakes[j + 1].idEntity!,
+    //         getNameGraphics()
+    //       ) as Graphics;
+    //
+    //       if (nextGraphic.type == GraphicsType.SNAKE_HEAD) {
+    //         return [graphic, snakes[j]];
+    //       }
+    //     }
+    //   }
+    // }
 
     const graphic = this.entityManager.getComponentByType(
       snakes[snakes.length - 1].idEntity!,
@@ -84,22 +99,23 @@ export default class SnakeSystem extends System {
       getNameGraphics()
     ) as Array<Graphics>;
     const array = this.getSnakeHead();
+    const players = this.componentManager.getComponentsByType(getNamePlayer()) as Array<Player>;
 
-    for (const [
-      snakeHead,
-      snakeAfterHead,
-      snakeHeadGraphics,
-      snakeHeadVelocity,
-    ] of array) {
+    for (const player of players) {
+      const snakeHead = this.entityManager.getComponentByType(player.head, getNameSnake()) as Snake;
+      const snakeAfterHead = this.entityManager.getComponentByType(player.body[0], getNameSnake()) as Snake;
+      const snakeHeadGraphics = this.entityManager.getComponentByType(player.head, getNameGraphics()) as Graphics;
+      const snakeHeadVelocity = this.entityManager.getComponentByType(player.body[0], getNameVelocity()) as Velocity;
+
       if (!snakeHeadGraphics || !snakeHead || !snakeAfterHead) {
         return;
       }
 
       for (const graphic of graphics) {
         if (
-          graphic.type == GraphicsType.GRASS ||
-          graphic.type == GraphicsType.SNAKE_HEAD ||
-          graphic.idEntity! == snakeAfterHead.idEntity!
+            graphic.type == GraphicsType.GRASS ||
+            graphic.type == GraphicsType.SNAKE_HEAD ||
+            graphic.idEntity! == snakeAfterHead.idEntity!
         )
           continue;
         let x;
@@ -129,39 +145,39 @@ export default class SnakeSystem extends System {
         }
 
         if (
-          x2 < x + width &&
-          x2 + width2 > x &&
-          y2 < y + height &&
-          y2 + height2 > y
+            x2 < x + width &&
+            x2 + width2 > x &&
+            y2 < y + height &&
+            y2 + height2 > y
         ) {
           switch (graphic.type) {
             case GraphicsType.APPLE:
               const apple = this.entityManager.getComponentByType(
-                graphic.idEntity!,
-                getNameApple()
+                  graphic.idEntity!,
+                  getNameApple()
               ) as Apple;
 
               if (apple.isAte) {
                 break;
               }
               if (
-                snakes.length ==
-                application.nbBlocksGrassX * application.nbBlocksGrassY
+                  snakes.length ==
+                  application.nbBlocksGrassX * application.nbBlocksGrassY
               ) {
                 this.gameOver();
                 break;
               }
               apple.isAte = true;
               const newBody = GamePrefabs.createDynamicBody(
-                application,
-                this.getSnakeTail(snakeHead.idEntity),
-                snakeHeadVelocity!
+                  application,
+                  this.getSnakeTail(player.head),
+                  snakeHeadVelocity!
               );
               let id = this.entityManager.addEntity(newBody);
               this.componentManager.addComponents(newBody);
 
               const app = this.componentManager.getComponentByType(
-                getNameApplication()
+                  getNameApplication()
               ) as Application;
 
               const players = this.componentManager.getComponentsByType(
