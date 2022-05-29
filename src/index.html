@@ -42,7 +42,7 @@
           <div class="player-name">
             <label class="white">
               Your name
-              <input class="font-size-30" name="your-name">
+              <input class="font-size-30" name="your-name" />
             </label>
           </div>
           <div class="buttons">
@@ -62,11 +62,17 @@
           </div>
         </div>
         <div class="game-details">
-          <p class="player-name"><i class="fa-solid fa-user"></i> <span></span></p>
-          <p class="highest-score"><i class="fa-solid fa-star"></i> <span></span></p>
-          <p class="actual-score"><i><img src="../assets/sprites/food.png"></i> <span></span></p>
+          <p class="player-name">
+            <i class="fa-solid fa-user"></i> <span></span>
+          </p>
+          <p class="highest-score">
+            <i class="fa-solid fa-star"></i> <span></span>
+          </p>
+          <p class="actual-score">
+            <i><img src="../assets/sprites/food.png" /></i> <span></span>
+          </p>
         </div>
-        <canvas id="game" width="40" height="40"></canvas>
+        <canvas id="game" width="40" height="80"></canvas>
         <div class="instructions close">
           <div class="labels">
             <p>Instructions</p>
@@ -76,7 +82,7 @@
           </div>
           <div class="instruction">
             <div class="image">
-              <img src="../assets/images/up-arrow.png" alt="">
+              <img src="../assets/images/up-arrow.png" alt="" />
             </div>
             <div class="text">
               <p>Move the snake up</p>
@@ -84,7 +90,11 @@
           </div>
           <div class="instruction">
             <div class="image">
-              <img src="../assets/images/up-arrow.png" alt="" class="rotate-180">
+              <img
+                src="../assets/images/up-arrow.png"
+                alt=""
+                class="rotate-180"
+              />
             </div>
             <div class="text">
               <p>Move the snake down</p>
@@ -92,7 +102,11 @@
           </div>
           <div class="instruction">
             <div class="image">
-              <img src="../assets/images/up-arrow.png" alt="" class="rotate-minus-90">
+              <img
+                src="../assets/images/up-arrow.png"
+                alt=""
+                class="rotate-minus-90"
+              />
             </div>
             <div class="text">
               <p>Move the snake to the left</p>
@@ -100,7 +114,11 @@
           </div>
           <div class="instruction">
             <div class="image">
-              <img src="../assets/images/up-arrow.png" alt="" class="rotate-90">
+              <img
+                src="../assets/images/up-arrow.png"
+                alt=""
+                class="rotate-90"
+              />
             </div>
             <div class="text">
               <p>Move the snake to the right</p>
@@ -108,7 +126,7 @@
           </div>
           <div class="instruction">
             <div class="image">
-              <img src="../assets/images/escape.png" alt="">
+              <img src="../assets/images/escape.png" alt="" />
             </div>
             <div class="text">
               <p>Pause</p>
@@ -124,19 +142,18 @@
           <div class="scores-thead">
             <table>
               <thead>
-              <tr>
-                <th style="width: 10%">Position</th>
-                <th style="width: 20%">Score</th>
-                <th style="width: 30%">Name</th>
-                <th>Date</th>
-              </tr>
+                <tr>
+                  <th style="width: 10%">Position</th>
+                  <th style="width: 20%">Score</th>
+                  <th style="width: 30%">Name</th>
+                  <th>Date</th>
+                </tr>
               </thead>
             </table>
           </div>
           <div class="scores-tbody">
             <table>
-              <tbody>
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
         </div>

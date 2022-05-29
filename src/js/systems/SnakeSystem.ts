@@ -1,25 +1,34 @@
-import {System} from "../libs/ecs/System";
-import Snake, {Direction, getNameSnake} from "../components/Snake";
-import Graphics, {getNameGraphics, GraphicsType} from "../components/Graphics";
-import Velocity, {getNameVelocity} from "../components/Velocity";
-import Application, {getNameApplication} from "../components/Application";
+import { System } from "../libs/ecs/System";
+import Snake, { Direction, getNameSnake } from "../components/Snake";
+import Graphics, {
+  getNameGraphics,
+  GraphicsType,
+} from "../components/Graphics";
+import Velocity, { getNameVelocity } from "../components/Velocity";
+import Application, { getNameApplication } from "../components/Application";
 import GamePrefabs from "../prefabs/GamePrefabs";
-import Player, {getNamePlayer} from "../components/Player";
-import GameOver, {getNameGameOver} from "../components/GameOver";
-import Apple, {getNameApple} from "../components/Apple";
-import Pause, {getNamePause} from "../components/Pause";
+import Player, { getNamePlayer } from "../components/Player";
+import GameOver, { getNameGameOver } from "../components/GameOver";
+import Apple, { getNameApple } from "../components/Apple";
 
 export default class SnakeSystem extends System {
-  spawnApple() {
-  }
+  spawnApple() {}
 
   getSnakeHead(): [Snake?, Graphics?, Velocity?] {
-    const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+    const snakes = this.componentManager.getComponentsByType(
+      getNameSnake()
+    ) as Array<Snake>;
 
     for (const snake of snakes) {
-      const graphic = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
-      const velocity = this.entityManager.getComponentByType(snake.idEntity!, getNameVelocity()) as Velocity;
-      let found = false;
+      const graphic = this.entityManager.getComponentByType(
+        snake.idEntity!,
+        getNameGraphics()
+      ) as Graphics;
+      const velocity = this.entityManager.getComponentByType(
+        snake.idEntity!,
+        getNameVelocity()
+      ) as Velocity;
+      // let found = false;
 
       if (graphic.type == GraphicsType.SNAKE_HEAD) {
         return [snake, graphic, velocity];
@@ -29,26 +38,42 @@ export default class SnakeSystem extends System {
   }
 
   getSnakeTail(): Graphics {
-    const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
-    const graphics = this.entityManager.getComponentByType(snakes[snakes.length - 1].idEntity!, getNameGraphics());
+    const snakes = this.componentManager.getComponentsByType(
+      getNameSnake()
+    ) as Array<Snake>;
+    const graphics = this.entityManager.getComponentByType(
+      snakes[snakes.length - 1].idEntity!,
+      getNameGraphics()
+    );
 
     return <Graphics>graphics;
   }
 
   checkCollisions() {
-    const application = this.componentManager.getComponentByType(getNameApplication()) as Application;
-    const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+    const application = this.componentManager.getComponentByType(
+      getNameApplication()
+    ) as Application;
+    const snakes = this.componentManager.getComponentsByType(
+      getNameSnake()
+    ) as Array<Snake>;
     const snakeAfterHead = snakes[1];
     const snakeAfterHead2 = snakes[2];
-    const graphics = this.componentManager.getComponentsByType(getNameGraphics()) as Array<Graphics>;
-    const [snakeHead, snakeHeadGraphics, snakeHeadVelocity] = this.getSnakeHead();
+    const graphics = this.componentManager.getComponentsByType(
+      getNameGraphics()
+    ) as Array<Graphics>;
+    const [snakeHead, snakeHeadGraphics, snakeHeadVelocity] =
+      this.getSnakeHead();
 
     if (!snakeHeadGraphics || !snakeHead) {
       return;
     }
 
     for (const graphic of graphics) {
-      if (graphic.type == GraphicsType.GRASS || graphic.type == GraphicsType.SNAKE_HEAD || graphic.idEntity! == snakeAfterHead.idEntity!)
+      if (
+        graphic.type == GraphicsType.GRASS ||
+        graphic.type == GraphicsType.SNAKE_HEAD ||
+        graphic.idEntity! == snakeAfterHead.idEntity!
+      )
         continue;
       let x;
       let y;
@@ -57,8 +82,8 @@ export default class SnakeSystem extends System {
 
       let width2 = snakeHeadGraphics.sprite!.width;
       let height2 = snakeHeadGraphics.sprite!.height;
-      let x2 = snakeHeadGraphics.sprite!.x - (width2 / 2);
-      let y2 = snakeHeadGraphics.sprite!.y - (height2 / 2);
+      let x2 = snakeHeadGraphics.sprite!.x - width2 / 2;
+      let y2 = snakeHeadGraphics.sprite!.y - height2 / 2;
 
       if (graphic.graphics) {
         x = graphic.graphics.getBounds().x;
@@ -77,32 +102,45 @@ export default class SnakeSystem extends System {
       }
 
       if (
-          x2 < x + width &&
-          x2 + width2 > x &&
-          y2 < y + height &&
-          y2 + height2 > y
+        x2 < x + width &&
+        x2 + width2 > x &&
+        y2 < y + height &&
+        y2 + height2 > y
       ) {
         switch (graphic.type) {
           case GraphicsType.APPLE:
-            const apple = this.entityManager.getComponentByType(graphic.idEntity!, getNameApple()) as Apple;
+            const apple = this.entityManager.getComponentByType(
+              graphic.idEntity!,
+              getNameApple()
+            ) as Apple;
 
             if (apple.isAte) {
               break;
             }
-            if (snakes.length == (application.nbBlocksGrass) * (application.nbBlocksGrass)) {
+            if (
+              snakes.length ==
+              application.nbBlocksGrass * application.nbBlocksGrass
+            ) {
               this.gameOver();
               break;
             }
             apple.isAte = true;
-            const newBody = GamePrefabs.createDynamicBody(application, this.getSnakeTail(), snakeHeadVelocity!, snakes[snakes.length - 1]);
+            const newBody = GamePrefabs.createDynamicBody(
+              application,
+              this.getSnakeTail(),
+              snakeHeadVelocity!,
+              snakes[snakes.length - 1]
+            );
             this.entityManager.addEntity(newBody);
             this.componentManager.addComponents(newBody);
 
             const app = this.componentManager.getComponentByType(
-                getNameApplication()
+              getNameApplication()
             ) as Application;
 
-            const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
+            const player = this.componentManager.getComponentByType(
+              getNamePlayer()
+            ) as Player;
 
             player.score++;
             break;
@@ -116,56 +154,80 @@ export default class SnakeSystem extends System {
   }
 
   gameOver() {
-    const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
+    const gameOver = this.componentManager.getComponentByType(
+      getNameGameOver()
+    ) as GameOver;
 
     gameOver.over = true;
   }
 
   update(delta: number) {
-    const snake = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
-    const application = this.componentManager.getComponentByType("Application") as Application;
-    const gameOver = this.componentManager.getComponentByType(getNameGameOver()) as GameOver;
-    const pause = this.componentManager.getComponentByType(getNamePause()) as Pause;
-
-    if (gameOver.over || pause.isPaused) {
-      return;
-    }
+    const snake = this.componentManager.getComponentsByType(
+      getNameSnake()
+    ) as Array<Snake>;
 
     for (const s of snake) {
-
       // If snake has a dependsOn, it means that we must create the snake just right after the dependsOn snake
       if (s.dependsOn) {
-        const graphic = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
-        const velocity = this.entityManager.getComponentByType(s.idEntity!, getNameVelocity()) as Velocity;
-        const graphicDependsOn = this.entityManager.getComponentByType(s.dependsOn.idEntity!, getNameGraphics()) as Graphics;
-        const velocityDependsOn = this.entityManager.getComponentByType(s.dependsOn.idEntity!, getNameVelocity()) as Velocity;
+        const graphic = this.entityManager.getComponentByType(
+          s.idEntity!,
+          getNameGraphics()
+        ) as Graphics;
+        const velocity = this.entityManager.getComponentByType(
+          s.idEntity!,
+          getNameVelocity()
+        ) as Velocity;
+        const graphicDependsOn = this.entityManager.getComponentByType(
+          s.dependsOn.idEntity!,
+          getNameGraphics()
+        ) as Graphics;
+        const velocityDependsOn = this.entityManager.getComponentByType(
+          s.dependsOn.idEntity!,
+          getNameVelocity()
+        ) as Velocity;
         let pass = false;
 
         switch (s.dependsOn.direction) {
           case Direction.UP:
-            if (graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height <= graphic.sprite!.y) {
-              graphic.sprite!.y = graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height;
+            if (
+              graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height <=
+              graphic.sprite!.y
+            ) {
+              graphic.sprite!.y =
+                graphicDependsOn.sprite!.y + graphicDependsOn.sprite!.height;
               graphic.sprite!.x = graphicDependsOn.sprite!.x;
               pass = true;
             }
             break;
           case Direction.RIGHT:
-            if (graphicDependsOn.sprite!.x >= graphic.sprite!.x + graphic.sprite!.width) {
-              graphic.sprite!.x = graphicDependsOn.sprite!.x - graphic.sprite!.width;
+            if (
+              graphicDependsOn.sprite!.x >=
+              graphic.sprite!.x + graphic.sprite!.width
+            ) {
+              graphic.sprite!.x =
+                graphicDependsOn.sprite!.x - graphic.sprite!.width;
               graphic.sprite!.y = graphicDependsOn.sprite!.y;
               pass = true;
             }
             break;
           case Direction.LEFT:
-            if (graphicDependsOn.sprite!.x + graphicDependsOn.sprite!.width <= graphic.sprite!.x) {
-              graphic.sprite!.x = graphicDependsOn.sprite!.x + graphicDependsOn.sprite!.width;
+            if (
+              graphicDependsOn.sprite!.x + graphicDependsOn.sprite!.width <=
+              graphic.sprite!.x
+            ) {
+              graphic.sprite!.x =
+                graphicDependsOn.sprite!.x + graphicDependsOn.sprite!.width;
               graphic.sprite!.y = graphicDependsOn.sprite!.y;
               pass = true;
             }
             break;
           case Direction.DOWN:
-            if (graphicDependsOn.sprite!.y >= graphic.sprite!.y + graphic.sprite!.height) {
-              graphic.sprite!.y = graphicDependsOn.sprite!.y - graphic.sprite!.height;
+            if (
+              graphicDependsOn.sprite!.y >=
+              graphic.sprite!.y + graphic.sprite!.height
+            ) {
+              graphic.sprite!.y =
+                graphicDependsOn.sprite!.y - graphic.sprite!.height;
               graphic.sprite!.x = graphicDependsOn.sprite!.x;
               pass = true;
             }
@@ -176,23 +238,23 @@ export default class SnakeSystem extends System {
           velocity.y = velocityDependsOn.y;
           s.angles = [];
           s.angles = [...s.dependsOn.angles];
-          s.lastDirection = s.direction
+          s.lastDirection = s.direction;
           s.direction = s.dependsOn.direction;
-          // graphic.posInBoard = {...graphicDependsOn.posInBoard};
-          // graphic.lastPosInBoard = {...graphicDependsOn.lastPosInBoard};
           s.dependsOn = undefined;
         }
         continue;
       }
 
-      if (s.angles.length == 0) {
-        this.keepStraight(s);
-        continue;
-      }
-
+      if (s.angles.length == 0) continue;
       const nextAngle = s.angles[0];
-      const graphics = this.entityManager.getComponentByType(s.idEntity!, getNameGraphics()) as Graphics;
-      const velocity = this.entityManager.getComponentByType(s.idEntity!, getNameVelocity()) as Velocity;
+      const graphics = this.entityManager.getComponentByType(
+        s.idEntity!,
+        getNameGraphics()
+      ) as Graphics;
+      const velocity = this.entityManager.getComponentByType(
+        s.idEntity!,
+        getNameVelocity()
+      ) as Velocity;
       let x;
       let y;
       let newAngle;
@@ -206,53 +268,53 @@ export default class SnakeSystem extends System {
         y = graphics.sprite.y;
       }
       if (
-          (s.direction == Direction.LEFT && x <= nextAngle.x) ||
-          (s.direction == Direction.RIGHT && x >= nextAngle.x) ||
-          (s.direction == Direction.UP && y <= nextAngle.y) ||
-          (s.direction == Direction.DOWN && y >= nextAngle.y)
+        (s.direction == Direction.LEFT && x <= nextAngle.x) ||
+        (s.direction == Direction.RIGHT && x >= nextAngle.x) ||
+        (s.direction == Direction.UP && y <= nextAngle.y) ||
+        (s.direction == Direction.DOWN && y >= nextAngle.y)
       ) {
         let newPosX = 0;
         let newPosY = 0;
         let diffX = Math.abs(x - nextAngle.x);
         let diffY = Math.abs(y - nextAngle.y);
-        s.lastDirection = s.direction
+        s.lastDirection = s.direction;
         s.direction = nextAngle.direction;
         s.angles.shift();
         switch (s.direction) {
           case Direction.DOWN:
-            newAngle = 180 * Math.PI / 180;
+            newAngle = (180 * Math.PI) / 180;
             newVelocity.x = 0;
             newVelocity.y = velocity.speed;
             newPosX = nextAngle.x;
             newPosY = nextAngle.y + diffX;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.y++;
             break;
           case Direction.LEFT:
-            newAngle = 270 * Math.PI / 180;
+            newAngle = (270 * Math.PI) / 180;
             newVelocity.x = -velocity.speed;
             newVelocity.y = 0;
             newPosX = nextAngle.x - diffY;
             newPosY = nextAngle.y;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.x--;
             break;
           case Direction.UP:
-            newAngle = 0 * Math.PI / 180;
+            newAngle = (0 * Math.PI) / 180;
             newVelocity.x = 0;
             newVelocity.y = -velocity.speed;
             newPosX = nextAngle.x;
             newPosY = nextAngle.y - diffX;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.y--;
             break;
           case Direction.RIGHT:
-            newAngle = 90 * Math.PI / 180;
+            newAngle = (90 * Math.PI) / 180;
             newVelocity.x = velocity.speed;
             newVelocity.y = 0;
             newPosX = nextAngle.x + diffY;
             newPosY = nextAngle.y;
-            graphics.lastPosInBoard = {...graphics.posInBoard};
+            graphics.lastPosInBoard = { ...graphics.posInBoard };
             graphics.posInBoard.x++;
             break;
         }
@@ -278,11 +340,27 @@ export default class SnakeSystem extends System {
   }
 
   keepStraight(snake: Snake) {
-    const application = this.componentManager.getComponentByType("Application") as Application;
-    const graphics = this.entityManager.getComponentByType(snake.idEntity!, getNameGraphics()) as Graphics;
-    const velocity = this.entityManager.getComponentByType(snake.idEntity!, getNameVelocity()) as Velocity;
-    let x = Math.floor((graphics!.sprite!.x - (graphics!.sprite!.width / 2)) / application.blockSizeX) * application.blockSizeX;
-    let y = Math.floor((graphics!.sprite!.y - (graphics!.sprite!.height / 2)) / application.blockSizeY) * application.blockSizeY;
+    const application = this.componentManager.getComponentByType(
+      "Application"
+    ) as Application;
+    const graphics = this.entityManager.getComponentByType(
+      snake.idEntity!,
+      getNameGraphics()
+    ) as Graphics;
+    const velocity = this.entityManager.getComponentByType(
+      snake.idEntity!,
+      getNameVelocity()
+    ) as Velocity;
+    let x =
+      Math.floor(
+        (graphics!.sprite!.x - graphics!.sprite!.width / 2) /
+          application.blockSizeX
+      ) * application.blockSizeX;
+    let y =
+      Math.floor(
+        (graphics!.sprite!.y - graphics!.sprite!.height / 2) /
+          application.blockSizeY
+      ) * application.blockSizeY;
 
     if (snake.direction == Direction.DOWN) {
       y += application.blockSizeY;
@@ -299,12 +377,16 @@ export default class SnakeSystem extends System {
     // console.log(x, y, graphics.posInBoard.x * application.blockSizeX, graphics.posInBoard.y * application.blockSizeY);
 
     if (
-        (snake.direction == Direction.LEFT && x != graphics.posInBoard.x * application.blockSizeX) ||
-        (snake.direction == Direction.RIGHT && x != graphics.posInBoard.x * application.blockSizeX) ||
-        (snake.direction == Direction.UP && y != graphics.posInBoard.y * application.blockSizeY) ||
-        (snake.direction == Direction.DOWN && y != graphics.posInBoard.y * application.blockSizeY)
+      (snake.direction == Direction.LEFT &&
+        x != graphics.posInBoard.x * application.blockSizeX) ||
+      (snake.direction == Direction.RIGHT &&
+        x != graphics.posInBoard.x * application.blockSizeX) ||
+      (snake.direction == Direction.UP &&
+        y != graphics.posInBoard.y * application.blockSizeY) ||
+      (snake.direction == Direction.DOWN &&
+        y != graphics.posInBoard.y * application.blockSizeY)
     ) {
-      graphics.lastPosInBoard = {...graphics.posInBoard};
+      graphics.lastPosInBoard = { ...graphics.posInBoard };
       switch (snake.direction) {
         case Direction.UP:
           graphics.posInBoard.y--;
@@ -323,10 +405,15 @@ export default class SnakeSystem extends System {
   }
 
   setSkipForOnLoop() {
-    const snakes = this.componentManager.getComponentsByType(getNameSnake()) as Array<Snake>;
+    const snakes = this.componentManager.getComponentsByType(
+      getNameSnake()
+    ) as Array<Snake>;
 
     for (const snake of snakes) {
-      const velocity = this.entityManager.getComponentByType(snake.idEntity!, getNameVelocity()) as Velocity;
+      const velocity = this.entityManager.getComponentByType(
+        snake.idEntity!,
+        getNameVelocity()
+      ) as Velocity;
 
       velocity.skip++;
     }
