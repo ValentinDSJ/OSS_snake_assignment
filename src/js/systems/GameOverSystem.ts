@@ -55,7 +55,7 @@ export default class GameOverSystem extends System {
 
     element?.classList.remove('hidden');
 
-    if (!gameOver.scoreSaved) {
+    if (gameOver.saveScore && !gameOver.scoreSaved) {
       this.savedScore();
       this.savedHighScore();
     }

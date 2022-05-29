@@ -1,7 +1,8 @@
 export default interface GameOver extends Component {
     over: boolean,
     exit: boolean,
-    scoreSaved: boolean
+    scoreSaved: boolean,
+    saveScore: boolean
 }
 
 export function getNameGameOver(): string {

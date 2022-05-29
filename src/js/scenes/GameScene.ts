@@ -133,6 +133,7 @@ export default class GameScene extends Scene {
 
       let headId = this.initEntity(head);
       let body = Array<number>();
+      let snakesBodyComponents = Array<Array<Component>>();
 
       let fsBody = GamePrefabs.createBody(
         application,
@@ -141,6 +142,7 @@ export default class GameScene extends Scene {
         head[1] as Velocity
       );
       body.push(this.initEntity(fsBody));
+      snakesBodyComponents.push(fsBody);
 
       for (let i = 1; i < 3; i++) {
         body.push(
@@ -153,6 +155,14 @@ export default class GameScene extends Scene {
             )
           )
         );
+        // snakesBodyComponents.push(GamePrefabs.createBody(
+        //     application,
+        //     application.app?.screen.width ?? 0,
+        //     application.app?.screen.height ?? 0,
+        //     i,
+        //     snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
+        //     snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
+        // body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
       }
       this.initEntity(GamePrefabs.createPlayer(headId, body));
     }

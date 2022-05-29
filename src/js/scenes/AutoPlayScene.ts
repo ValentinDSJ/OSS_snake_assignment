@@ -14,6 +14,8 @@ import VelocitySystem from "../systems/VelocitySystem";
 import RestartSystem from "../systems/RestartSystem";
 import AutoPlayPrefabs from "../prefabs/AutoPlayPrefabs";
 import AIControllerSystem from "../systems/AIControllerSystem";
+import AIController2System from "../systems/AIController2System";
+import ComponentManager from "../libs/ecs/ComponentManager";
 
 export default class AutoPlayScene extends Scene {
   initSystems() {
@@ -45,7 +47,7 @@ export default class AutoPlayScene extends Scene {
       new RestartSystem(this.entityManager, this.componentManager)
     );
     this.systemManager.addSystem(
-      new AIControllerSystem(this.entityManager, this.componentManager)
+      new AIController2System(this.entityManager, this.componentManager)
     );
   }
 
@@ -81,6 +83,7 @@ export default class AutoPlayScene extends Scene {
 
     let headId = this.initEntity(head);
     let body = Array<number>();
+    let snakesBodyComponents = Array<Array<Component>>();
 
     let fsBody = GamePrefabs.createBody(
       application,
@@ -89,22 +92,29 @@ export default class AutoPlayScene extends Scene {
       head[1] as Velocity
     );
     body.push(this.initEntity(fsBody));
+    snakesBodyComponents.push(fsBody);
 
     for (let i = 1; i < 3; i++) {
-      body.push(
-        this.initEntity(
-          GamePrefabs.createBody(
-            application,
-            "middle",
-            fsBody[0] as Graphics,
-            fsBody[1] as Velocity
-          )
-        )
-      );
+      // body.push(
+      //   this.initEntity(
+      //     GamePrefabs.createBody(
+      //       application,
+      //       "middle",
+      //       fsBody[0] as Graphics,
+      //       fsBody[1] as Velocity
+      //     )
+      //   )
+      // );
+      snakesBodyComponents.push(GamePrefabs.createBody(
+          application,
+          "middle",
+          snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
+          snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
+      body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
     }
     this.initEntity(AutoPlayPrefabs.createBot(headId, body));
 
-    this.initEntity(GamePrefabs.createGameOver());
+    this.initEntity(GamePrefabs.createGameOver(false));
     this.initEntity(AutoPlayPrefabs.createPause());
   }
 }

@@ -23,6 +23,7 @@ import Apple, { getNameApple } from "../components/Apple";
 import Restart, { getNameRestart } from "../components/Restart";
 import GameOverSystem from "../systems/GameOverSystem";
 import Board, { getNameBoard } from "../components/Board";
+import Position from "../components/Position";
 
 export default class GamePrefabs {
   static createHTMLElement(): Array<Component> {
@@ -74,6 +75,8 @@ export default class GamePrefabs {
         name: getNameGraphics(),
         sprite: snake,
         type: GraphicsType.SNAKE_HEAD,
+        posInBoard: <Position>{x: 20, y: 20},
+        lastPosInBoard: <Position>{x: 20, y: 19},
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -87,6 +90,7 @@ export default class GamePrefabs {
         direction: Direction.UP,
         angles: [],
         isInit: true,
+        lastDirection: Direction.UP
       });
     } else if (corner === "top-left") {
       snake.x = app.blockSizeX + 10;
@@ -96,6 +100,8 @@ export default class GamePrefabs {
         name: getNameGraphics(),
         sprite: snake,
         type: GraphicsType.SNAKE_HEAD,
+        posInBoard: <Position>{x: 20, y: 20},
+        lastPosInBoard: <Position>{x: 20, y: 19},
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -109,6 +115,7 @@ export default class GamePrefabs {
         direction: Direction.DOWN,
         angles: [],
         isInit: true,
+        lastDirection: Direction.DOWN
       });
     } else if (corner === "bottom-right") {
       snake.x = app.blockSizeX * 20 - 10;
@@ -118,6 +125,8 @@ export default class GamePrefabs {
         name: getNameGraphics(),
         sprite: snake,
         type: GraphicsType.SNAKE_HEAD,
+        posInBoard: <Position>{x: 20, y: 20},
+        lastPosInBoard: <Position>{x: 20, y: 19},
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -131,8 +140,10 @@ export default class GamePrefabs {
         direction: Direction.UP,
         angles: [],
         isInit: true,
+        lastDirection: Direction.UP
       });
     }
+    snake.angle = 0;
     snake.anchor.set(0.5);
 
     return components;
@@ -161,6 +172,8 @@ export default class GamePrefabs {
       name: getNameGraphics(),
       sprite: snake,
       type: GraphicsType.SNAKE,
+      posInBoard: <Position>{x: tail.posInBoard.x, y: tail.posInBoard.y + 1},
+      lastPosInBoard: <Position>{x: tail.posInBoard.x, y: tail.posInBoard.y + 1},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -173,6 +186,9 @@ export default class GamePrefabs {
       name: getNameSnake(),
       direction: corner === "top-left" ? Direction.DOWN : Direction.UP,
       angles: [],
+      // direction: Direction.UP,
+      // angles: [],
+      lastDirection: corner === "top-left" ? Direction.DOWN : Direction.UP,
     });
     return components;
   }
@@ -196,11 +212,14 @@ export default class GamePrefabs {
     snake.anchor.set(0.5);
     snake.angle = tail.sprite!.angle;
 
+    console.log("Create dynamic body :", tail.posInBoard, tail.lastPosInBoard);
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,
       type: GraphicsType.SNAKE,
       isInit: false,
+      posInBoard: <Position>{x: tail.posInBoard.x, y: tail.posInBoard.y},
+      lastPosInBoard: <Position>{x: tail.lastPosInBoard.x, y: tail.lastPosInBoard.y},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -211,9 +230,10 @@ export default class GamePrefabs {
     });
     components.push(<Snake>{
       name: getNameSnake(),
-      direction: Direction.UP,
+      direction: dependsOn.direction,
       angles: [],
       dependsOn: dependsOn,
+      lastDirection: dependsOn.direction
     });
     return components;
   }
@@ -227,10 +247,12 @@ export default class GamePrefabs {
     nbBlocks: number
   ): Array<Component> {
     let components = Array<Component>();
+    let x = Math.floor(Math.random() * (nbBlocks - 2)) + 1;
+    let y = Math.floor(Math.random() * (nbBlocks - 2)) + 1;
 
     const apple = PIXI.Sprite.from(appleSprite);
-    apple.x = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeX;
-    apple.y = (Math.floor(Math.random() * (nbBlocks - 2)) + 1) * blockSizeY;
+    apple.x = x * blockSizeX;
+    apple.y = y * blockSizeY;
     apple.width = app.blockSizeX;
     apple.height = app.blockSizeY;
 
@@ -238,6 +260,8 @@ export default class GamePrefabs {
       name: getNameGraphics(),
       sprite: apple,
       type: GraphicsType.APPLE,
+      posInBoard: <Position>{x: x, y: y},
+      lastPosInBoard: <Position>{x: x, y: y},
     });
     components.push(<Apple>{
       name: getNameApple(),
@@ -265,6 +289,8 @@ export default class GamePrefabs {
       name: getNameGraphics(),
       sprite: apple,
       type: GraphicsType.APPLE,
+      posInBoard: <Position>{x: x, y: y},
+      lastPosInBoard: <Position>{x: x, y: y},
     });
     components.push(<Apple>{
       name: getNameApple(),
@@ -300,6 +326,8 @@ export default class GamePrefabs {
       name: getNameGraphics(),
       sprite: snake,
       type: savedSnake.type,
+      posInBoard: <Position>{x: 0, y: 0},
+      lastPosInBoard: <Position>{x: 0, y: 0},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -313,6 +341,7 @@ export default class GamePrefabs {
       direction: savedSnake.direction,
       angles: savedSnake.angles,
       isInit: savedSnake.isInit,
+      lastDirection: savedSnake.direction
     });
     return components;
   }
@@ -377,7 +406,7 @@ export default class GamePrefabs {
     return components;
   }
 
-  static createGameOver(): Array<Component> {
+  static createGameOver(saveScore: boolean = true): Array<Component> {
     let components = Array<Component>();
     let events = new Map();
 
@@ -386,6 +415,7 @@ export default class GamePrefabs {
       over: false,
       exit: false,
       scoreSaved: false,
+      saveScore: saveScore
     });
     events.set(
       ".game-over .restart-button",
@@ -393,7 +423,9 @@ export default class GamePrefabs {
         const restart = cm.getComponentByType(getNameRestart()) as Restart;
         restart.click = true;
 
-        GameOverSystem.saveLatestScoreIfExist();
+        if (saveScore) {
+          GameOverSystem.saveLatestScoreIfExist();
+        }
       }
     );
 
