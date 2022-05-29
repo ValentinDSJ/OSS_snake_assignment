@@ -42,13 +42,17 @@ export default class GameOverSystem extends System {
     if (!gameOver?.over || gameOver?.exit) {
       return;
     }
-    const player = this.componentManager.getComponentByType(getNamePlayer()) as Player;
+    let highestScore = 0;
+    const players = this.componentManager.getComponentsByType(getNamePlayer()) as Array<Player>;
+    for (const player of players) {
+      if (player.score > highestScore)
+        highestScore = player.score;
+    }
+
     const scoreHTML = document.querySelector("body main .game-scene .game-over .final-score p span");
 
-    if (scoreHTML && player) {
-      if (scoreHTML.innerHTML !== player.score.toString()) {
-        scoreHTML.innerHTML = player.score.toString();
-      }
+    if (scoreHTML) {
+      scoreHTML.innerHTML = highestScore.toString();
     }
 
     let element = document.querySelector("body main .game-scene .game-over");

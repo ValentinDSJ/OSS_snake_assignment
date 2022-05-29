@@ -52,6 +52,14 @@ export default class AutoPlayScene extends Scene {
   }
 
   initEntities() {
+    console.log(  document.querySelector(".game-scene .player-name"))
+    // @ts-ignore
+    document.querySelector(".game-scene .game-details .player-name").classList.add("visibility-hidden");
+    // @ts-ignore
+    document.querySelector(".game-scene .highest-score").classList.add("visibility-hidden");
+    // @ts-ignore
+    document.querySelector(".game-scene .game-over .player-name").classList.add("visibility-hidden");
+
     const application = this.componentManager.getComponentByType(
       "Application"
     ) as Application;
@@ -116,5 +124,16 @@ export default class AutoPlayScene extends Scene {
 
     this.initEntity(GamePrefabs.createGameOver(false));
     this.initEntity(AutoPlayPrefabs.createPause());
+  }
+
+  tearDown() {
+    super.tearDown();
+
+    // @ts-ignore
+    document.querySelector(".game-scene .game-details .player-name").classList.remove("visibility-hidden");
+    // @ts-ignore
+    document.querySelector(".game-scene .game-details .highest-score").classList.remove("visibility-hidden");
+    // @ts-ignore
+    document.querySelector(".game-scene .game-over .player-name").classList.remove("visibility-hidden");
   }
 }

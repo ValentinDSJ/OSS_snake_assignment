@@ -88,6 +88,9 @@ export default class DualPlayScene extends Scene {
   }
 
   initEntities() {
+    // @ts-ignore
+    document.querySelector(".game-scene .game-over .player-name").classList.add("visibility-hidden");
+
     const application = this.componentManager.getComponentByType(
       "Application"
     ) as Application;
@@ -136,7 +139,7 @@ export default class DualPlayScene extends Scene {
     this.initSnake(application, 0);
     this.initSnake(application, 1);
 
-    this.initEntity(GamePrefabs.createGameOver());
+    this.initEntity(GamePrefabs.createGameOver(false));
     this.initEntity(DualPlayPrefabs.createPause());
   }
 
@@ -153,5 +156,14 @@ export default class DualPlayScene extends Scene {
     application.nbBlocksGrassX = 40;
     view.classList.remove("big");
     application.app?.renderer.resize(view.offsetWidth, view.offsetHeight);
+
+    const actualScoreHTML = document.querySelector(
+        ".game-scene .game-details"
+    )!;
+    // @ts-ignore
+    actualScoreHTML.style.visibility = "visible";
+
+    // @ts-ignore
+    document.querySelector(".game-scene .game-over .player-name").classList.remove("visibility-hidden");
   }
 }
