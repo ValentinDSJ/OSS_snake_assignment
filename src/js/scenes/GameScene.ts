@@ -145,24 +145,22 @@ export default class GameScene extends Scene {
       snakesBodyComponents.push(fsBody);
 
       for (let i = 1; i < 3; i++) {
-        body.push(
-          this.initEntity(
-            GamePrefabs.createBody(
-              application,
-              "middle",
-              fsBody[0] as Graphics,
-              fsBody[1] as Velocity
-            )
-          )
-        );
-        // snakesBodyComponents.push(GamePrefabs.createBody(
-        //     application,
-        //     application.app?.screen.width ?? 0,
-        //     application.app?.screen.height ?? 0,
-        //     i,
-        //     snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
-        //     snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
-        // body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
+        // body.push(
+        //   this.initEntity(
+        //     GamePrefabs.createBody(
+        //       application,
+        //       "middle",
+        //       fsBody[0] as Graphics,
+        //       fsBody[1] as Velocity
+        //     )
+        //   )
+        // );
+        snakesBodyComponents.push(GamePrefabs.createBody(
+            application,
+            "middle",
+            snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
+            snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
+        body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
       }
       this.initEntity(GamePrefabs.createPlayer(headId, body));
     }

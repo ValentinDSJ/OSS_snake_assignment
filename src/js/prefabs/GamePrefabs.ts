@@ -93,8 +93,8 @@ export default class GamePrefabs {
         lastDirection: Direction.UP
       });
     } else if (corner === "top-left") {
-      snake.x = app.blockSizeX + 10;
-      snake.y = app.blockSizeY + 10;
+      snake.x = app.blockSizeX * 1 + snake.width / 2;
+      snake.y = app.blockSizeY * 3 + snake.height / 2;
       snake.angle = 90;
       components.push(<Graphics>{
         name: getNameGraphics(),
@@ -118,8 +118,8 @@ export default class GamePrefabs {
         lastDirection: Direction.DOWN
       });
     } else if (corner === "bottom-right") {
-      snake.x = app.blockSizeX * 20 - 10;
-      snake.y = app.blockSizeY * 20 - 10;
+      snake.x = app.blockSizeX * 40 + snake.width / 2;
+      snake.y = app.blockSizeY * 40 + snake.height / 2;
       snake.angle = 0;
       components.push(<Graphics>{
         name: getNameGraphics(),
@@ -160,7 +160,18 @@ export default class GamePrefabs {
     const snake = PIXI.Sprite.from(snakeBody);
 
     snake.x = tail.sprite!.x;
-    snake.y = tail.sprite!.y + tail.sprite!.height;
+    switch (corner) {
+      case "bottom-right":
+        snake.y = tail.sprite!.y + tail.sprite!.height;
+        break
+      case "middle":
+        snake.y = tail.sprite!.y + tail.sprite!.height;
+        break
+      case "top-left":
+        snake.y = tail.sprite!.y - tail.sprite!.height;
+        break
+    }
+    // snake.y = tail.sprite!.y + tail.sprite!.height;
 
     snake.width = app.blockSizeX;
     snake.height = app.blockSizeY;

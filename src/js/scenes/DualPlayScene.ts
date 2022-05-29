@@ -57,6 +57,7 @@ export default class DualPlayScene extends Scene {
 
     let headId = this.initEntity(head);
     let body = Array<number>();
+    let snakesBodyComponents = Array<Array<Component>>();
 
     let fsBody = GamePrefabs.createBody(
       application,
@@ -65,18 +66,25 @@ export default class DualPlayScene extends Scene {
       head[1] as Velocity
     );
     body.push(this.initEntity(fsBody));
+    snakesBodyComponents.push(fsBody);
 
     for (let i = 1; i < 3; i++) {
-      body.push(
-        this.initEntity(
-          GamePrefabs.createBody(
-            application,
-            playerNb === 0 ? "top-left" : "bottom-right",
-            fsBody[0] as Graphics,
-            fsBody[1] as Velocity
-          )
-        )
-      );
+      // body.push(
+      //   this.initEntity(
+      //     GamePrefabs.createBody(
+      //       application,
+      //       playerNb === 0 ? "top-left" : "bottom-right",
+      //       fsBody[0] as Graphics,
+      //       fsBody[1] as Velocity
+      //     )
+      //   )
+      // );
+      snakesBodyComponents.push(GamePrefabs.createBody(
+          application,
+          playerNb === 0 ? "top-left" : "bottom-right",
+          snakesBodyComponents[snakesBodyComponents.length - 1][0] as Graphics,
+          snakesBodyComponents[snakesBodyComponents.length - 1][1] as Velocity));
+      body.push(this.initEntity(snakesBodyComponents[snakesBodyComponents.length - 1]));
     }
     this.initEntity(
       GamePrefabs.createPlayer(headId, body, undefined, playerNb)
