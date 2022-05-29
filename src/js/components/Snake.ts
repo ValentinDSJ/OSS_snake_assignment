@@ -18,7 +18,9 @@ export default interface Snake extends Component {
     direction: Direction,
     dependsOn?: Snake,
     lastDirection: Direction,
-    lastPos?: Array<Position>
+    lastPos?: Array<Position>,
+
+    initialDirection: Direction,
 }
 
 export function getNameSnake(): string {

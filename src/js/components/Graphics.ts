@@ -1,6 +1,8 @@
 import {Graphics as G} from "pixi.js";
 import {Sprite as S} from "pixi.js";
 import Position from "./Position";
+import {Direction} from "./Snake";
+import Velocity from "./Velocity";
 
 export enum GraphicsType {
     WALL,
@@ -17,7 +19,10 @@ export default interface Graphics extends Component {
     type: GraphicsType,
     isInit: boolean,
     posInBoard: Position,
-    lastPosInBoard: Position
+    lastPosInBoard: Position,
+    initialPosition: Position,
+    initialRotation: number,
+    initialVelocity: Velocity,
 }
 
 export function getNameGraphics(): string {

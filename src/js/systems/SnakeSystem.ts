@@ -157,18 +157,29 @@ export default class SnakeSystem extends System {
                 this.getSnakeTail(snakeHead.idEntity),
                 snakeHeadVelocity!
               );
-              this.entityManager.addEntity(newBody);
+              let id = this.entityManager.addEntity(newBody);
               this.componentManager.addComponents(newBody);
 
               const app = this.componentManager.getComponentByType(
                 getNameApplication()
               ) as Application;
 
-              const player = this.componentManager.getComponentByType(
-                getNamePlayer()
-              ) as Player;
+              const players = this.componentManager.getComponentsByType(
+                  getNamePlayer()
+              ) as Array<Player>;
 
-              player.score++;
+              for (const player of players) {
+                if (snakeHead.idEntity == player.head) {
+                  player.score++;
+                  player.body.push(id);
+                }
+              }
+
+              // const player = this.componentManager.getComponentByType(
+              //   getNamePlayer()
+              // ) as Player;
+
+              // player.score++;
               break;
             case GraphicsType.SNAKE:
             case GraphicsType.WALL:

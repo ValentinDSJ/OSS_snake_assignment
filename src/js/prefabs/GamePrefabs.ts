@@ -2,27 +2,24 @@ import * as PIXI from "pixi.js";
 import appleSprite from "../../../assets/sprites/food.png";
 import snakeBody from "../../../assets/sprites/nibbler_snake_core.png";
 import snakeHead from "../../../assets/sprites/nibbler_snake_head.png";
-import Graphics, {
-  getNameGraphics,
-  GraphicsType,
-} from "../components/Graphics";
-import Velocity, { getNameVelocity } from "../components/Velocity";
+import Graphics, {getNameGraphics, GraphicsType,} from "../components/Graphics";
+import Velocity, {getNameVelocity} from "../components/Velocity";
 import Game from "../Game";
-import { SceneType } from "../utils/SceneType";
+import {SceneType} from "../utils/SceneType";
 import EntityManager from "../libs/ecs/EntityManager";
 import ComponentManager from "../libs/ecs/ComponentManager";
-import HTML, { getNameHTML } from "../components/HTML";
-import GameOver, { getNameGameOver } from "../components/GameOver";
-import Player, { getNamePlayer } from "../components/Player";
-import Pause, { getNamePause } from "../components/Pause";
-import Snake, { Direction, getNameSnake } from "../components/Snake";
+import HTML, {getNameHTML} from "../components/HTML";
+import GameOver, {getNameGameOver} from "../components/GameOver";
+import Player, {getNamePlayer} from "../components/Player";
+import Pause, {getNamePause} from "../components/Pause";
+import Snake, {Direction, getNameSnake} from "../components/Snake";
 import Application from "../components/Application";
-import Save, { getNameSave } from "../components/Save";
-import { SnakeSaved } from "../utils/GameSaved";
-import Apple, { getNameApple } from "../components/Apple";
-import Restart, { getNameRestart } from "../components/Restart";
+import Save, {getNameSave} from "../components/Save";
+import {SnakeSaved} from "../utils/GameSaved";
+import Apple, {getNameApple} from "../components/Apple";
+import Restart, {getNameRestart} from "../components/Restart";
 import GameOverSystem from "../systems/GameOverSystem";
-import Board, { getNameBoard } from "../components/Board";
+import Board, {getNameBoard} from "../components/Board";
 import Position from "../components/Position";
 
 export default class GamePrefabs {
@@ -74,6 +71,8 @@ export default class GamePrefabs {
         type: GraphicsType.SNAKE_HEAD,
         posInBoard: <Position>{ x: 20, y: 20 },
         lastPosInBoard: <Position>{ x: 20, y: 19 },
+        initialPosition: <Position>{x: snake.x, y: snake.y},
+        initialVelocity: <Velocity>{x: 0, y: -2},
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -88,6 +87,7 @@ export default class GamePrefabs {
         angles: [],
         isInit: false,
         lastDirection: Direction.UP,
+        initialDirection: Direction.UP
       });
     } else if (corner === "top-left") {
       snake.x = app.blockSizeX * 1 + snake.width / 2;
@@ -105,6 +105,8 @@ export default class GamePrefabs {
           x: app.blockSizeX + 10,
           y: app.blockSizeX + 9,
         },
+        initialPosition: <Position>{x: snake.x, y: snake.y},
+        initialVelocity: <Velocity>{x: 0, y: 2},
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -119,6 +121,7 @@ export default class GamePrefabs {
         angles: [],
         isInit: false,
         lastDirection: Direction.DOWN,
+        initialDirection: Direction.UP,
       });
     } else if (corner === "bottom-right") {
       snake.x = app.blockSizeX * 80 + snake.width / 2;
@@ -136,6 +139,8 @@ export default class GamePrefabs {
           x: app.blockSizeX * 20 - 10,
           y: app.blockSizeX * 20 - 9,
         },
+        initialPosition: <Position>{x: snake.x, y: snake.y},
+        initialVelocity: <Velocity>{x: 0, y: -2},
       });
       components.push(<Velocity>{
         name: getNameVelocity(),
@@ -150,6 +155,7 @@ export default class GamePrefabs {
         angles: [],
         isInit: false,
         lastDirection: Direction.UP,
+        initialDirection: Direction.UP
       });
     }
     snake.angle = 0;
@@ -197,6 +203,8 @@ export default class GamePrefabs {
         x: tail.posInBoard.x,
         y: tail.posInBoard.y + 1,
       },
+      initialPosition: <Position>{x: snake.x, y: snake.y},
+      initialVelocity: <Velocity>{x: velocity.x, y: velocity.y},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -210,6 +218,7 @@ export default class GamePrefabs {
       direction: corner === "top-left" ? Direction.DOWN : Direction.UP,
       angles: [],
       lastDirection: corner === "top-left" ? Direction.DOWN : Direction.UP,
+      initialDirection: corner === "top-left" ? Direction.DOWN : Direction.UP
     });
     return components;
   }
@@ -250,6 +259,8 @@ export default class GamePrefabs {
         x: tail[0].lastPosInBoard.x,
         y: tail[0].lastPosInBoard.y,
       },
+      initialPosition: <Position>{x: snake.x, y: snake.y},
+      initialVelocity: <Velocity>{x: velocity.x, y: velocity.y},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -264,6 +275,9 @@ export default class GamePrefabs {
       angles: [],
       dependsOn: tail[1],
       lastDirection: tail[1].direction,
+      // dependsOn: dependsOn,
+      // lastDirection: tail[1].direction,
+      initialDirection: tail[1].direction
     });
     return components;
   }
@@ -358,6 +372,8 @@ export default class GamePrefabs {
       type: savedSnake.type,
       posInBoard: <Position>{ x: 0, y: 0 },
       lastPosInBoard: <Position>{ x: 0, y: 0 },
+      initialPosition: <Position>{x: snake.x, y: snake.y},
+      initialVelocity: <Velocity>{x: savedSnake.velocity.x, y: savedSnake.velocity.y},
     });
     components.push(<Velocity>{
       name: getNameVelocity(),
@@ -372,6 +388,7 @@ export default class GamePrefabs {
       angles: savedSnake.angles,
       isInit: savedSnake.isInit,
       lastDirection: savedSnake.direction,
+      initialDirection: savedSnake.direction
     });
     return components;
   }
