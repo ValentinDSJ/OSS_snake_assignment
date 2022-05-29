@@ -41,7 +41,8 @@ export default class EventsSystem extends System {
   setNextDirectionSnake(
     direction: Direction,
     snakeHead: Snake,
-    snakeHeadGraphics: Graphics
+    snakeHeadGraphics: Graphics,
+    ids: number[]
   ) {
     const snake = this.componentManager.getComponentsByType(
       getNameSnake()
@@ -92,11 +93,13 @@ export default class EventsSystem extends System {
       for (let i = 0; i < nbToRemove; i++) {
         s.angles.pop();
       }
-      s.angles.push({
-        direction: direction,
-        x: x,
-        y: y,
-      });
+      if (s.idEntity !== undefined && ids.indexOf(s.idEntity) != -1) {
+        s.angles.push({
+          direction: direction,
+          x: x,
+          y: y,
+        });
+      }
     }
   }
 
@@ -129,8 +132,6 @@ export default class EventsSystem extends System {
         getNamePlayer()
       ) as Array<Player>;
 
-      console.log("players", players.length);
-
       for (const player of players) {
         let snakeHead: Snake = this.entityManager.getComponentByType(
           player.head,
@@ -142,9 +143,6 @@ export default class EventsSystem extends System {
         ) as Graphics;
         let direction = snakeHead.direction;
 
-        console.log("e.key", e.key);
-        console.log("palyer", player.keyEventLeft);
-
         if (
           e.key === player.keyEventLeft &&
           direction !== Direction.RIGHT &&
@@ -153,7 +151,8 @@ export default class EventsSystem extends System {
           this.setNextDirectionSnake(
             Direction.LEFT,
             snakeHead!,
-            snakeHeadGraphics!
+            snakeHeadGraphics!,
+            player.body
           );
         }
         if (
@@ -164,7 +163,8 @@ export default class EventsSystem extends System {
           this.setNextDirectionSnake(
             Direction.RIGHT,
             snakeHead!,
-            snakeHeadGraphics!
+            snakeHeadGraphics!,
+            player.body
           );
         }
         if (
@@ -175,7 +175,8 @@ export default class EventsSystem extends System {
           this.setNextDirectionSnake(
             Direction.UP,
             snakeHead!,
-            snakeHeadGraphics!
+            snakeHeadGraphics!,
+            player.body
           );
         }
         if (
@@ -186,7 +187,8 @@ export default class EventsSystem extends System {
           this.setNextDirectionSnake(
             Direction.DOWN,
             snakeHead!,
-            snakeHeadGraphics!
+            snakeHeadGraphics!,
+            player.body
           );
         }
       }
