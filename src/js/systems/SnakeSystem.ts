@@ -14,11 +14,12 @@ import Apple, { getNameApple } from "../components/Apple";
 export default class SnakeSystem extends System {
   spawnApple() {}
 
-  getSnakeHead(): [Snake?, Graphics?, Velocity?][] {
-    const array: [Snake?, Graphics?, Velocity?][] = [];
+  getSnakeHead(): [Snake?, Snake?, Graphics?, Velocity?][] {
+    const array: [Snake?, Snake?, Graphics?, Velocity?][] = [];
     const snakes = this.componentManager.getComponentsByType(
       getNameSnake()
     ) as Array<Snake>;
+    let index = 0;
 
     for (const snake of snakes) {
       const graphic = this.entityManager.getComponentByType(
@@ -32,22 +33,44 @@ export default class SnakeSystem extends System {
       // let found = false;
 
       if (graphic.type == GraphicsType.SNAKE_HEAD) {
-        array.push([snake, graphic, velocity]);
+        array.push([snake, snakes[index + 1], graphic, velocity]);
       }
+      index++;
     }
     return array;
   }
 
-  getSnakeTail(): Graphics {
+  getSnakeTail(idEntity?: number): [Graphics, Snake] {
     const snakes = this.componentManager.getComponentsByType(
       getNameSnake()
     ) as Array<Snake>;
-    const graphics = this.entityManager.getComponentByType(
+
+    for (let i = 0; i < snakes.length - 1; i++) {
+      // head of wanted snake
+      if (snakes[i].idEntity === idEntity) {
+        for (let j = i + 1; j < snakes.length - 1; j++) {
+          const graphic = this.entityManager.getComponentByType(
+            snakes[j].idEntity!,
+            getNameGraphics()
+          ) as Graphics;
+          const nextGraphic = this.entityManager.getComponentByType(
+            snakes[j + 1].idEntity!,
+            getNameGraphics()
+          ) as Graphics;
+
+          if (nextGraphic.type == GraphicsType.SNAKE_HEAD) {
+            return [graphic, snakes[j]];
+          }
+        }
+      }
+    }
+
+    const graphic = this.entityManager.getComponentByType(
       snakes[snakes.length - 1].idEntity!,
       getNameGraphics()
-    );
+    ) as Graphics;
 
-    return <Graphics>graphics;
+    return [graphic, snakes[snakes.length - 1]];
   }
 
   checkCollisions() {
@@ -57,15 +80,18 @@ export default class SnakeSystem extends System {
     const snakes = this.componentManager.getComponentsByType(
       getNameSnake()
     ) as Array<Snake>;
-    const snakeAfterHead = snakes[1];
-    const snakeAfterHead2 = snakes[2];
     const graphics = this.componentManager.getComponentsByType(
       getNameGraphics()
     ) as Array<Graphics>;
     const array = this.getSnakeHead();
 
-    for (const [snakeHead, snakeHeadGraphics, snakeHeadVelocity] of array) {
-      if (!snakeHeadGraphics || !snakeHead) {
+    for (const [
+      snakeHead,
+      snakeAfterHead,
+      snakeHeadGraphics,
+      snakeHeadVelocity,
+    ] of array) {
+      if (!snakeHeadGraphics || !snakeHead || !snakeAfterHead) {
         return;
       }
 
@@ -128,9 +154,8 @@ export default class SnakeSystem extends System {
               apple.isAte = true;
               const newBody = GamePrefabs.createDynamicBody(
                 application,
-                this.getSnakeTail(),
-                snakeHeadVelocity!,
-                snakes[snakes.length - 1]
+                this.getSnakeTail(snakeHead.idEntity),
+                snakeHeadVelocity!
               );
               this.entityManager.addEntity(newBody);
               this.componentManager.addComponents(newBody);

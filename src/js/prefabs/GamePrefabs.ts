@@ -216,33 +216,39 @@ export default class GamePrefabs {
 
   static createDynamicBody(
     app: Application,
-    tail: Graphics,
-    velocity: Velocity,
-    dependsOn: Snake
+    tail: [Graphics, Snake],
+    velocity: Velocity
   ): Array<Component> {
     let components = Array<Component>();
 
     const snake = PIXI.Sprite.from(snakeBody);
 
-    snake.x = tail.sprite!.x;
-    snake.y = tail.sprite!.y;
+    snake.x = tail[0].sprite!.x;
+    snake.y = tail[0].sprite!.y;
 
     snake.width = app.blockSizeX;
     snake.height = app.blockSizeY;
 
     snake.anchor.set(0.5);
-    snake.angle = tail.sprite!.angle;
+    snake.angle = tail[0].sprite!.angle;
 
-    console.log("Create dynamic body :", tail.posInBoard, tail.lastPosInBoard);
+    console.log(
+      "Create dynamic body :",
+      tail[0].posInBoard,
+      tail[0].lastPosInBoard
+    );
     components.push(<Graphics>{
       name: getNameGraphics(),
       sprite: snake,
       type: GraphicsType.SNAKE,
       isInit: false,
-      posInBoard: <Position>{ x: tail.posInBoard.x, y: tail.posInBoard.y },
+      posInBoard: <Position>{
+        x: tail[0].posInBoard.x,
+        y: tail[0].posInBoard.y,
+      },
       lastPosInBoard: <Position>{
-        x: tail.lastPosInBoard.x,
-        y: tail.lastPosInBoard.y,
+        x: tail[0].lastPosInBoard.x,
+        y: tail[0].lastPosInBoard.y,
       },
     });
     components.push(<Velocity>{
@@ -254,10 +260,10 @@ export default class GamePrefabs {
     });
     components.push(<Snake>{
       name: getNameSnake(),
-      direction: dependsOn.direction,
+      direction: tail[1].direction,
       angles: [],
-      dependsOn: dependsOn,
-      lastDirection: dependsOn.direction,
+      dependsOn: tail[1],
+      lastDirection: tail[1].direction,
     });
     return components;
   }
